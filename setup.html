@@ -1206,10 +1206,13 @@
             const helpText = document.getElementById('schoolNameHelp');
 
             // Try these sheet types in order of preference
+            // Platform sheets contain ALL athletes (not just top finishers), so use one as primary source
+            const platformSheets = sheets.filter(s => s.name.toLowerCase().startsWith('platform'));
             const candidates = [
                 sheets.find(s => s.name.toLowerCase().includes('varsity team')),
                 sheets.find(s => s.name.toLowerCase().includes('jv team')),
                 sheets.find(s => s.name.toLowerCase().includes('team')),
+                platformSheets[0],
                 sheets.find(s => s.name.toLowerCase().includes('varsity results')),
                 sheets.find(s => s.name.toLowerCase().includes('results')),
                 sheets[0]
