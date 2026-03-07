@@ -379,7 +379,9 @@
                     for (let i = 0; i < Math.min(15, csvData.length); i++) {
                         for (let j = 0; j < csvData[i].length; j++) {
                             const cell = csvData[i][j].toLowerCase().trim();
-                            if (cell === 'weight class' || cell === 'wt class' || cell === 'class') {
+                            if (cell === 'weight class' || cell === 'wt class' || cell === 'wt. class' ||
+                                cell === 'class' || cell === 'wc' || cell === 'weight' ||
+                                (cell.includes('wt') && cell.includes('class'))) {
                                 weightClassCol = j;
                                 headerRow = i;
                                 break;
@@ -556,7 +558,7 @@
                     const cell = row[j].toLowerCase().trim();
                     if ((cell === 'name' || cell === 'lifter') && nameCol === -1) nameCol = j;
                     if (cell === 'school' && schoolCol === -1) schoolCol = j;
-                    if ((cell === 'weight class' || cell === 'wt class' || cell === 'class') && weightClassCol === -1) weightClassCol = j;
+                    if ((cell === 'weight class' || cell === 'wt class' || cell === 'wt. class' || cell === 'class' || cell === 'wc' || cell === 'weight' || (cell.includes('wt') && cell.includes('class'))) && weightClassCol === -1) weightClassCol = j;
                     if ((cell === 'body weight' || cell === 'bw' || cell === 'bodyweight' || cell === 'weight') && bodyWeightCol === -1) bodyWeightCol = j;
                     if ((cell === 'squat 1' || cell === 'sq1' || cell === 'squat1' || cell === 'f') && squat1Col === -1) squat1Col = j;
                     if ((cell === 'squat 2' || cell === 'sq2' || cell === 'squat2') && squat2Col === -1) squat2Col = j;
