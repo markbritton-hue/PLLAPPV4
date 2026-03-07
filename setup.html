@@ -471,14 +471,17 @@
                             placeholder="https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/edit..."
                             value="">
                         <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button class="btn-qr" onclick="document.getElementById('spreadsheetUrl').value='https://docs.google.com/spreadsheets/d/14_-bYrmenIDzJsrQGuunStMMT-YNcN7NBcXaTC1yUNU/edit?usp=sharing'; onQRScanned(document.getElementById('spreadsheetUrl').value);" title="Load Mens State Sheet" style="margin: 0; background: #0369a1;">
+                                🏆 Mens State
+                            </button>
+                            <button class="btn-qr" onclick="document.getElementById('spreadsheetUrl').value='https://docs.google.com/spreadsheets/d/1a_1IK5FYinrmq_v1ysDrXVW5CAsaS2c31L-HAtis5-c/edit?usp=sharing'; onQRScanned(document.getElementById('spreadsheetUrl').value);" title="Load Womens State Sheet" style="margin: 0; background: #be185d;">
+                                🏆 Womens State
+                            </button>
                             <button class="btn-qr" onclick="openQRScanner()" title="Scan QR Code" style="margin: 0;">
                                 📷 Scan QR Code
                             </button>
                             <button class="btn-qr" onclick="document.getElementById('spreadsheetUrl').value='https://docs.google.com/spreadsheets/d/1mEubp4_lKmxKgJVc_wEcrDaFJNGL22RUdvRgruqKbQw/edit?usp=sharing'; document.getElementById('schoolName').value='Three Rivers'; onQRScanned(document.getElementById('spreadsheetUrl').value);" title="Load Sample Sheet" style="margin: 0; background: #8b5cf6;">
                                 📋 Sample Sheet
-                            </button>
-                            <button class="btn-qr" onclick="document.getElementById('spreadsheetUrl').value='https://docs.google.com/spreadsheets/d/14_-bYrmenIDzJsrQGuunStMMT-YNcN7NBcXaTC1yUNU/edit?usp=sharing'; onQRScanned(document.getElementById('spreadsheetUrl').value);" title="Load Mens State Sheet" style="margin: 0; background: #0369a1;">
-                                🏆 Mens State
                             </button>
                         </div>
                         <div id="step2Check" style="display: none; margin-top: 12px; font-weight: 600; font-size: 1rem;"></div>
