@@ -525,7 +525,7 @@
                     <div class="athlete-row ${rowClass}">
                         <div class="athlete-name">
                             ${athlete.name}
-                            ${attemptWeight ? `<span class="attempt-weight">- Attempting ${attemptWeight}</span>` : ''}
+                            ${attemptWeight ? `<div style="font-size: 0.85rem; font-weight: 600; color: #60a5fa; margin-top: 2px;">Attempting ${attemptWeight}</div>` : ''}
                         </div>
                         <div style="display: flex; align-items: center; gap: 12px;">
                             ${athlete.hasPending && overallPosition > 2 ? `<div style="color: #60a5fa; font-size: 1.2rem; font-weight: 800; white-space: nowrap;">Position ${overallPosition}</div>` : ''}
