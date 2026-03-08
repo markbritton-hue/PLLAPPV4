@@ -574,22 +574,22 @@
                         </div>
                     </div>
                     <div class="athlete-details" id="${detailId}">
-                        <div style="display:grid; grid-template-columns:3fr 1px 3fr 1px 3fr ${athlete.total ? '1px 2fr' : ''}; gap:4px; align-items:center;">
-                            <div>
-                                <div style="font-size:0.65rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:3px;">Squat</div>
+                        <div style="display:flex; gap:12px; align-items:stretch;">
+                            <div style="flex:3;">
+                                <div style="font-size:0.65rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Squat</div>
                                 <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:3px;">${renderAttempt(athlete.squat1)}${renderAttempt(athlete.squat2)}${renderAttempt(athlete.squat3)}</div>
                             </div>
-                            <div style="background:rgba(96,165,250,0.15); height:100%; min-height:36px;"></div>
-                            <div>
-                                <div style="font-size:0.65rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:3px;">Bench</div>
+                            <div style="width:1px; background:rgba(96,165,250,0.2);"></div>
+                            <div style="flex:3;">
+                                <div style="font-size:0.65rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Bench</div>
                                 <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:3px;">${renderAttempt(athlete.bench1)}${renderAttempt(athlete.bench2)}${renderAttempt(athlete.bench3)}</div>
                             </div>
-                            <div style="background:rgba(96,165,250,0.15); height:100%; min-height:36px;"></div>
-                            <div>
-                                <div style="font-size:0.65rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:3px;">Deadlift</div>
+                            <div style="width:1px; background:rgba(96,165,250,0.2);"></div>
+                            <div style="flex:3;">
+                                <div style="font-size:0.65rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Deadlift</div>
                                 <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:3px;">${renderAttempt(athlete.dead1)}${renderAttempt(athlete.dead2)}${renderAttempt(athlete.dead3)}</div>
                             </div>
-                            ${athlete.total ? `<div style="background:rgba(96,165,250,0.15); height:100%; min-height:36px;"></div><div style="text-align:center; background:linear-gradient(135deg,#60a5fa,#a78bfa); border-radius:6px; padding:6px 4px; font-weight:800; font-size:0.85rem;">Total<br>${athlete.total}</div>` : ''}
+                            ${athlete.total ? `<div style="width:1px; background:rgba(96,165,250,0.2);"></div><div style="flex:2; text-align:center; display:flex; align-items:center; justify-content:center;"><div style="background:linear-gradient(135deg,#60a5fa,#a78bfa); border-radius:6px; padding:6px 8px; font-weight:800; font-size:0.85rem; width:100%;">Total<br>${athlete.total}</div></div>` : ''}
                         </div>
                     </div>
                 `;
