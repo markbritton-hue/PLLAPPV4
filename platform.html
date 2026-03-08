@@ -314,6 +314,13 @@
         // Load platforms on page load
         window.addEventListener('DOMContentLoaded', function() {
             loadPlatformsList();
+            // Auto-select platform from URL param e.g. platform.html?gid=12345
+            const gidParam = new URLSearchParams(window.location.search).get('gid');
+            if (gidParam) {
+                const select = document.getElementById('platformSelect');
+                select.value = gidParam;
+                if (select.value) loadPlatform();
+            }
             if (localStorage.getItem('platformAutoRefresh') === 'on') {
                 toggleAutoRefresh();
             }
