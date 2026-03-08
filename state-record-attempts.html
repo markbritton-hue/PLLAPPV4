@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerLift Live | State Record Attempts</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+            color: white;
+        }
+
+        .btn-home {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(96, 165, 250, 0.2);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            transition: all 0.2s;
+        }
+        .btn-home:hover {
+            background: rgba(30, 41, 59, 1);
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .page-header h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+        .page-header p {
+            color: rgba(255,255,255,0.65);
+            font-size: 1rem;
+        }
+
+        .record-card {
+            background: rgba(30, 41, 59, 0.85);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+            transition: transform 0.2s;
+        }
+        .record-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .athlete-name {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: white;
+        }
+        .athlete-meta {
+            color: rgba(255,255,255,0.55);
+            font-size: 0.85rem;
+            margin-top: 2px;
+        }
+
+        .attempt-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-top: 14px;
+            padding: 12px 16px;
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 10px;
+        }
+        .lift-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #f59e0b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            min-width: 70px;
+        }
+        .attempt-weight {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: white;
+        }
+        .attempt-weight small {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.5);
+            font-weight: 400;
+        }
+        .record-weight {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.6);
+        }
+        .margin-badge {
+            margin-left: auto;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .margin-badge.close {
+            background: rgba(245, 158, 11, 0.2);
+            border-color: #f59e0b;
+            color: #f59e0b;
+        }
+
+        .no-records-msg {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255,255,255,0.5);
+        }
+        .no-records-msg i {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            display: block;
+            color: #f59e0b;
+        }
+
+        .gender-toggle {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .gender-btn {
+            padding: 8px 24px;
+            border-radius: 20px;
+            border: 1px solid rgba(96,165,250,0.3);
+            background: rgba(30, 41, 59, 0.8);
+            color: rgba(255,255,255,0.7);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .gender-btn.active-men {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+        .gender-btn.active-women {
+            background: #ec4899;
+            border-color: #ec4899;
+            color: white;
+        }
+
+        /* Records editor modal */
+        .records-modal-bg {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .records-modal {
+            background: #1e293b;
+            border: 1px solid rgba(96,165,250,0.2);
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .records-modal h3 {
+            color: #f59e0b;
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+        .records-table input {
+            background: rgba(15,23,42,0.8);
+            border: 1px solid rgba(96,165,250,0.2);
+            color: white;
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 0.85rem;
+            width: 75px;
+            text-align: center;
+        }
+        .records-table input:focus {
+            outline: none;
+            border-color: #f59e0b;
+        }
+        .records-table th {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 6px 10px;
+        }
+        .records-table td {
+            padding: 6px 10px;
+            vertical-align: middle;
+            color: rgba(255,255,255,0.85);
+            font-size: 0.9rem;
+        }
+        .records-table tr:nth-child(even) td {
+            background: rgba(255,255,255,0.03);
+        }
+
+        .section-label {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #60a5fa;
+            margin: 20px 0 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(96,165,250,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container px-4">
+        <!-- Nav -->
+        <div class="mb-4 d-flex justify-content-between align-items-center">
+            <a href="resources.html" class="btn-home">
+                <i class="fas fa-arrow-left me-2"></i>Resources
+            </a>
+            <div class="d-flex gap-2">
+                <button onclick="openEditor()" style="background: rgba(245,158,11,0.2); border: 1px solid #f59e0b; color: #f59e0b; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem;">
+                    <i class="fas fa-edit me-2"></i>Edit Records
+                </button>
+                <button onclick="refreshData()" style="background: rgba(96,165,250,0.2); border: 1px solid #60a5fa; color: #60a5fa; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem;">
+                    <i class="fas fa-sync-alt me-2"></i>Refresh
+                </button>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="page-header">
+            <h1><i class="fas fa-star me-2"></i>State Record Attempts</h1>
+            <p>Athletes in the current meet attempting to break a Michigan state record</p>
+        </div>
+
+        <!-- Gender toggle -->
+        <div class="gender-toggle">
+            <button class="gender-btn active-men" id="btnMen" onclick="setGender('M')">
+                <i class="fas fa-mars me-1"></i>Men's Records
+            </button>
+            <button class="gender-btn" id="btnWomen" onclick="setGender('W')">
+                <i class="fas fa-venus me-1"></i>Women's Records
+            </button>
+        </div>
+
+        <div id="mainContent">
+            <div class="no-records-msg">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading athlete data...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Records Editor Modal -->
+    <div class="records-modal-bg" id="editorModal">
+        <div class="records-modal">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3><i class="fas fa-trophy me-2"></i>Edit State Records</h3>
+                <button onclick="closeEditor()" style="background: none; border: none; color: rgba(255,255,255,0.5); font-size: 1.4rem; cursor: pointer;">&times;</button>
+            </div>
+            <p style="color: rgba(255,255,255,0.5); font-size: 0.85rem; margin-bottom: 16px;">
+                Enter the current state records from <a href="https://www.mhspla.com/state-records" target="_blank" style="color: #f59e0b;">mhspla.com/state-records</a>. Leave 0 for no record set.
+            </p>
+
+            <div class="gender-toggle mb-3">
+                <button class="gender-btn active-men" id="editorBtnM" onclick="switchEditorGender('M')">Men's</button>
+                <button class="gender-btn" id="editorBtnW" onclick="switchEditorGender('W')">Women's</button>
+            </div>
+
+            <div id="editorVarsity"></div>
+            <div id="editorJV"></div>
+
+            <div class="d-flex gap-3 mt-4">
+                <button onclick="saveRecords()" style="background: #f59e0b; border: none; color: #0f172a; padding: 12px 30px; border-radius: 8px; font-weight: 700; cursor: pointer; flex: 1;">
+                    <i class="fas fa-save me-2"></i>Save Records
+                </button>
+                <button onclick="closeEditor()" style="background: rgba(30,41,59,0.8); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); padding: 12px 30px; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ─── Default weight classes ───────────────────────────────────────────
+        const MEN_WC   = ['114','123','132','148','165','181','198','220','242','275','SHW'];
+        const WOMEN_WC = ['97','105','114','123','132','148','165','181','198','SHW'];
+
+        const DEFAULT_RECORD = { sq: 0, bp: 0, dl: 0, total: 0 };
+
+        function defaultRecords(wcs) {
+            const out = { V: {}, JV: {} };
+            wcs.forEach(w => {
+                out.V[w]  = { ...DEFAULT_RECORD };
+                out.JV[w] = { ...DEFAULT_RECORD };
+            });
+            return out;
+        }
+
+        // ─── State ────────────────────────────────────────────────────────────
+        let currentGender = 'M';   // M or W
+        let editorGender  = 'M';
+        let athletes = [];
+
+        function getRecordsKey(g) { return `trplStateRecords_${g}`; }
+
+        function loadRecords(g) {
+            const wcs = g === 'M' ? MEN_WC : WOMEN_WC;
+            try {
+                const stored = localStorage.getItem(getRecordsKey(g));
+                if (stored) return JSON.parse(stored);
+            } catch(e) {}
+            return defaultRecords(wcs);
+        }
+
+        function saveRecordsToStorage(g, data) {
+            localStorage.setItem(getRecordsKey(g), JSON.stringify(data));
+        }
+
+        // ─── Gender toggle ────────────────────────────────────────────────────
+        function setGender(g) {
+            currentGender = g;
+            document.getElementById('btnMen').className   = 'gender-btn' + (g === 'M' ? ' active-men' : '');
+            document.getElementById('btnWomen').className = 'gender-btn' + (g === 'W' ? ' active-women' : '');
+            renderAttempts();
+        }
+
+        // ─── CSV / athlete loading ────────────────────────────────────────────
+        async function fetchCSV(spreadsheetId, gid) {
+            const url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/export?format=csv&gid=${gid}&t=${Date.now()}`;
+            const resp = await fetch(url);
+            const text = await resp.text();
+            return text.trim().split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g,'').trim()));
+        }
+
+        function parseAthletes(csvData) {
+            if (!csvData || csvData.length < 2) return [];
+            let headerRow = 0;
+            let nameCol=-1, schoolCol=-1, weightClassCol=-1, bodyWeightCol=-1, totalCol=-1;
+            let sq1=-1, sq2=-1, sq3=-1, bp1=-1, bp2=-1, bp3=-1, dl1=-1, dl2=-1, dl3=-1;
+
+            // Find header row
+            for (let i = 0; i < Math.min(5, csvData.length); i++) {
+                const row = csvData[i].map(c => c.toLowerCase().trim());
+                if (row.some(c => c === 'name' || c === 'athlete')) { headerRow = i; break; }
+            }
+
+            const h0 = csvData[headerRow].map(c => c.toLowerCase().trim());
+            h0.forEach((cell, j) => {
+                if ((cell === 'name' || cell === 'athlete') && nameCol === -1) nameCol = j;
+                if ((cell === 'school' || cell === 'team') && schoolCol === -1) schoolCol = j;
+                if ((cell === 'weight class' || cell === 'wt class' || cell === 'wt. class' || cell === 'class' || cell === 'wc' || (cell.includes('wt') && cell.includes('class'))) && weightClassCol === -1) weightClassCol = j;
+                if ((cell === 'body weight' || cell === 'bwt' || cell === 'body wt' || cell === 'bw') && bodyWeightCol === -1) bodyWeightCol = j;
+                if (cell === 'total' && totalCol === -1) totalCol = j;
+                if ((cell === 'squat 1' || cell === 'sq1' || cell === 'squat1') && sq1 === -1) sq1 = j;
+            });
+
+            // Sub-header row
+            function scanSub(row) {
+                row.forEach((cell, j) => {
+                    cell = cell.toLowerCase().trim();
+                    if ((cell==='sq1'||cell==='squat 1'||cell==='sq 1'||cell==='squat1') && sq1===-1) sq1=j;
+                    if ((cell==='sq2'||cell==='squat 2'||cell==='sq 2'||cell==='squat2') && sq2===-1) sq2=j;
+                    if ((cell==='sq3'||cell==='squat 3'||cell==='sq 3'||cell==='squat3') && sq3===-1) sq3=j;
+                    if ((cell==='bp1'||cell==='bench 1'||cell==='bp 1'||cell==='bench1') && bp1===-1) bp1=j;
+                    if ((cell==='bp2'||cell==='bench 2'||cell==='bp 2'||cell==='bench2') && bp2===-1) bp2=j;
+                    if ((cell==='bp3'||cell==='bench 3'||cell==='bp 3'||cell==='bench3') && bp3===-1) bp3=j;
+                    if ((cell==='dl1'||cell==='dead 1'||cell==='dl 1'||cell==='dead1'||cell==='deadlift 1') && dl1===-1) dl1=j;
+                    if ((cell==='dl2'||cell==='dead 2'||cell==='dl 2'||cell==='dead2'||cell==='deadlift 2') && dl2===-1) dl2=j;
+                    if ((cell==='dl3'||cell==='dead 3'||cell==='dl 3'||cell==='dead3'||cell==='deadlift 3') && dl3===-1) dl3=j;
+                    // TRPL patterns
+                    if ((cell==='f') && sq1===-1 && j>0) sq1=j;
+                });
+            }
+            if (csvData[headerRow + 1]) scanSub(csvData[headerRow + 1]);
+            if (sq1===-1 && bp1===-1 && dl1===-1 && csvData[headerRow + 2]) {
+                scanSub(csvData[headerRow + 2]);
+                if (sq1!==-1 || bp1!==-1 || dl1!==-1) headerRow++;
+            }
+            if (sq2===-1 && sq1!==-1) sq2 = sq1 + 1;
+            if (sq3===-1 && sq2!==-1) sq3 = sq2 + 1;
+            if (bp1===-1 && sq3!==-1) bp1 = sq3 + 1;
+            if (bp2===-1 && bp1!==-1) bp2 = bp1 + 1;
+            if (bp3===-1 && bp2!==-1) bp3 = bp2 + 1;
+            if (dl1===-1 && bp3!==-1) dl1 = bp3 + 1;
+            if (dl2===-1 && dl1!==-1) dl2 = dl1 + 1;
+            if (dl3===-1 && dl2!==-1) dl3 = dl2 + 1;
+
+            const out = [];
+            for (let i = headerRow + 2; i < csvData.length; i++) {
+                const row = csvData[i];
+                const name = nameCol !== -1 ? row[nameCol]?.trim() : '';
+                if (!name) continue;
+                const rawWc = weightClassCol !== -1 ? row[weightClassCol]?.trim() : '';
+                const desig = rawWc?.toUpperCase().includes('JV') ? 'JV' : 'V';
+                const wc = rawWc?.match(/(\d+)/)?.[1] || rawWc || '';
+                out.push({
+                    name,
+                    school: schoolCol !== -1 ? row[schoolCol]?.trim() : '',
+                    weightClass: wc,
+                    designation: desig,
+                    bodyWeight: parseFloat(bodyWeightCol !== -1 ? row[bodyWeightCol]?.trim() : '0') || 0,
+                    total: parseFloat(totalCol !== -1 ? row[totalCol]?.trim() : '0') || 0,
+                    squat1: sq1!==-1 ? row[sq1]?.trim() : '',
+                    squat2: sq2!==-1 ? row[sq2]?.trim() : '',
+                    squat3: sq3!==-1 ? row[sq3]?.trim() : '',
+                    bench1: bp1!==-1 ? row[bp1]?.trim() : '',
+                    bench2: bp2!==-1 ? row[bp2]?.trim() : '',
+                    bench3: bp3!==-1 ? row[bp3]?.trim() : '',
+                    dead1:  dl1!==-1 ? row[dl1]?.trim()  : '',
+                    dead2:  dl2!==-1 ? row[dl2]?.trim()  : '',
+                    dead3:  dl3!==-1 ? row[dl3]?.trim()  : '',
+                });
+            }
+            return out;
+        }
+
+        function isPending(val) {
+            if (!val) return false;
+            const v = val.toLowerCase().trim();
+            return v !== '' && !v.includes('x') && !v.includes('g');
+        }
+
+        // For a given athlete, return all pending attempts that could beat a record
+        // Returns array of { lift, attemptNum, weight, record }
+        function getRecordAttempts(athlete, records) {
+            const desig = athlete.designation || 'V';
+            const wc = athlete.weightClass || '';
+            const rec = records[desig]?.[wc] || records[desig]?.['SHW'] || null;
+            if (!rec) return [];
+
+            const checks = [
+                { lift: 'Squat',    key: 'sq',    attempts: [athlete.squat1, athlete.squat2, athlete.squat3] },
+                { lift: 'Bench',    key: 'bp',    attempts: [athlete.bench1, athlete.bench2, athlete.bench3] },
+                { lift: 'Deadlift', key: 'dl',    attempts: [athlete.dead1,  athlete.dead2,  athlete.dead3] },
+            ];
+
+            const hits = [];
+            checks.forEach(({ lift, key, attempts }) => {
+                const stateRec = rec[key] || 0;
+                if (stateRec === 0) return; // no record configured
+                attempts.forEach((val, idx) => {
+                    if (!isPending(val)) return;
+                    const w = parseFloat(val.replace(/[xgXG]/g, '').trim()) || 0;
+                    if (w > stateRec) {
+                        hits.push({ lift, attemptNum: idx + 1, weight: w, record: stateRec });
+                    }
+                });
+            });
+
+            // Also check total
+            if (rec.total > 0 && athlete.total > 0 && athlete.total > rec.total) {
+                hits.push({ lift: 'Total', attemptNum: null, weight: athlete.total, record: rec.total });
+            }
+
+            return hits;
+        }
+
+        // ─── Render ───────────────────────────────────────────────────────────
+        function renderAttempts() {
+            const container = document.getElementById('mainContent');
+            const records = loadRecords(currentGender);
+
+            // Check if any records are configured
+            let hasAnyRecord = false;
+            ['V','JV'].forEach(d => {
+                Object.values(records[d] || {}).forEach(r => {
+                    if (r.sq > 0 || r.bp > 0 || r.dl > 0 || r.total > 0) hasAnyRecord = true;
+                });
+            });
+
+            if (!hasAnyRecord) {
+                container.innerHTML = `
+                    <div class="no-records-msg">
+                        <i class="fas fa-trophy"></i>
+                        <h4 style="color: rgba(255,255,255,0.7); margin-bottom: 10px;">No State Records Configured</h4>
+                        <p style="color: rgba(255,255,255,0.4); margin-bottom: 20px;">Enter the current ${currentGender === 'M' ? "Men's" : "Women's"} state records to see which athletes are attempting to break them.</p>
+                        <button onclick="openEditor()" style="background: #f59e0b; border: none; color: #0f172a; padding: 12px 28px; border-radius: 8px; font-weight: 700; cursor: pointer;">
+                            <i class="fas fa-edit me-2"></i>Enter State Records
+                        </button>
+                    </div>`;
+                return;
+            }
+
+            // Find record attempts
+            const recordAttempts = [];
+            const seen = new Set();
+            athletes.forEach(a => {
+                if (seen.has(a.name.toLowerCase())) return;
+                seen.add(a.name.toLowerCase());
+                const hits = getRecordAttempts(a, records);
+                if (hits.length > 0) recordAttempts.push({ athlete: a, hits });
+            });
+
+            if (recordAttempts.length === 0) {
+                container.innerHTML = `
+                    <div class="no-records-msg">
+                        <i class="fas fa-check-circle" style="color: #10b981;"></i>
+                        <h4 style="color: rgba(255,255,255,0.7); margin-bottom: 10px;">No Record Attempts Found</h4>
+                        <p style="color: rgba(255,255,255,0.4);">No athletes in the current meet are attempting to break a state record — or the meet data uses a different gender. Try switching to ${currentGender === 'M' ? "Women's" : "Men's"} records.</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = `<p style="color: rgba(255,255,255,0.5); font-size: 0.85rem; margin-bottom: 16px;">${recordAttempts.length} athlete${recordAttempts.length !== 1 ? 's' : ''} with potential record-breaking attempt${recordAttempts.length !== 1 ? 's' : ''}</p>`;
+
+            recordAttempts.forEach(({ athlete, hits }) => {
+                const card = document.createElement('div');
+                card.className = 'record-card';
+                card.innerHTML = `
+                    <div class="d-flex align-items-start justify-content-between">
+                        <div>
+                            <div class="athlete-name">${athlete.name}</div>
+                            <div class="athlete-meta">${athlete.school} &bull; ${athlete.designation === 'JV' ? 'JV' : 'Varsity'} ${athlete.weightClass} lbs</div>
+                        </div>
+                        <span style="background: rgba(245,158,11,0.15); border: 1px solid #f59e0b; color: #f59e0b; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; white-space: nowrap;">RECORD ATTEMPT</span>
+                    </div>
+                    ${hits.map(h => {
+                        const margin = h.weight - h.record;
+                        const pct = ((h.weight / h.record - 1) * 100).toFixed(1);
+                        const isClose = margin <= 5;
+                        return `
+                        <div class="attempt-row">
+                            <div class="lift-label">${h.lift}${h.attemptNum ? ` #${h.attemptNum}` : ''}</div>
+                            <div class="attempt-weight">${h.weight} <small>lbs</small></div>
+                            <div class="record-weight">Record: ${h.record} lbs</div>
+                            <div class="margin-badge ${isClose ? 'close' : ''}">+${margin} lbs (${pct}%)</div>
+                        </div>`;
+                    }).join('')}
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // ─── Data load ────────────────────────────────────────────────────────
+        async function refreshData() {
+            const container = document.getElementById('mainContent');
+            container.innerHTML = `<div class="no-records-msg"><i class="fas fa-spinner fa-spin"></i><p>Loading...</p></div>`;
+
+            const configStr = localStorage.getItem('trplConfig');
+            if (!configStr) {
+                container.innerHTML = `<div class="no-records-msg"><i class="fas fa-cog"></i><p>No meet configured. <a href="setup.html" style="color:#f59e0b;">Go to Setup</a></p></div>`;
+                return;
+            }
+
+            const config = JSON.parse(configStr);
+            const platforms = (config.sheets || []).filter(s => s.name.toLowerCase().startsWith('platform'));
+
+            if (platforms.length === 0) {
+                container.innerHTML = `<div class="no-records-msg"><i class="fas fa-exclamation-circle"></i><p>No platform sheets found in current meet.</p></div>`;
+                return;
+            }
+
+            try {
+                const results = await Promise.all(platforms.map(async p => {
+                    try {
+                        const csv = await fetchCSV(config.spreadsheetId, p.gid);
+                        return parseAthletes(csv);
+                    } catch(e) { return []; }
+                }));
+                athletes = results.flat();
+                renderAttempts();
+            } catch(e) {
+                container.innerHTML = `<div class="no-records-msg"><i class="fas fa-exclamation-triangle"></i><p>Error loading data: ${e.message}</p></div>`;
+            }
+        }
+
+        // ─── Records Editor ───────────────────────────────────────────────────
+        function switchEditorGender(g) {
+            editorGender = g;
+            document.getElementById('editorBtnM').className = 'gender-btn' + (g === 'M' ? ' active-men' : '');
+            document.getElementById('editorBtnW').className = 'gender-btn' + (g === 'W' ? ' active-women' : '');
+            buildEditorTables(g);
+        }
+
+        function buildEditorTables(g) {
+            const wcs = g === 'M' ? MEN_WC : WOMEN_WC;
+            const records = loadRecords(g);
+
+            ['V','JV'].forEach(desig => {
+                const el = document.getElementById(desig === 'V' ? 'editorVarsity' : 'editorJV');
+                el.innerHTML = `
+                    <div class="section-label">${desig === 'V' ? 'Varsity' : 'JV'}</div>
+                    <table class="records-table w-100">
+                        <thead>
+                            <tr>
+                                <th>Wt Class</th>
+                                <th>Squat</th>
+                                <th>Bench</th>
+                                <th>Deadlift</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${wcs.map(wc => {
+                                const r = records[desig]?.[wc] || DEFAULT_RECORD;
+                                return `<tr>
+                                    <td><strong>${wc}</strong></td>
+                                    <td><input type="number" id="rec_${g}_${desig}_${wc}_sq" value="${r.sq || 0}" min="0"></td>
+                                    <td><input type="number" id="rec_${g}_${desig}_${wc}_bp" value="${r.bp || 0}" min="0"></td>
+                                    <td><input type="number" id="rec_${g}_${desig}_${wc}_dl" value="${r.dl || 0}" min="0"></td>
+                                    <td><input type="number" id="rec_${g}_${desig}_${wc}_total" value="${r.total || 0}" min="0"></td>
+                                </tr>`;
+                            }).join('')}
+                        </tbody>
+                    </table>`;
+            });
+        }
+
+        function openEditor() {
+            editorGender = currentGender;
+            document.getElementById('editorBtnM').className = 'gender-btn' + (editorGender === 'M' ? ' active-men' : '');
+            document.getElementById('editorBtnW').className = 'gender-btn' + (editorGender === 'W' ? ' active-women' : '');
+            buildEditorTables(editorGender);
+            document.getElementById('editorModal').style.display = 'block';
+        }
+
+        function closeEditor() {
+            document.getElementById('editorModal').style.display = 'none';
+        }
+
+        function saveRecords() {
+            const g = editorGender;
+            const wcs = g === 'M' ? MEN_WC : WOMEN_WC;
+            const records = { V: {}, JV: {} };
+            ['V','JV'].forEach(desig => {
+                wcs.forEach(wc => {
+                    records[desig][wc] = {
+                        sq:    parseFloat(document.getElementById(`rec_${g}_${desig}_${wc}_sq`)?.value)    || 0,
+                        bp:    parseFloat(document.getElementById(`rec_${g}_${desig}_${wc}_bp`)?.value)    || 0,
+                        dl:    parseFloat(document.getElementById(`rec_${g}_${desig}_${wc}_dl`)?.value)    || 0,
+                        total: parseFloat(document.getElementById(`rec_${g}_${desig}_${wc}_total`)?.value) || 0,
+                    };
+                });
+            });
+            saveRecordsToStorage(g, records);
+            closeEditor();
+            renderAttempts();
+        }
+
+        // ─── Init ─────────────────────────────────────────────────────────────
+        window.addEventListener('DOMContentLoaded', refreshData);
+    </script>
+</body>
+</html>
