@@ -166,11 +166,11 @@
     <div class="records-modal-bg" id="editorModal">
         <div class="records-modal">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3><i class="fas fa-trophy me-2"></i>Edit State Records</h3>
+                <h3><i class="fas fa-trophy me-2"></i>State Records</h3>
                 <button onclick="closeEditor()" style="background:none;border:none;color:rgba(255,255,255,0.5);font-size:1.4rem;cursor:pointer;">&times;</button>
             </div>
             <p style="color:rgba(255,255,255,0.5);font-size:0.85rem;margin-bottom:16px;">
-                Records pre-loaded from <em>Varsity Mens State Records 2025</em>. Edit weights and holder info as needed.
+                Current state records from <em>Varsity Mens State Records 2025</em>.
                 Source: <a href="https://www.mhspla.com/state-records" target="_blank" style="color:#f59e0b;">mhspla.com/state-records</a>
             </p>
             <div class="gender-toggle mb-3">
@@ -179,12 +179,9 @@
             </div>
             <div class="section-label">Varsity Records</div>
             <div id="editorTable" style="overflow-x:auto;"></div>
-            <div class="d-flex gap-3 mt-4">
-                <button onclick="saveRecords()" style="background:#f59e0b;border:none;color:#0f172a;padding:12px 30px;border-radius:8px;font-weight:700;cursor:pointer;flex:1;">
-                    <i class="fas fa-save me-2"></i>Save Records
-                </button>
-                <button onclick="closeEditor()" style="background:rgba(30,41,59,0.8);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);padding:12px 30px;border-radius:8px;font-weight:600;cursor:pointer;">
-                    Cancel
+            <div class="mt-4">
+                <button onclick="closeEditor()" style="background:rgba(30,41,59,0.8);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);padding:12px 30px;border-radius:8px;font-weight:600;cursor:pointer;width:100%;">
+                    Close
                 </button>
             </div>
         </div>
@@ -679,15 +676,14 @@
                         const r = records[wc] || {};
                         const f = (key) => {
                             const e = r[key] || {};
-                            return `<input type="number" id="w_${g}_${wc}_${key}" value="${e.weight||0}" min="0">
-                                    <input type="text"   id="n_${g}_${wc}_${key}" value="${e.name||''}" placeholder="Holder name">`;
+                            const w = e.weight || 0;
+                            const n = e.name || '—';
+                            return `<td style="color:white;font-weight:600;">${w > 0 ? w + ' lbs' : '—'}</td>
+                                    <td style="color:rgba(255,255,255,0.5);font-size:0.8rem;">${n}</td>`;
                         };
                         return `<tr>
                             <td><strong>${wc}</strong></td>
-                            <td colspan="2" style="white-space:nowrap">${f('sq')}</td>
-                            <td colspan="2" style="white-space:nowrap">${f('bp')}</td>
-                            <td colspan="2" style="white-space:nowrap">${f('dl')}</td>
-                            <td colspan="2" style="white-space:nowrap">${f('total')}</td>
+                            ${f('sq')}${f('bp')}${f('dl')}${f('total')}
                         </tr>`;
                     }).join('')}
                 </tbody>
