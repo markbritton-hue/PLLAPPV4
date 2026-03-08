@@ -231,52 +231,45 @@
             const container = document.getElementById('displayContainer');
             container.innerHTML = '';
 
-            for (const platform of platforms) {
+            // Load all platforms in parallel
+            const platformResults = await Promise.all(platforms.map(async platform => {
                 try {
                     const athletes = await loadPlatformData(config.spreadsheetId, platform.gid);
+                    const currentColumn = getCurrentAttemptColumn(athletes);
+                    const pendingFilter = currentColumn
+                        ? (a) => hasPendingInColumn(a, currentColumn)
+                        : (a) => hasAnyPendingAttempt(a);
+
+                    const allSorted = sortAthletesByLiftingOrder(athletes).filter(pendingFilter);
+                    const platformPositionMap = {};
+                    allSorted.forEach((a, idx) => { platformPositionMap[a.sheetOrder] = idx + 1; });
 
                     const schoolAthletes = athletes.filter(a =>
                         a.school && a.school.toLowerCase().includes(schoolName.toLowerCase())
                     );
-
-                    // Use ALL athletes to determine current column and overall platform positions
-                    const currentColumn = getCurrentAttemptColumn(athletes);
-
-                    const pendingFilter = currentColumn
-                        ? (athlete) => hasPendingInColumn(athlete, currentColumn)
-                        : (athlete) => hasAnyPendingAttempt(athlete);
-
-                    // Sort ALL athletes to get true platform position
-                    const allSorted = sortAthletesByLiftingOrder(athletes).filter(pendingFilter);
-
-                    // Build map of sheetOrder -> overall platform position
-                    const platformPositionMap = {};
-                    allSorted.forEach((athlete, idx) => {
-                        platformPositionMap[athlete.sheetOrder] = idx + 1;
+                    schoolAthletes.forEach(a => {
+                        a.platformName = platform.name;
+                        a.platformPosition = platformPositionMap[a.sheetOrder] || 0;
+                        a.hasPending = pendingFilter(a);
+                        a.currentColumn = currentColumn;
                     });
-
-                    const sortedAthletes = sortAthletesByLiftingOrder(schoolAthletes);
-
-                    // Attach overall platform position and pending status to each school athlete
-                    sortedAthletes.forEach(athlete => {
-                        athlete.platformPosition = platformPositionMap[athlete.sheetOrder] || 0;
-                        athlete.hasPending = pendingFilter(athlete);
-                    });
-
-                    // Sort by platform position (DONE athletes at the end)
-                    sortedAthletes.sort((a, b) => {
-                        if (!a.hasPending && b.hasPending) return 1;
-                        if (a.hasPending && !b.hasPending) return -1;
-                        return (a.platformPosition || 999) - (b.platformPosition || 999);
-                    });
-
-                    if (sortedAthletes.length > 0) {
-                        renderPlatformSection(platform.name, sortedAthletes);
-                    }
-
+                    return schoolAthletes;
                 } catch (error) {
                     console.error(`Error loading ${platform.name}:`, error);
+                    return [];
                 }
+            }));
+
+            // Combine all school athletes and sort by platform position across all platforms
+            const allSchoolAthletes = platformResults.flat();
+            allSchoolAthletes.sort((a, b) => {
+                if (!a.hasPending && b.hasPending) return 1;
+                if (a.hasPending && !b.hasPending) return -1;
+                return (a.platformPosition || 999) - (b.platformPosition || 999);
+            });
+
+            if (allSchoolAthletes.length > 0) {
+                renderAllAthletes(allSchoolAthletes);
             }
         }
 
@@ -495,53 +488,37 @@
             });
         }
 
-        function renderPlatformSection(platformName, athletes) {
+        function renderAllAthletes(athletes) {
             const container = document.getElementById('displayContainer');
-
             const section = document.createElement('div');
             section.className = 'platform-section';
+            let html = '';
 
-            let html = `<div class="platform-name"><i class="fas fa-layer-group me-2"></i>${platformName}</div>`;
-
-            // Determine current attempt column to check if athletes are actually lifting
-            const currentColumn = getCurrentAttemptColumn(athletes);
-
-            athletes.forEach((athlete, index) => {
-                // Overall platform position across ALL athletes
+            athletes.forEach(athlete => {
                 const overallPosition = athlete.platformPosition || 0;
-
-                let status = '';
-                let statusClass = '';
+                let status = '', statusClass = '';
 
                 if (!athlete.hasPending) {
-                    status = 'DONE';
-                    statusClass = 'done';
+                    status = 'DONE'; statusClass = 'done';
                 } else if (overallPosition === 1) {
-                    status = 'LIFTING';
-                    statusClass = 'lifting';
+                    status = 'LIFTING'; statusClass = 'lifting';
                 } else if (overallPosition === 2) {
-                    status = 'ON DECK';
-                    statusClass = 'on-deck';
+                    status = 'ON DECK'; statusClass = 'on-deck';
                 }
 
-                // Get the weight they'll be attempting
                 let attemptWeight = '';
-                if (currentColumn && athlete[currentColumn]) {
-                    const attemptValue = athlete[currentColumn];
-                    // Extract numeric value, removing g/x markers
-                    const weight = attemptValue.replace(/[xgXG]/g, '').trim();
-                    if (weight) {
-                        attemptWeight = `${weight} lbs`;
-                    }
+                if (athlete.currentColumn && athlete[athlete.currentColumn]) {
+                    const weight = athlete[athlete.currentColumn].replace(/[xgXG]/g, '').trim();
+                    if (weight) attemptWeight = `${weight} lbs`;
                 }
 
-                // Default background for rows without status
                 const rowClass = statusClass || 'default';
 
                 html += `
                     <div class="athlete-row ${rowClass}">
                         <div class="athlete-name">
                             ${athlete.name}
+                            <div style="font-size: 0.8rem; color: rgba(255,255,255,0.5); font-weight: 500; margin-top: 1px;">${athlete.platformName}</div>
                             ${attemptWeight ? `<div style="font-size: 0.85rem; font-weight: 600; color: #60a5fa; margin-top: 2px;">Attempting ${attemptWeight}</div>` : ''}
                         </div>
                         <div style="display: flex; align-items: center; gap: 12px;">
