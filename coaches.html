@@ -11,240 +11,178 @@
         body {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             min-height: 100vh;
-            padding: 20px 0;
-        }
-
-        .btn-home {
-            background: rgba(30, 41, 59, 0.8);
-            border: 1px solid rgba(96, 165, 250, 0.2);
+            padding: 20px;
             color: white;
-            padding: 12px 30px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            display: inline-block;
-            transition: all 0.2s;
-        }
-
-        .btn-home:hover {
-            background: rgba(30, 41, 59, 1);
-            transform: translateY(-2px);
-            color: white;
-        }
-
-        .page-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .page-header h1 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: #ec4899;
-            margin-bottom: 10px;
-        }
-
-        .page-header p {
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.7);
         }
 
         .platform-section {
             background: rgba(30, 41, 59, 0.8);
             border: 1px solid rgba(96, 165, 250, 0.2);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 30px;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 15px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
 
-        .platform-section h3 {
+        .platform-name {
             color: #60a5fa;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
             font-weight: 700;
         }
 
-        .athlete-card {
-            background: rgba(30, 41, 59, 0.9);
-            border: 1px solid rgba(96, 165, 250, 0.2);
-            border-radius: 12px;
-            padding: 12px;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.5);
-            transition: all 0.3s ease;
-            border-left: 4px solid #60a5fa;
-            height: 100%;
+        .athlete-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 8px;
+            border-left: 3px solid;
+            transition: all 0.2s;
         }
 
-        .athlete-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 28px rgba(0,0,0,0.6);
-            border-left-color: #a78bfa;
+        .athlete-row.lifting {
+            border-left-color: #ef4444;
+            background: linear-gradient(90deg, rgba(16, 185, 129, 0.15) 0%, rgba(239, 68, 68, 0.15) 100%);
+        }
+
+        .athlete-row.on-deck {
+            border-left-color: #10b981;
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        .athlete-row.default {
+            border-left-color: rgba(96, 165, 250, 0.3);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .athlete-row:hover {
+            transform: translateX(5px);
         }
 
         .athlete-name {
-            font-size: 1.2rem;
+            font-size: 0.95rem;
             font-weight: 700;
             color: white;
-            margin-bottom: 5px;
+            flex: 1;
         }
 
-        .athlete-school {
+        .attempt-weight {
             font-size: 1rem;
-            color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 8px;
-        }
-
-        .stat-box {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(96, 165, 250, 0.2);
-            padding: 6px 8px;
-            border-radius: 8px;
-            text-align: center;
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.6);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
             font-weight: 600;
-        }
-
-        .stat-value {
-            font-size: 0.95rem;
-            font-weight: 700;
             color: #60a5fa;
-            margin-top: 2px;
+            margin-left: 12px;
         }
 
-        .lifts-section {
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 2px solid rgba(96, 165, 250, 0.2);
-        }
-
-        .lift-box {
-            text-align: center;
-            padding: 8px;
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(96, 165, 250, 0.2);
+        .status-badge {
+            padding: 8px 20px;
             border-radius: 10px;
-        }
-
-        .lift-name {
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.6);
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-
-        .lift-value {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #60a5fa;
-            margin-top: 3px;
-        }
-
-        .total-box {
-            margin-top: 10px;
-            background: linear-gradient(135deg, #60a5fa, #a78bfa);
-            color: white;
-            padding: 6px 10px;
-            border-radius: 5px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
-        }
-
-        .total-label {
-            font-size: 0.6rem;
-            opacity: 0.95;
-            font-weight: 600;
-        }
-
-        .total-value {
-            font-size: 0.95rem;
+            font-size: 1rem;
             font-weight: 800;
-            margin-top: 1px;
+            letter-spacing: 1px;
+            color: white;
         }
 
-        .status-message {
-            padding: 15px;
+        .status-badge.lifting {
+            background: #ef4444;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+        }
+
+        .status-badge.on-deck {
+            background: #10b981;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .status-badge.done {
+            background: #6b7280;
+        }
+
+        .btn-back {
+            background: rgba(30, 41, 59, 0.8);
+            border: 2px solid rgba(96, 165, 250, 0.3);
+            color: white;
+            padding: 10px 20px;
             border-radius: 8px;
-            margin-bottom: 20px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: inline-block;
+            margin-bottom: 15px;
+            transition: all 0.2s;
         }
 
-        .status-message.info {
-            background: rgba(96, 165, 250, 0.2);
-            border: 1px solid #60a5fa;
-            color: #60a5fa;
+        .btn-back:hover {
+            background: rgba(30, 41, 59, 1);
+            transform: translateY(-2px);
+            color: white;
         }
 
-        .status-message.success {
+        .athlete-details {
+            display: none;
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 0 0 8px 8px;
+            margin-top: -4px;
+            border-left: 3px solid rgba(96, 165, 250, 0.3);
+        }
+
+        .athlete-details.open {
+            display: block;
+        }
+
+        .attempt-cell {
+            text-align: center;
+            padding: 6px 4px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .auto-refresh {
             background: rgba(16, 185, 129, 0.2);
-            border: 1px solid #10b981;
+            border: 2px solid #10b981;
+            padding: 12px 20px;
+            border-radius: 10px;
             color: #10b981;
-        }
-
-        .status-message.error {
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid #ef4444;
-            color: #ef4444;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Navigation Buttons -->
-        <div class="mb-4" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
-            <a href="index.html" class="btn btn-lg" style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(96, 165, 250, 0.2); color: white;">
-                <i class="fas fa-home me-2"></i>Home
-            </a>
-            <a href="display.html" class="btn btn-lg" style="background: rgba(16, 185, 129, 0.8); border: none; color: white;">
-                <i class="fas fa-tv me-2"></i>Simple Display
-            </a>
-            <button id="refreshToggle" onclick="toggleAutoRefresh()" class="btn btn-lg" style="background: rgba(96, 165, 250, 0.8); border: none; color: white; cursor: pointer;">
-                <i class="fas fa-sync-alt me-2"></i>Auto-Refresh: OFF
-            </button>
-            <a href="share.html" style="display: inline-flex; align-items: center; gap: 8px; background: rgba(167, 139, 250, 0.8); color: white; text-decoration: none; padding: 12px 20px; border-radius: 8px; font-weight: 700; box-shadow: 0 4px 12px rgba(167,139,250,0.3);">
-                <i class="fas fa-share-alt"></i> Share
-            </a>
-            <a href="https://venmo.com/u/Mark-Britton-18" target="_blank" rel="noopener noreferrer"
-               style="display: inline-flex; align-items: center; gap: 8px; background: #008CFF; color: white; text-decoration: none; padding: 12px 20px; border-radius: 8px; font-weight: 700; box-shadow: 0 4px 12px rgba(0,140,255,0.4);">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 111 111" fill="white"><path d="M90.5 8.5c3.9 6.4 5.7 13 5.7 21.4 0 26.7-22.8 61.4-41.3 85.8H15.7L1 10.9l38-3.6 7.9 63.7C55.1 55.4 64 30.1 64 16.1c0-8.1-1.4-13.6-3.6-18.1L90.5 8.5z"/></svg>
-                Donate
-            </a>
-        </div>
-
-        <!-- Page Header -->
-        <div class="page-header">
-            <h1><i class="fas fa-clipboard-user me-3"></i>Coaches View</h1>
-            <p id="schoolHeader">Your team's athletes lifting or on deck</p>
-        </div>
-
-        <!-- Status Message -->
-        <!-- Platforms Container -->
-        <div id="platformsContainer"></div>
-
-        <div id="statusMessage" style="display: none;"></div>
-
-        <!-- Donation Card -->
-        <div style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(96, 165, 250, 0.4); border-radius: 15px; padding: 25px 30px; text-align: center; margin-top: 40px; box-shadow: 0 8px 20px rgba(0,0,0,0.5);">
-            <h3 style="color: #60a5fa; font-weight: 700; margin-bottom: 8px;"><i class="fas fa-heart me-2" style="color: #ec4899;"></i>Support PowerLift Live</h3>
-            <p style="color: rgba(255,255,255,0.7); margin-bottom: 16px;">Donations help cover hosting and keep live results running.</p>
-            <a href="https://venmo.com/u/Mark-Britton-18" target="_blank" rel="noopener noreferrer"
-               style="display: inline-flex; align-items: center; gap: 12px; background: #008CFF; color: white; text-decoration: none; padding: 14px 30px; border-radius: 12px; font-size: 1.1rem; font-weight: 700; box-shadow: 0 4px 15px rgba(0,140,255,0.4);">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 111 111" fill="white"><path d="M90.5 8.5c3.9 6.4 5.7 13 5.7 21.4 0 26.7-22.8 61.4-41.3 85.8H15.7L1 10.9l38-3.6 7.9 63.7C55.1 55.4 64 30.1 64 16.1c0-8.1-1.4-13.6-3.6-18.1L90.5 8.5z"/></svg>
-                Donate via Venmo
-            </a>
-        </div>
+    <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap;">
+        <a href="index.html" class="btn btn-lg" style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(96, 165, 250, 0.2); color: white; text-decoration: none;">
+            <i class="fas fa-home me-2"></i>Home
+        </a>
+        <button id="refreshToggle" onclick="toggleAutoRefresh()" class="btn btn-lg" style="background: rgba(96, 165, 250, 0.8); border: none; color: white; cursor: pointer;">
+            <i class="fas fa-sync-alt me-2"></i>Auto-Refresh: OFF
+        </button>
+        <a href="https://venmo.com/u/Mark-Britton-18" target="_blank" rel="noopener noreferrer"
+           style="display: inline-flex; align-items: center; gap: 8px; background: #008CFF; color: white; text-decoration: none; padding: 12px 20px; border-radius: 8px; font-weight: 700; box-shadow: 0 4px 12px rgba(0,140,255,0.4);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 111 111" fill="white"><path d="M90.5 8.5c3.9 6.4 5.7 13 5.7 21.4 0 26.7-22.8 61.4-41.3 85.8H15.7L1 10.9l38-3.6 7.9 63.7C55.1 55.4 64 30.1 64 16.1c0-8.1-1.4-13.6-3.6-18.1L90.5 8.5z"/></svg>
+            Donate
+        </a>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <div id="displayContainer"></div>
+
+    <!-- Donation Card -->
+    <div style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(96, 165, 250, 0.4); border-radius: 15px; padding: 25px 30px; text-align: center; margin-top: 40px; box-shadow: 0 8px 20px rgba(0,0,0,0.5);">
+        <h3 style="color: #60a5fa; font-weight: 700; margin-bottom: 8px;"><i class="fas fa-heart me-2" style="color: #ec4899;"></i>Support PowerLift Live</h3>
+        <p style="color: rgba(255,255,255,0.7); margin-bottom: 16px;">Donations help cover hosting and keep live results running.</p>
+        <a href="https://venmo.com/u/Mark-Britton-18" target="_blank" rel="noopener noreferrer"
+           style="display: inline-flex; align-items: center; gap: 12px; background: #008CFF; color: white; text-decoration: none; padding: 14px 30px; border-radius: 12px; font-size: 1.1rem; font-weight: 700; box-shadow: 0 4px 15px rgba(0,140,255,0.4);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 111 111" fill="white"><path d="M90.5 8.5c3.9 6.4 5.7 13 5.7 21.4 0 26.7-22.8 61.4-41.3 85.8H15.7L1 10.9l38-3.6 7.9 63.7C55.1 55.4 64 30.1 64 16.1c0-8.1-1.4-13.6-3.6-18.1L90.5 8.5z"/></svg>
+            Donate via Venmo
+        </a>
+    </div>
+
     <script>
-        let schoolName = '';
         let autoRefreshInterval = null;
+        let schoolName = '';
 
         function toggleAutoRefresh() {
             const btn = document.getElementById('refreshToggle');
@@ -258,35 +196,30 @@
                 const cfg = JSON.parse(localStorage.getItem('trplConfig') || '{}');
                 const intervalMs = (cfg.autoRefreshSeconds || 20) * 1000;
                 autoRefreshInterval = setInterval(function() {
-                    loadAllPlatforms(true);
+                    loadDisplay(true);
                 }, intervalMs);
                 btn.innerHTML = `<i class="fas fa-sync-alt fa-spin me-2"></i>Auto-Refresh: ON (${cfg.autoRefreshSeconds || 20}s)`;
                 btn.style.background = 'rgba(16, 185, 129, 0.8)';
                 localStorage.setItem('coachesAutoRefresh', 'on');
-                loadAllPlatforms();
+                loadDisplay();
             }
         }
 
-        // Load all platforms on page load
         window.addEventListener('DOMContentLoaded', function() {
-            // Restore auto-refresh state (toggleAutoRefresh calls loadAllPlatforms internally)
+            // Restore auto-refresh state (toggleAutoRefresh calls loadDisplay internally)
             if (localStorage.getItem('coachesAutoRefresh') === 'on') {
                 toggleAutoRefresh();
             } else {
-                loadAllPlatforms();
+                loadDisplay();
             }
         });
 
-        // Load all platform sheets
-        async function loadAllPlatforms(preserveScroll = false) {
-            const statusDiv = document.getElementById('statusMessage');
-            const configStr = localStorage.getItem('trplConfig');
-
-            // Save scroll position
+        async function loadDisplay(preserveScroll = false) {
             const scrollPosition = preserveScroll ? window.pageYOffset || document.documentElement.scrollTop : 0;
 
+            const configStr = localStorage.getItem('trplConfig');
             if (!configStr) {
-                showStatus('No configuration found. Please go to Setup first.', 'error');
+                document.getElementById('displayContainer').innerHTML = '<p style="text-align: center; font-size: 2rem;">No configuration found. Please go to Setup.</p>';
                 return;
             }
 
@@ -294,28 +227,16 @@
                 const config = JSON.parse(configStr);
                 schoolName = config.schoolName || '';
 
-                if (!schoolName) {
-                    showStatus('School name not configured. Please go to Setup.', 'error');
-                    return;
-                }
-
-                // Update header with school name
-                document.getElementById('schoolHeader').textContent = `${schoolName} athletes lifting or on deck`;
-
-                // Filter sheets that start with "Platform"
                 const platforms = config.sheets.filter(s => s.name.toLowerCase().startsWith('platform'));
 
                 if (platforms.length === 0) {
-                    showStatus('No platform sheets found in configuration.', 'error');
+                    document.getElementById('displayContainer').innerHTML = '<p style="text-align: center; font-size: 2rem;">No platform sheets found.</p>';
                     return;
                 }
 
-                showStatus('Loading platforms...', 'info');
-
-                // Load all platforms
                 await loadPlatformsData(config, platforms);
 
-                // Restore scroll position if this is a refresh
+
                 if (preserveScroll && scrollPosition > 0) {
                     setTimeout(() => {
                         window.scrollTo({ top: scrollPosition, behavior: 'instant' });
@@ -323,98 +244,68 @@
                 }
 
             } catch (error) {
-                console.error('Error loading configuration:', error);
-                showStatus('Error loading configuration: ' + error.message, 'error');
+                console.error('Error:', error);
             }
         }
 
-        // Load data from all platforms
         async function loadPlatformsData(config, platforms) {
-            const container = document.getElementById('platformsContainer');
+            const container = document.getElementById('displayContainer');
             container.innerHTML = '';
 
-            let totalAthletesShown = 0;
-
-            for (const platform of platforms) {
+            // Load all platforms in parallel
+            const platformResults = await Promise.all(platforms.map(async platform => {
                 try {
                     const athletes = await loadPlatformData(config.spreadsheetId, platform.gid);
-
-                    // Determine current attempt column from all athletes
                     const currentColumn = getCurrentAttemptColumn(athletes);
+                    const pendingFilter = currentColumn
+                        ? (a) => hasPendingInColumn(a, currentColumn)
+                        : (a) => hasAnyPendingAttempt(a);
 
-                    // Filter for school's athletes only
+                    const allSorted = sortAthletesByLiftingOrder(athletes).filter(pendingFilter);
+                    const platformPositionMap = {};
+                    allSorted.forEach((a, idx) => { platformPositionMap[a.sheetOrder] = idx + 1; });
+
                     const schoolAthletes = athletes.filter(a =>
                         a.school && a.school.toLowerCase().includes(schoolName.toLowerCase())
                     );
-
-                    // Sort ALL athletes to get their true platform position
-                    const pendingFilter = currentColumn
-                        ? (athlete) => hasPendingInColumn(athlete, currentColumn)
-                        : (athlete) => hasAnyPendingAttempt(athlete);
-
-                    const allSorted = sortAthletesByLiftingOrder(athletes).filter(pendingFilter);
-
-                    // Build a map of sheetOrder -> overall platform position
-                    const platformPositionMap = {};
-                    allSorted.forEach((athlete, idx) => {
-                        platformPositionMap[athlete.sheetOrder] = idx + 1;
+                    schoolAthletes.forEach(a => {
+                        a.platformName = platform.name;
+                        a.platformGid = platform.gid;
+                        a.platformPosition = platformPositionMap[a.sheetOrder] || 0;
+                        a.hasPending = pendingFilter(a);
+                        a.currentColumn = currentColumn;
                     });
-
-                    // Show all school athletes — sorted by lifting order
-                    const sortedAthletes = sortAthletesByLiftingOrder(schoolAthletes);
-
-                    // Attach overall platform position to each school athlete
-                    sortedAthletes.forEach(athlete => {
-                        athlete.platformPosition = platformPositionMap[athlete.sheetOrder] || 0;
-                        athlete.hasPending = pendingFilter(athlete);
-                    });
-
-                    if (sortedAthletes.length > 0) {
-                        renderPlatformSection(platform.name, sortedAthletes);
-                        totalAthletesShown += sortedAthletes.length;
-                    }
-
+                    return schoolAthletes;
                 } catch (error) {
                     console.error(`Error loading ${platform.name}:`, error);
+                    return [];
                 }
-            }
+            }));
 
-            if (totalAthletesShown === 0) {
-                showStatus(`No ${schoolName} athletes currently lifting or on deck.`, 'info');
-            } else {
-                const now = new Date();
-                const timeStr = now.toLocaleTimeString();
-                showStatus(`✓ Showing ${totalAthletesShown} ${schoolName} athlete(s) - Last updated: ${timeStr}`, 'success');
+            // Combine all school athletes and sort by platform position across all platforms
+            const allSchoolAthletes = platformResults.flat();
+            allSchoolAthletes.sort((a, b) => {
+                if (!a.hasPending && b.hasPending) return 1;
+                if (a.hasPending && !b.hasPending) return -1;
+                return (a.platformPosition || 999) - (b.platformPosition || 999);
+            });
+
+            if (allSchoolAthletes.length > 0) {
+                renderAllAthletes(allSchoolAthletes);
             }
         }
 
-        // Load single platform data
         async function loadPlatformData(spreadsheetId, gid) {
             const timestamp = new Date().getTime();
             const csvUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/export?format=csv&gid=${gid}&t=${timestamp}`;
 
             let response;
             try {
-                response = await fetch(csvUrl, {
-                    cache: 'no-store',
-                    headers: {
-                        'Cache-Control': 'no-cache',
-                        'Pragma': 'no-cache'
-                    }
-                });
+                response = await fetch(csvUrl, { cache: 'no-store' });
                 if (!response.ok) throw new Error('Direct fetch failed');
             } catch (directError) {
                 const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(csvUrl)}`;
-                response = await fetch(proxyUrl, {
-                    cache: 'no-store',
-                    headers: {
-                        'Cache-Control': 'no-cache',
-                        'Pragma': 'no-cache'
-                    }
-                });
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch platform data: ${response.status}`);
-                }
+                response = await fetch(proxyUrl, { cache: 'no-store' });
             }
 
             const csvText = await response.text();
@@ -422,7 +313,6 @@
             return parseAthletes(csvData);
         }
 
-        // Parse CSV (same as platform.html)
         function parseCSV(csv) {
             const lines = csv.split('\n');
             const result = [];
@@ -436,7 +326,6 @@
 
                 for (let j = 0; j < line.length; j++) {
                     const char = line[j];
-
                     if (char === '"') {
                         inQuotes = !inQuotes;
                     } else if (char === ',' && !inQuotes) {
@@ -453,25 +342,23 @@
             return result;
         }
 
-        // Parse athletes from CSV (simplified from platform.html)
         function parseAthletes(csvData) {
             const athletes = [];
             let headerRow = -1;
-            let nameCol = -1, schoolCol = -1, weightClassCol = -1, bodyWeightCol = -1;
+            let nameCol = -1, schoolCol = -1, weightClassCol = -1, bodyWeightCol = -1, totalCol = -1;
             let squat1Col = -1, squat2Col = -1, squat3Col = -1;
             let bench1Col = -1, bench2Col = -1, bench3Col = -1;
             let dead1Col = -1, dead2Col = -1, dead3Col = -1;
-            let totalCol = -1;
 
-            // Find header row and columns
             for (let i = 0; i < Math.min(15, csvData.length); i++) {
                 const row = csvData[i];
                 for (let j = 0; j < row.length; j++) {
                     const cell = row[j].toLowerCase().trim();
                     if ((cell === 'name' || cell === 'lifter') && nameCol === -1) nameCol = j;
                     if (cell === 'school' && schoolCol === -1) schoolCol = j;
-                    if ((cell === 'weight class' || cell === 'wt class' || cell === 'class') && weightClassCol === -1) weightClassCol = j;
-                    if ((cell === 'body weight' || cell === 'bw' || cell === 'bodyweight' || cell === 'weight') && bodyWeightCol === -1) bodyWeightCol = j;
+                    if ((cell === 'weight class' || cell === 'wt class' || cell === 'wt. class' || cell === 'class' || cell === 'wc' || (cell.includes('wt') && cell.includes('class'))) && weightClassCol === -1) weightClassCol = j;
+                    if ((cell === 'body weight' || cell === 'bw' || cell === 'bodyweight') && bodyWeightCol === -1) bodyWeightCol = j;
+                    if (cell === 'total' && totalCol === -1) totalCol = j;
                     if ((cell === 'squat 1' || cell === 'sq1' || cell === 'squat1' || cell === 'f') && squat1Col === -1) squat1Col = j;
                     if ((cell === 'squat 2' || cell === 'sq2' || cell === 'squat2') && squat2Col === -1) squat2Col = j;
                     if ((cell === 'squat 3' || cell === 'sq3' || cell === 'squat3') && squat3Col === -1) squat3Col = j;
@@ -481,7 +368,6 @@
                     if ((cell === 'deadlift 1' || cell === 'dead 1' || cell === 'dl1' || cell === 'deal lift 1') && dead1Col === -1) dead1Col = j;
                     if ((cell === 'deadlift 2' || cell === 'dead 2' || cell === 'dl2' || cell === 'dead lift 2') && dead2Col === -1) dead2Col = j;
                     if ((cell === 'deadlift 3' || cell === 'dead 3' || cell === 'dl3' || cell === 'dead lift 3') && dead3Col === -1) dead3Col = j;
-                    if (cell === 'total' && totalCol === -1) totalCol = j;
                 }
 
                 if (nameCol !== -1 && schoolCol !== -1) {
@@ -539,7 +425,6 @@
                 dead3Col = dead2Col + 1;
             }
 
-            // Parse athlete rows
             for (let i = headerRow + 1; i < csvData.length; i++) {
                 const row = csvData[i];
                 if (row.length <= nameCol) continue;
@@ -547,19 +432,16 @@
                 const name = row[nameCol]?.trim();
                 if (!name) continue;
 
-                const school = schoolCol !== -1 ? row[schoolCol]?.trim() : '';
-                let weightClass = weightClassCol !== -1 ? row[weightClassCol]?.trim() : '';
-
-                if (weightClass) {
-                    const match = weightClass.match(/(\d+)/);
-                    if (match) weightClass = match[1];
-                }
-
-                const athlete = {
+                const rawWc = weightClassCol !== -1 ? row[weightClassCol]?.trim() : '';
+                const designation = rawWc?.toUpperCase().includes('JV') ? 'JV' : 'V';
+                const weightClass = rawWc?.match(/(\d+)/)?.[1] || rawWc;
+                athletes.push({
                     name: name,
-                    school: school,
-                    weightClass: weightClass,
+                    school: schoolCol !== -1 ? row[schoolCol]?.trim() : '',
+                    designation,
+                    weightClass,
                     bodyWeight: bodyWeightCol !== -1 ? parseFloat(row[bodyWeightCol]) || 0 : 0,
+                    total: totalCol !== -1 ? parseFloat(row[totalCol]) || 0 : 0,
                     squat1: squat1Col !== -1 ? row[squat1Col]?.trim() : '',
                     squat2: squat2Col !== -1 ? row[squat2Col]?.trim() : '',
                     squat3: squat3Col !== -1 ? row[squat3Col]?.trim() : '',
@@ -569,17 +451,13 @@
                     dead1: dead1Col !== -1 ? row[dead1Col]?.trim() : '',
                     dead2: dead2Col !== -1 ? row[dead2Col]?.trim() : '',
                     dead3: dead3Col !== -1 ? row[dead3Col]?.trim() : '',
-                    total: totalCol !== -1 ? parseFloat(row[totalCol]) || 0 : 0,
                     sheetOrder: i - headerRow - 1
-                };
-
-                athletes.push(athlete);
+                });
             }
 
             return athletes;
         }
 
-        // Sort athletes by lifting order (same logic as platform page)
         function sortAthletesByLiftingOrder(athletes) {
             const currentColumn = getCurrentAttemptColumn(athletes);
 
@@ -632,7 +510,6 @@
             return !lower.includes('g') && !lower.includes('x');
         }
 
-        // Returns true if the athlete has any lift entered but not yet judged (used between flights)
         function hasAnyPendingAttempt(athlete) {
             const cols = ['squat1', 'squat2', 'squat3', 'bench1', 'bench2', 'bench3', 'dead1', 'dead2', 'dead3'];
             return cols.some(col => {
@@ -643,165 +520,95 @@
             });
         }
 
-        // Render platform section with athletes
-        function renderPlatformSection(platformName, athletes) {
-            const container = document.getElementById('platformsContainer');
+        function renderAttempt(val) {
+            if (!val) return `<div class="attempt-cell" style="background:rgba(255,255,255,0.05); color:rgba(255,255,255,0.3);">—</div>`;
+            const failed = val.toLowerCase().includes('x');
+            const good = val.toLowerCase().includes('g');
+            const num = val.replace(/[xgXG]/g, '').trim();
+            const bg = failed ? '#ef4444' : good ? 'rgba(16,185,129,0.2)' : '#000';
+            const border = failed ? '#dc2626' : good ? '#10b981' : 'rgba(96,165,250,0.2)';
+            const color = failed ? 'white' : good ? '#10b981' : 'white';
+            const icon = failed ? ' ✗' : good ? ' ✓' : '';
+            return `<div class="attempt-cell" style="background:${bg}; border:1px solid ${border}; color:${color};">${num}${icon}</div>`;
+        }
 
+        function renderAllAthletes(athletes) {
+            const container = document.getElementById('displayContainer');
             const section = document.createElement('div');
             section.className = 'platform-section';
+            let html = '';
 
-            let sectionHTML = `<h3><i class="fas fa-layer-group me-2"></i>${platformName}</h3>`;
-            sectionHTML += '<div class="row g-4">';
-
-            // Determine current attempt column to check if athletes are actually lifting
-            const currentColumn = getCurrentAttemptColumn(athletes);
-
-            athletes.forEach((athlete, index) => {
-                let statusLabel = '';
-                let statusColor = '';
-
-                // Position number (1-indexed in school list)
-                const position = index + 1;
-                // Overall platform position across ALL athletes
+            athletes.forEach((athlete, idx) => {
                 const overallPosition = athlete.platformPosition || 0;
+                let status = '', statusClass = '';
 
-                // Use overallPosition for both badge and position number
                 if (!athlete.hasPending) {
-                    statusLabel = 'DONE';
-                    statusColor = '#6b7280';
+                    status = 'DONE'; statusClass = 'done';
                 } else if (overallPosition === 1) {
-                    statusLabel = 'LIFTING';
-                    statusColor = '#ef4444';
+                    status = 'LIFTING'; statusClass = 'lifting';
                 } else if (overallPosition === 2) {
-                    statusLabel = 'ON DECK';
-                    statusColor = '#10b981';
+                    status = 'ON DECK'; statusClass = 'on-deck';
                 }
 
-                sectionHTML += `
-                    <div class="col-lg-6 col-md-12">
-                        <div class="athlete-card" style="background: rgba(255, 115, 0, 0.15); border-color: rgba(255, 115, 0, 0.4);">
-                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-                                <div class="athlete-name">${athlete.name}</div>
-                                <div style="display: flex; align-items: center; gap: 12px;">
-                                    ${athlete.hasPending && overallPosition > 2 ? `<div style="color: #60a5fa; font-size: 1.2rem; font-weight: 800;">Position ${overallPosition}</div>` : ''}
-                                    ${statusLabel ? `<div style="background: ${statusColor}; color: white; padding: 6px 16px; border-radius: 12px; font-size: 1rem; font-weight: 800; letter-spacing: 0.5px;">${statusLabel}</div>` : ''}
+                let attemptWeight = '';
+                if (athlete.currentColumn && athlete[athlete.currentColumn]) {
+                    const weight = athlete[athlete.currentColumn].replace(/[xgXG]/g, '').trim();
+                    if (weight) attemptWeight = `${weight} lbs`;
+                }
+
+                const rowClass = statusClass || 'default';
+                const detailId = `detail-${idx}`;
+
+                html += `
+                    <div class="athlete-row ${rowClass}" onclick="toggleDetail('${detailId}')" style="cursor:pointer;">
+                        <div class="athlete-name">
+                            ${athlete.name}
+                            ${athlete.weightClass ? `<span style="font-size:0.8rem; color:rgba(255,255,255,0.5); font-weight:500; margin-left:6px;">${athlete.designation === 'JV' ? 'JV ' : ''}${athlete.weightClass} lbs</span>` : ''}
+                            ${attemptWeight ? `<div style="font-size: 0.85rem; font-weight: 600; color: #60a5fa; margin-top: 2px;">Attempting ${attemptWeight}</div>` : ''}
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end;">
+                            <a href="platform.html?gid=${athlete.platformGid}" onclick="event.stopPropagation();" style="display: inline-block; background: rgba(6,182,212,0.2); border: 1px solid rgba(6,182,212,0.6); color: #06b6d4; font-size: 1rem; font-weight: 700; padding: 5px 14px; border-radius: 12px; text-decoration: none; white-space: nowrap;">${athlete.platformName}</a>
+                            ${athlete.hasPending && overallPosition > 2 ? `<div style="color: #60a5fa; font-size: 1.2rem; font-weight: 800; white-space: nowrap;">Position ${overallPosition}</div>` : ''}
+                            ${status ? `<div class="status-badge ${statusClass}">${status}</div>` : ''}
+                            <div style="color:rgba(255,255,255,0.4); font-size:1rem;">▼</div>
+                        </div>
+                    </div>
+                    <div class="athlete-details" id="${detailId}">
+                        <div style="display:flex; flex-direction:column; gap:0;">
+                            <div style="padding:8px 0;">
+                                <div style="font-size:0.7rem; color:rgba(255,255,255,0.5); text-transform:uppercase; margin-bottom:6px; letter-spacing:1px;">Squat</div>
+                                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:4px;">
+                                    ${renderAttempt(athlete.squat1)}${renderAttempt(athlete.squat2)}${renderAttempt(athlete.squat3)}
                                 </div>
                             </div>
-                            <div class="athlete-school">${athlete.school}</div>
-
-                            <div class="row g-2">
-                                <div class="col-6">
-                                    <div class="stat-box">
-                                        <div class="stat-label">Weight Class</div>
-                                        <div class="stat-value">${athlete.weightClass || 'N/A'} <small>lbs</small></div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="stat-box">
-                                        <div class="stat-label">Body Weight</div>
-                                        <div class="stat-value">${athlete.bodyWeight} <small>lbs</small></div>
-                                    </div>
+                            <div style="border-top:1px solid rgba(96,165,250,0.15); padding:8px 0;">
+                                <div style="font-size:0.7rem; color:rgba(255,255,255,0.5); text-transform:uppercase; margin-bottom:6px; letter-spacing:1px;">Bench</div>
+                                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:4px;">
+                                    ${renderAttempt(athlete.bench1)}${renderAttempt(athlete.bench2)}${renderAttempt(athlete.bench3)}
                                 </div>
                             </div>
-
-                            <div class="lifts-section">
-                                <h6 style="color: rgba(255,255,255,0.8); font-size: 0.85rem; margin-bottom: 10px;">
-                                    <i class="fas fa-compress-arrows-alt me-2"></i>Squat
-                                </h6>
-                                <div class="row g-2 mb-3">
-                                    ${renderAttempt(athlete.squat1, '1')}
-                                    ${renderAttempt(athlete.squat2, '2')}
-                                    ${renderAttempt(athlete.squat3, '3')}
+                            <div style="border-top:1px solid rgba(96,165,250,0.15); padding:8px 0;">
+                                <div style="font-size:0.7rem; color:rgba(255,255,255,0.5); text-transform:uppercase; margin-bottom:6px; letter-spacing:1px;">Deadlift</div>
+                                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:4px;">
+                                    ${renderAttempt(athlete.dead1)}${renderAttempt(athlete.dead2)}${renderAttempt(athlete.dead3)}
                                 </div>
-
-                                <h6 style="color: rgba(255,255,255,0.8); font-size: 0.85rem; margin-bottom: 10px;">
-                                    <i class="fas fa-hands me-2"></i>Bench Press
-                                </h6>
-                                <div class="row g-2 mb-3">
-                                    ${renderAttempt(athlete.bench1, '1')}
-                                    ${renderAttempt(athlete.bench2, '2')}
-                                    ${renderAttempt(athlete.bench3, '3')}
-                                </div>
-
-                                <h6 style="color: rgba(255,255,255,0.8); font-size: 0.85rem; margin-bottom: 10px;">
-                                    <i class="fas fa-weight-hanging me-2"></i>Deadlift
-                                </h6>
-                                <div class="row g-2">
-                                    ${renderAttempt(athlete.dead1, '1')}
-                                    ${renderAttempt(athlete.dead2, '2')}
-                                    ${renderAttempt(athlete.dead3, '3')}
-                                </div>
-                            </div>
-
-                            <div class="total-box">
-                                <div class="total-label">TOTAL</div>
-                                <div class="total-value">${athlete.total} lbs</div>
                             </div>
                         </div>
+                        ${athlete.total ? `<div style="border-top:1px solid rgba(96,165,250,0.15); margin-top:4px; padding-top:8px; text-align:center; background:linear-gradient(135deg,#60a5fa,#a78bfa); border-radius:6px; padding:6px; font-weight:800; font-size:0.95rem;">Total: ${athlete.total} lbs</div>` : ''}
                     </div>
                 `;
             });
 
-            sectionHTML += '</div>';
-            section.innerHTML = sectionHTML;
+            section.innerHTML = html;
             container.appendChild(section);
         }
 
-        // Render single attempt
-        function renderAttempt(attempt, attemptNum) {
-            if (!attempt) {
-                return `
-                    <div class="col-4">
-                        <div class="lift-box" style="opacity: 0.3;">
-                            <div class="lift-name">Attempt ${attemptNum}</div>
-                            <div class="lift-value">-</div>
-                        </div>
-                    </div>
-                `;
-            }
-
-            const isFailed = attempt.toLowerCase().includes('x');
-            const isGood = attempt.toLowerCase().includes('g');
-            const hasMarker = isFailed || isGood;
-            let value = attempt.replace(/[xgXG]/g, '');
-
-            let bgColor, borderColor, textColor, labelColor;
-
-            if (isFailed) {
-                bgColor = '#ef4444';
-                borderColor = '#dc2626';
-                textColor = 'white';
-                labelColor = 'rgba(255,255,255,0.8)';
-            } else if (isGood) {
-                bgColor = 'rgba(16, 185, 129, 0.2)';
-                borderColor = '#10b981';
-                textColor = '#60a5fa';
-                labelColor = 'rgba(255, 255, 255, 0.6)';
-            } else {
-                bgColor = '#000000';
-                borderColor = 'rgba(96, 165, 250, 0.2)';
-                textColor = 'white';
-                labelColor = 'rgba(255,255,255,0.8)';
-            }
-
-            return `
-                <div class="col-4">
-                    <div class="lift-box" style="background: ${bgColor}; border-color: ${borderColor};">
-                        <div class="lift-name" style="color: ${labelColor};">Attempt ${attemptNum}</div>
-                        <div class="lift-value" style="color: ${textColor};">
-                            ${value}${isFailed ? '<i class="fas fa-times ms-1"></i>' : ''}${isGood ? '<i class="fas fa-check ms-1" style="color: #10b981;"></i>' : ''}
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Show status message
-        function showStatus(message, type = 'info') {
-            const statusDiv = document.getElementById('statusMessage');
-            statusDiv.textContent = message;
-            statusDiv.className = `status-message ${type}`;
-            statusDiv.style.display = 'block';
+        function toggleDetail(id) {
+            const el = document.getElementById(id);
+            el.classList.toggle('open');
+            const row = el.previousElementSibling;
+            const arrow = row.querySelector('div[style*="▼"]');
+            if (arrow) arrow.style.transform = el.classList.contains('open') ? 'rotate(180deg)' : '';
         }
     </script>
 </body>
