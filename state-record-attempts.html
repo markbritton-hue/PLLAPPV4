@@ -133,6 +133,9 @@
                 <button onclick="openEditor()" style="background:rgba(245,158,11,0.2);border:1px solid #f59e0b;color:#f59e0b;padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer;font-size:0.9rem;">
                     <i class="fas fa-list me-2"></i>Show Records
                 </button>
+                <button id="btnToggleView" onclick="toggleView()" style="background:rgba(16,185,129,0.2);border:1px solid #10b981;color:#10b981;padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer;font-size:0.9rem;">
+                    <i class="fas fa-medal me-2"></i>Beaten / Failed
+                </button>
                 <button onclick="refreshData()" style="background:rgba(96,165,250,0.2);border:1px solid #60a5fa;color:#60a5fa;padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer;font-size:0.9rem;">
                     <i class="fas fa-sync-alt me-2"></i>Refresh
                 </button>
@@ -359,6 +362,7 @@
     let currentGender = 'M';
     let editorGender  = 'M';
     let athletes = [];
+    let viewMode = 'pending';
 
     function getStorageKey(g) { return `trplStateRecords2_${g}`; }
 
@@ -593,6 +597,113 @@
     }
 
     // ─── Render ────────────────────────────────────────────────────────────────
+    function toggleView() {
+        viewMode = viewMode === 'pending' ? 'beaten' : 'pending';
+        const btn = document.getElementById('btnToggleView');
+        if (viewMode === 'beaten') {
+            btn.innerHTML = '<i class="fas fa-star me-2"></i>Pending Attempts';
+            btn.style.background = 'rgba(245,158,11,0.2)';
+            btn.style.borderColor = '#f59e0b';
+            btn.style.color = '#f59e0b';
+            renderBeatenFailed();
+        } else {
+            btn.innerHTML = '<i class="fas fa-medal me-2"></i>Beaten / Failed';
+            btn.style.background = 'rgba(16,185,129,0.2)';
+            btn.style.borderColor = '#10b981';
+            btn.style.color = '#10b981';
+            renderAttempts();
+        }
+    }
+
+    function getBeatenFailed(athlete, records) {
+        const wc = athlete.weightClass || '';
+        const rec = records[wc];
+        if (!rec) return [];
+        const checks = [
+            { lift: 'Squat',    key: 'sq',  attempts: [athlete.squat1, athlete.squat2, athlete.squat3] },
+            { lift: 'Bench',    key: 'bp',  attempts: [athlete.bench1, athlete.bench2, athlete.bench3] },
+            { lift: 'Deadlift', key: 'dl',  attempts: [athlete.dead1,  athlete.dead2,  athlete.dead3]  },
+        ];
+        const hits = [];
+        checks.forEach(function({ lift, key, attempts }) {
+            const stateRec = rec[key];
+            if (!stateRec || stateRec.weight === 0) return;
+            attempts.forEach(function(val, idx) {
+                if (!val) return;
+                const v = val.toLowerCase().trim();
+                const isGood   = v.includes('g');
+                const isFailed = v.includes('x');
+                if (!isGood && !isFailed) return;
+                const w = parseFloat(val.replace(/[xgXG]/g, '').trim()) || 0;
+                if (w > stateRec.weight) {
+                    hits.push({ lift: lift, attemptNum: idx + 1, weight: w, record: stateRec, beaten: isGood, failed: isFailed });
+                }
+            });
+        });
+        return hits;
+    }
+
+    function renderBeatenFailed() {
+        const container = document.getElementById('mainContent');
+        const records = loadRecords(currentGender);
+        const seen = new Set();
+        const results = [];
+        athletes.forEach(function(a) {
+            if (seen.has(a.name.toLowerCase())) return;
+            seen.add(a.name.toLowerCase());
+            if (a.designation !== 'V') return;
+            const hits = getBeatenFailed(a, records);
+            if (hits.length > 0) results.push({ athlete: a, hits: hits });
+        });
+
+        if (results.length === 0) {
+            container.innerHTML = '<div class="no-records-msg"><i class="fas fa-hourglass-half" style="color:#10b981;"></i><h4 style="color:rgba(255,255,255,0.7);margin-bottom:10px;">No Records Beaten or Failed Yet</h4><p style="color:rgba(255,255,255,0.4);">No completed attempts above a state record have been recorded yet.</p></div>';
+            return;
+        }
+
+        const beaten = results.filter(function(r) { return r.hits.some(function(h) { return h.beaten; }); });
+        const failedOnly = results.filter(function(r) { return !r.hits.some(function(h) { return h.beaten; }) && r.hits.some(function(h) { return h.failed; }); });
+
+        container.innerHTML = '';
+
+        function renderSection(title, color, iconCls, items) {
+            if (items.length === 0) return;
+            const hdr = document.createElement('div');
+            hdr.style.cssText = 'font-size:1rem;font-weight:700;color:' + color + ';margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid ' + color + '40;';
+            hdr.innerHTML = '<i class="' + iconCls + ' me-2"></i>' + title;
+            container.appendChild(hdr);
+            items.forEach(function(item) {
+                const athlete = item.athlete, hits = item.hits;
+                const card = document.createElement('div');
+                card.className = 'record-card';
+                card.style.borderColor = color + '60';
+                let hitsHtml = '';
+                hits.forEach(function(h) {
+                    const margin = h.weight - h.record.weight;
+                    const bc = h.beaten ? '#10b981' : '#ef4444';
+                    const bl = h.beaten ? 'BEATEN' : 'FAILED';
+                    hitsHtml += '<div class="attempt-row" style="border-color:' + bc + '40;background:' + bc + '08;">' +
+                        '<div class="lift-label">' + h.lift + ' #' + h.attemptNum + '</div>' +
+                        '<div class="attempt-weight">' + h.weight + ' <small>lbs</small></div>' +
+                        '<div class="record-info"><div class="record-weight">Record: ' + h.record.weight + ' lbs</div>' +
+                        '<div class="record-holder">' + h.record.name + ' &bull; ' + h.record.school + '</div></div>' +
+                        '<span style="background:' + bc + '22;border:1px solid ' + bc + ';color:' + bc + ';padding:4px 12px;border-radius:20px;font-size:0.8rem;font-weight:700;white-space:nowrap;">' + bl + ' +' + margin + ' lbs</span></div>';
+                });
+                card.innerHTML = '<div class="d-flex align-items-start justify-content-between flex-wrap gap-2">' +
+                    '<div><div class="athlete-name">' + athlete.name + '</div>' +
+                    '<div class="athlete-meta">' + athlete.school + ' &bull; Varsity ' + athlete.weightClass + ' lbs</div></div>' +
+                    '<div class="d-flex align-items-center gap-2">' +
+                    '<a href="platform.html?gid=' + athlete.platformGid + '" style="background:rgba(6,182,212,0.15);border:1px solid #06b6d4;color:#06b6d4;padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:700;white-space:nowrap;text-decoration:none;">' + athlete.platformName + '</a>' +
+                    '<span style="background:rgba(96,165,250,0.15);border:1px solid #60a5fa;color:#60a5fa;padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:700;white-space:nowrap;">Position ' + athlete.platformPosition + '</span>' +
+                    '</div></div>' + hitsHtml;
+                container.appendChild(card);
+            });
+        }
+
+        renderSection('Records Beaten', '#10b981', 'fas fa-trophy', beaten);
+        renderSection('Attempted but Failed', '#ef4444', 'fas fa-times-circle', failedOnly);
+    }
+
     function renderAttempts() {
         const container = document.getElementById('mainContent');
         const records = loadRecords(currentGender);
