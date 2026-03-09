@@ -294,6 +294,21 @@
         let lastLiftingColumn = null;
         let justFinishedAthlete = null;
         let lastJustFinishedName = null;
+        let platformGender = 'M'; // default Men's
+        let platformStateRecords = null;
+
+        function loadStateRecords() {
+            const raw = localStorage.getItem(`trplStateRecords2_${platformGender}`);
+            if (!raw) return null;
+            try { return JSON.parse(raw); } catch { return null; }
+        }
+
+        function isStateRecordAttempt(weight, liftKey, weightClass, records) {
+            if (!records || !weightClass || !liftKey || !weight) return false;
+            const rec = records[String(weightClass)];
+            if (!rec || !rec[liftKey]) return false;
+            return weight > rec[liftKey].weight;
+        }
 
         function fireConfetti() {
             const duration = 2500;
@@ -384,6 +399,19 @@
                     option.textContent = platform.name;
                     platformSelect.appendChild(option);
                 });
+
+                // Detect gender from spreadsheet title for state record lookup
+                fetch(`https://docs.google.com/spreadsheets/d/${config.spreadsheetId}/htmlview`)
+                    .then(r => r.text())
+                    .then(html => {
+                        const m = html.match(/<title>([^<]+)<\/title>/);
+                        if (m) {
+                            const t = m[1].toLowerCase();
+                            platformGender = t.includes('women') || t.includes('female') || t.includes('girls') ? 'W' : 'M';
+                        }
+                        platformStateRecords = loadStateRecords();
+                    })
+                    .catch(() => { platformStateRecords = loadStateRecords(); });
 
                 // Load weight classes for all platforms in background
                 loadAllPlatformWeightClasses(config.spreadsheetId, platforms);
@@ -932,27 +960,27 @@
                                 <i class="fas fa-compress-arrows-alt me-2"></i>Squat
                             </h6>
                             <div class="row g-2 mb-3">
-                                ${renderAttempt(athlete.squat1, '1')}
-                                ${renderAttempt(athlete.squat2, '2')}
-                                ${renderAttempt(athlete.squat3, '3')}
+                                ${renderAttempt(athlete.squat1, '1', 'sq', athlete.weightClass, platformStateRecords)}
+                                ${renderAttempt(athlete.squat2, '2', 'sq', athlete.weightClass, platformStateRecords)}
+                                ${renderAttempt(athlete.squat3, '3', 'sq', athlete.weightClass, platformStateRecords)}
                             </div>
 
                             <h6 style="color: rgba(255,255,255,0.8); font-size: 0.85rem; margin-bottom: 10px;">
                                 <i class="fas fa-hands me-2"></i>Bench Press
                             </h6>
                             <div class="row g-2 mb-3">
-                                ${renderAttempt(athlete.bench1, '1')}
-                                ${renderAttempt(athlete.bench2, '2')}
-                                ${renderAttempt(athlete.bench3, '3')}
+                                ${renderAttempt(athlete.bench1, '1', 'bp', athlete.weightClass, platformStateRecords)}
+                                ${renderAttempt(athlete.bench2, '2', 'bp', athlete.weightClass, platformStateRecords)}
+                                ${renderAttempt(athlete.bench3, '3', 'bp', athlete.weightClass, platformStateRecords)}
                             </div>
 
                             <h6 style="color: rgba(255,255,255,0.8); font-size: 0.85rem; margin-bottom: 10px;">
                                 <i class="fas fa-weight-hanging me-2"></i>Deadlift
                             </h6>
                             <div class="row g-2">
-                                ${renderAttempt(athlete.dead1, '1')}
-                                ${renderAttempt(athlete.dead2, '2')}
-                                ${renderAttempt(athlete.dead3, '3')}
+                                ${renderAttempt(athlete.dead1, '1', 'dl', athlete.weightClass, platformStateRecords)}
+                                ${renderAttempt(athlete.dead2, '2', 'dl', athlete.weightClass, platformStateRecords)}
+                                ${renderAttempt(athlete.dead3, '3', 'dl', athlete.weightClass, platformStateRecords)}
                             </div>
                         </div>
 
@@ -965,7 +993,7 @@
         }
 
         // Render single attempt
-        function renderAttempt(attempt, attemptNum) {
+        function renderAttempt(attempt, attemptNum, liftKey, weightClass, stateRecords) {
             if (!attempt) {
                 return `
                     <div class="col-4">
@@ -979,8 +1007,9 @@
 
             const isFailed = attempt.toLowerCase().includes('x');
             const isGood = attempt.toLowerCase().includes('g');
-            const hasMarker = isFailed || isGood;
             let value = attempt.replace(/[xgXG]/g, '');
+            const numWeight = parseFloat(value) || 0;
+            const isRecordAttempt = isStateRecordAttempt(numWeight, liftKey, weightClass, stateRecords);
 
             // Color scheme based on attempt status
             let bgColor, borderColor, textColor, labelColor;
@@ -1010,7 +1039,7 @@
                     <div class="lift-box" style="background: ${bgColor}; border-color: ${borderColor};">
                         <div class="lift-name" style="color: ${labelColor};">Attempt ${attemptNum}</div>
                         <div class="lift-value" style="color: ${textColor};">
-                            ${value}${isFailed ? '<i class="fas fa-times ms-1"></i>' : ''}${isGood ? '<i class="fas fa-check ms-1" style="color: #10b981;"></i>' : ''}
+                            ${value}${isFailed ? '<i class="fas fa-times ms-1"></i>' : ''}${isGood ? '<i class="fas fa-check ms-1" style="color: #10b981;"></i>' : ''}${isRecordAttempt ? '<i class="fas fa-star ms-1" style="color: #ef4444;" title="State record attempt"></i>' : ''}
                         </div>
                     </div>
                 </div>
