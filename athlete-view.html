@@ -348,26 +348,26 @@
             const sq = rec.sq?.weight || '—';
             const bp = rec.bp?.weight || '—';
             const dl = rec.dl?.weight || '—';
-            const sqName = rec.sq?.name ? ` <span style="color:rgba(255,255,255,0.45); font-size:0.75rem;">(${rec.sq.name})</span>` : '';
-            const bpName = rec.bp?.name ? ` <span style="color:rgba(255,255,255,0.45); font-size:0.75rem;">(${rec.bp.name})</span>` : '';
-            const dlName = rec.dl?.name ? ` <span style="color:rgba(255,255,255,0.45); font-size:0.75rem;">(${rec.dl.name})</span>` : '';
+            const sqName = rec.sq?.name ? ` <span style="color:rgba(255,255,255,0.6); font-size:0.9rem;">(${rec.sq.name})</span>` : '';
+            const bpName = rec.bp?.name ? ` <span style="color:rgba(255,255,255,0.6); font-size:0.9rem;">(${rec.bp.name})</span>` : '';
+            const dlName = rec.dl?.name ? ` <span style="color:rgba(255,255,255,0.6); font-size:0.9rem;">(${rec.dl.name})</span>` : '';
             return `
-                <div style="background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.3); border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center;">
-                    <div style="display:flex; align-items:center; gap:8px; color:rgba(255,255,255,0.6); font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap;">
-                        <i class="fas fa-star" style="color:#ef4444;"></i> State Records — ${wc} lbs
+                <div style="background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.3); border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 12px 28px; align-items: center;">
+                    <div style="display:flex; align-items:center; gap:8px; color:rgba(255,255,255,0.85); font-size:1rem; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap;">
+                        <i class="fas fa-star" style="color:#ef4444; font-size:1.1rem;"></i> State Records — ${wc} lbs
                     </div>
-                    <div style="display:flex; flex-wrap:wrap; gap:12px 24px; flex:1;">
-                        <span style="font-size:0.9rem; white-space:nowrap;">
-                            <span style="color:rgba(255,255,255,0.5); font-size:0.8rem;">Squat</span>
-                            <strong style="color:#f87171; margin-left:6px;">${sq} lbs</strong>${sqName}
+                    <div style="display:flex; flex-wrap:wrap; gap:12px 28px; flex:1;">
+                        <span style="font-size:1rem; white-space:nowrap;">
+                            <span style="color:rgba(255,255,255,0.7); font-size:0.95rem; font-weight:600;">Squat</span>
+                            <strong style="color:#ff4444; font-size:1.15rem; margin-left:8px;">${sq} lbs</strong>${sqName}
                         </span>
-                        <span style="font-size:0.9rem; white-space:nowrap;">
-                            <span style="color:rgba(255,255,255,0.5); font-size:0.8rem;">Bench</span>
-                            <strong style="color:#f87171; margin-left:6px;">${bp} lbs</strong>${bpName}
+                        <span style="font-size:1rem; white-space:nowrap;">
+                            <span style="color:rgba(255,255,255,0.7); font-size:0.95rem; font-weight:600;">Bench</span>
+                            <strong style="color:#ff4444; font-size:1.15rem; margin-left:8px;">${bp} lbs</strong>${bpName}
                         </span>
-                        <span style="font-size:0.9rem; white-space:nowrap;">
-                            <span style="color:rgba(255,255,255,0.5); font-size:0.8rem;">Deadlift</span>
-                            <strong style="color:#f87171; margin-left:6px;">${dl} lbs</strong>${dlName}
+                        <span style="font-size:1rem; white-space:nowrap;">
+                            <span style="color:rgba(255,255,255,0.7); font-size:0.95rem; font-weight:600;">Deadlift</span>
+                            <strong style="color:#ff4444; font-size:1.15rem; margin-left:8px;">${dl} lbs</strong>${dlName}
                         </span>
                     </div>
                 </div>`;
