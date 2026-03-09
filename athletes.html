@@ -636,7 +636,9 @@
             if (dead1Col !== -1 && dead2Col !== -1 && dead3Col === -1) dead3Col = dead2Col + 1;
 
             // If no header found OR missing critical columns, use position-based parsing
-            const missingColumns = headerRow === -1 || nameCol === -1 || weightClassCol === -1 || squat1Col === -1;
+            // Note: squat1Col may be -1 for results-format sheets (totals only) — that's OK,
+            // we still use the correctly detected nameCol/schoolCol/weightClassCol.
+            const missingColumns = headerRow === -1 || nameCol === -1 || weightClassCol === -1;
             if (missingColumns) {
                 console.log('Using position-based parsing because:', {
                     noHeader: headerRow === -1,
