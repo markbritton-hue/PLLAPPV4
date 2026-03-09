@@ -279,6 +279,48 @@
             margin-top: 12px;
             opacity: 0.9;
         }
+
+        #goodLiftBanner {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 99998;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            pointer-events: none;
+        }
+        #goodLiftBanner.show {
+            display: flex;
+        }
+        #goodLiftBanner .banner-inner {
+            text-align: center;
+            animation: recordPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        #goodLiftBanner .gl-icon {
+            font-size: 3.5rem;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 0 16px #10b981);
+        }
+        #goodLiftBanner .gl-text {
+            font-size: clamp(2.5rem, 9vw, 5rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, #10b981, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            line-height: 1;
+            filter: drop-shadow(0 4px 16px rgba(16,185,129,0.6));
+        }
+        #goodLiftBanner .gl-sub {
+            font-size: clamp(1rem, 4vw, 1.6rem);
+            font-weight: 700;
+            color: white;
+            margin-top: 10px;
+            opacity: 0.85;
+        }
     </style>
 </head>
 <body>
@@ -344,6 +386,15 @@
 
     </div>
 
+    <!-- Good Lift Banner Overlay -->
+    <div id="goodLiftBanner">
+        <div class="banner-inner">
+            <div class="gl-icon">✅</div>
+            <div class="gl-text">Good Lift!</div>
+            <div class="gl-sub" id="goodLiftBannerSub"></div>
+        </div>
+    </div>
+
     <!-- State Record Banner Overlay -->
     <div id="stateRecordBanner">
         <div class="banner-inner">
@@ -399,6 +450,23 @@
                     banner.style.animation = '';
                 }, 500);
             }, 3500);
+        }
+
+        let goodLiftBannerTimer = null;
+
+        function showGoodLiftBanner(athleteName, liftName, weight) {
+            const banner = document.getElementById('goodLiftBanner');
+            const sub = document.getElementById('goodLiftBannerSub');
+            sub.textContent = `${athleteName} — ${liftName} ${weight} lbs`;
+            banner.classList.add('show');
+            if (goodLiftBannerTimer) clearTimeout(goodLiftBannerTimer);
+            goodLiftBannerTimer = setTimeout(() => {
+                banner.style.animation = 'recordFadeOut 0.5s ease forwards';
+                setTimeout(() => {
+                    banner.classList.remove('show');
+                    banner.style.animation = '';
+                }, 500);
+            }, 2500);
         }
 
         function fireConfetti() {
@@ -968,6 +1036,8 @@
                             const isRecord = isStateRecordAttempt(liftWeight, liftKey, lastAthlete.weightClass, platformStateRecords);
                             if (isRecord) {
                                 showStateRecordBanner(lastAthlete.name, liftName, liftWeight);
+                            } else {
+                                showGoodLiftBanner(lastAthlete.name, liftName, liftWeight);
                             }
                             fireConfetti();
                         }
