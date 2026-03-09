@@ -228,6 +228,57 @@
             border: 1px solid #ef4444;
             color: #ef4444;
         }
+        @keyframes recordPop {
+            0%   { transform: scale(0.3) rotate(-6deg); opacity: 0; }
+            50%  { transform: scale(1.08) rotate(2deg); opacity: 1; }
+            70%  { transform: scale(0.96) rotate(-1deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        @keyframes recordFadeOut {
+            0%   { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(1.1); }
+        }
+        #stateRecordBanner {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: rgba(0,0,0,0.65);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            pointer-events: none;
+        }
+        #stateRecordBanner.show {
+            display: flex;
+        }
+        #stateRecordBanner .banner-inner {
+            text-align: center;
+            animation: recordPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        #stateRecordBanner .banner-star {
+            font-size: 4rem;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 0 20px #ef4444);
+        }
+        #stateRecordBanner .banner-text {
+            font-size: clamp(2.5rem, 10vw, 5.5rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, #ef4444, #f59e0b, #ef4444);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            line-height: 1;
+            filter: drop-shadow(0 4px 20px rgba(239,68,68,0.6));
+        }
+        #stateRecordBanner .banner-sub {
+            font-size: clamp(1rem, 4vw, 1.8rem);
+            font-weight: 700;
+            color: white;
+            margin-top: 12px;
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body>
@@ -293,6 +344,15 @@
 
     </div>
 
+    <!-- State Record Banner Overlay -->
+    <div id="stateRecordBanner">
+        <div class="banner-inner">
+            <div class="banner-star">⭐</div>
+            <div class="banner-text">New State Record!</div>
+            <div class="banner-sub" id="stateRecordBannerSub"></div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <script src="state-records-data.js"></script>
@@ -322,6 +382,23 @@
             const rec = records[String(weightClass)];
             if (!rec || !rec[liftKey]) return false;
             return weight > rec[liftKey].weight;
+        }
+
+        let stateRecordBannerTimer = null;
+
+        function showStateRecordBanner(athleteName, liftName, weight) {
+            const banner = document.getElementById('stateRecordBanner');
+            const sub = document.getElementById('stateRecordBannerSub');
+            sub.textContent = `${athleteName} — ${liftName} ${weight} lbs`;
+            banner.classList.add('show');
+            if (stateRecordBannerTimer) clearTimeout(stateRecordBannerTimer);
+            stateRecordBannerTimer = setTimeout(() => {
+                banner.style.animation = 'recordFadeOut 0.5s ease forwards';
+                setTimeout(() => {
+                    banner.classList.remove('show');
+                    banner.style.animation = '';
+                }, 500);
+            }, 3500);
         }
 
         function fireConfetti() {
@@ -879,9 +956,19 @@
                     justFinishedAthlete = lastAthlete;
                     if (lastAthlete.name !== lastJustFinishedName) {
                         lastJustFinishedName = lastAthlete.name;
-                        // Only fire confetti on a good lift
+                        // Only fire on a good lift
                         const lastVal = lastLiftingColumn ? lastAthlete[lastLiftingColumn] : null;
                         if (lastVal && lastVal.toLowerCase().includes('g')) {
+                            // Check if it broke a state record
+                            const colToKey = { squat1:'sq', squat2:'sq', squat3:'sq', bench1:'bp', bench2:'bp', bench3:'bp', dead1:'dl', dead2:'dl', dead3:'dl' };
+                            const colToName = { squat1:'Squat', squat2:'Squat', squat3:'Squat', bench1:'Bench', bench2:'Bench', bench3:'Bench', dead1:'Deadlift', dead2:'Deadlift', dead3:'Deadlift' };
+                            const liftKey = lastLiftingColumn ? colToKey[lastLiftingColumn] : null;
+                            const liftName = lastLiftingColumn ? colToName[lastLiftingColumn] : null;
+                            const liftWeight = lastVal ? parseFloat(lastVal.replace(/[xgXG]/g, '')) : 0;
+                            const isRecord = isStateRecordAttempt(liftWeight, liftKey, lastAthlete.weightClass, platformStateRecords);
+                            if (isRecord) {
+                                showStateRecordBanner(lastAthlete.name, liftName, liftWeight);
+                            }
                             fireConfetti();
                         }
                     }
