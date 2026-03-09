@@ -327,9 +327,51 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="state-records-data.js"></script>
     <script>
         let allGrouped = {};
         let autoRefreshInterval = null;
+        let athleteViewGender = 'M';
+        let athleteViewRecords = null;
+
+        function getAthleteViewRecords() {
+            initStateRecordsStorage();
+            const raw = localStorage.getItem(`trplStateRecords2_${athleteViewGender}`);
+            try { return raw ? JSON.parse(raw) : (athleteViewGender === 'M' ? BUILTIN_M_RECORDS : BUILTIN_W_RECORDS); }
+            catch (e) { return athleteViewGender === 'M' ? BUILTIN_M_RECORDS : BUILTIN_W_RECORDS; }
+        }
+
+        function renderStateRecordLegend(wc) {
+            if (!athleteViewRecords || !wc) return '';
+            const rec = athleteViewRecords[String(wc)];
+            if (!rec) return '';
+            const sq = rec.sq?.weight || '—';
+            const bp = rec.bp?.weight || '—';
+            const dl = rec.dl?.weight || '—';
+            const sqName = rec.sq?.name ? ` <span style="color:rgba(255,255,255,0.45); font-size:0.75rem;">(${rec.sq.name})</span>` : '';
+            const bpName = rec.bp?.name ? ` <span style="color:rgba(255,255,255,0.45); font-size:0.75rem;">(${rec.bp.name})</span>` : '';
+            const dlName = rec.dl?.name ? ` <span style="color:rgba(255,255,255,0.45); font-size:0.75rem;">(${rec.dl.name})</span>` : '';
+            return `
+                <div style="background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.3); border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center;">
+                    <div style="display:flex; align-items:center; gap:8px; color:rgba(255,255,255,0.6); font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap;">
+                        <i class="fas fa-star" style="color:#ef4444;"></i> State Records — ${wc} lbs
+                    </div>
+                    <div style="display:flex; flex-wrap:wrap; gap:12px 24px; flex:1;">
+                        <span style="font-size:0.9rem; white-space:nowrap;">
+                            <span style="color:rgba(255,255,255,0.5); font-size:0.8rem;">Squat</span>
+                            <strong style="color:#f87171; margin-left:6px;">${sq} lbs</strong>${sqName}
+                        </span>
+                        <span style="font-size:0.9rem; white-space:nowrap;">
+                            <span style="color:rgba(255,255,255,0.5); font-size:0.8rem;">Bench</span>
+                            <strong style="color:#f87171; margin-left:6px;">${bp} lbs</strong>${bpName}
+                        </span>
+                        <span style="font-size:0.9rem; white-space:nowrap;">
+                            <span style="color:rgba(255,255,255,0.5); font-size:0.8rem;">Deadlift</span>
+                            <strong style="color:#f87171; margin-left:6px;">${dl} lbs</strong>${dlName}
+                        </span>
+                    </div>
+                </div>`;
+        }
 
         function toggleAutoRefresh() {
             const btn = document.getElementById('refreshToggle');
@@ -386,6 +428,23 @@
 
             const config = JSON.parse(configStr);
             const sheets = config.sheets || [];
+
+            // Detect gender for state records
+            if (config.spreadsheetId) {
+                fetch(`https://docs.google.com/spreadsheets/d/${config.spreadsheetId}/htmlview`)
+                    .then(r => r.text())
+                    .then(html => {
+                        const m = html.match(/<title>([^<]+)<\/title>/);
+                        if (m) {
+                            const t = m[1].toLowerCase();
+                            athleteViewGender = t.includes('women') || t.includes('female') || t.includes('girls') ? 'W' : 'M';
+                        }
+                        athleteViewRecords = getAthleteViewRecords();
+                        renderWeightClass();
+                    })
+                    .catch(() => { athleteViewRecords = getAthleteViewRecords(); });
+            }
+            athleteViewRecords = getAthleteViewRecords();
 
             if (sheets.length === 0) {
                 statusDiv.innerHTML = '<div class="status-msg">No sheets found in configuration.</div>';
@@ -710,7 +769,7 @@
                 return html;
             }
 
-            let html = '';
+            let html = renderStateRecordLegend(wc);
             html += buildCards(varsity, 'Varsity', '#8b5cf6');
             if (varsity.length > 0 && jv.length > 0) html += '<div style="margin-top: 32px;"></div>';
             html += buildCards(jv, 'JV', '#10b981');
