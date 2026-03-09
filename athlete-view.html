@@ -677,6 +677,8 @@
                 const leaderBench = Math.max(...athletes.map(a => a.bench));
                 const leaderDead  = Math.max(...athletes.map(a => a.deadlift));
                 const leaderTotal = athletes[0].total;
+                const thirdTotal  = athletes[2]?.total ?? null;
+                const tenthTotal  = athletes[9]?.total ?? null;
                 const medals = ['🥇', '🥈', '🥉'];
 
                 let html = `<div class="group-header" style="color:${labelColor}; border-bottom-color:${labelColor}40;">
@@ -692,10 +694,12 @@
                     const badgeClass = isJV ? 'jv' : 'varsity';
                     const badgeLabel = isJV ? 'JV' : 'Varsity';
 
-                    const diffSquat = athlete.squat - leaderSquat;
-                    const diffBench = athlete.bench - leaderBench;
-                    const diffDead  = athlete.deadlift - leaderDead;
-                    const diffTotal = athlete.total - leaderTotal;
+                    const diffSquat  = athlete.squat - leaderSquat;
+                    const diffBench  = athlete.bench - leaderBench;
+                    const diffDead   = athlete.deadlift - leaderDead;
+                    const diffTotal  = athlete.total - leaderTotal;
+                    const diffTo3rd  = thirdTotal  !== null ? athlete.total - thirdTotal  : null;
+                    const diffTo10th = tenthTotal  !== null ? athlete.total - tenthTotal  : null;
 
                     function diffHtml(best, diff) {
                         const bestStr = best ? `<span style="color:#60a5fa; font-weight:800;">${best} lbs</span>` : '';
@@ -703,9 +707,12 @@
                         return `<div class="lift-diff behind" style="display:flex;justify-content:space-between;align-items:center;">${bestStr}<span>${diff} lbs</span></div>`;
                     }
 
-                    function totalDiffHtml(val) {
-                        if (val === 0) return `<span class="total-diff leader">★ Leader</span>`;
-                        return `<span class="total-diff behind">${val} lbs</span>`;
+                    function gapChip(label, diff, isSelf) {
+                        if (diff === null) return '';
+                        if (isSelf) return `<div style="text-align:center;"><div style="font-size:0.7rem;color:rgba(255,255,255,0.55);font-weight:600;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:2px;">${label}</div><div style="font-size:0.95rem;font-weight:800;color:#fbbf24;">Here</div></div>`;
+                        const color = diff >= 0 ? '#4ade80' : '#fca5a5';
+                        const sign  = diff > 0 ? '+' : '';
+                        return `<div style="text-align:center;"><div style="font-size:0.7rem;color:rgba(255,255,255,0.55);font-weight:600;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:2px;">${label}</div><div style="font-size:0.95rem;font-weight:800;color:${color};">${sign}${diff} lbs</div></div>`;
                     }
 
                     const squatBg = athlete.squatDone ? 'background:rgba(16,185,129,0.12); border-radius:8px; padding:8px;' : '';
@@ -754,12 +761,21 @@
                                 </div>
                                 ${diffHtml(athlete.deadlift, diffDead)}
                             </div>
-                            <div class="total-box">
-                                <div>
-                                    <div class="total-label">Total</div>
-                                    <div class="total-value">${athlete.total} lbs</div>
+                            <div class="total-box" style="flex-direction:column; gap:10px;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                                    <div>
+                                        <div class="total-label">Total</div>
+                                        <div class="total-value">${athlete.total} lbs</div>
+                                    </div>
+                                    <div style="text-align:right;">
+                                        <div style="font-size:0.7rem;color:rgba(255,255,255,0.6);font-weight:600;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:2px;">vs Leader</div>
+                                        <div style="font-size:0.95rem;font-weight:800;color:${diffTotal === 0 ? '#fbbf24' : '#fca5a5'};">${diffTotal === 0 ? '★ Leader' : diffTotal + ' lbs'}</div>
+                                    </div>
                                 </div>
-                                ${totalDiffHtml(diffTotal)}
+                                <div style="display:flex; justify-content:space-around; width:100%; border-top:1px solid rgba(255,255,255,0.15); padding-top:8px;">
+                                    ${gapChip('To 3rd', diffTo3rd, rank <= 3)}
+                                    ${gapChip('To 10th', diffTo10th, rank <= 10)}
+                                </div>
                             </div>
                         </div>
                     </div>`;
