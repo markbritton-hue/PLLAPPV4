@@ -291,6 +291,7 @@
         let autoRefreshInterval = null;
         let currentPlatformGid = null;
         let lastLiftingName = null;
+        let lastLiftingColumn = null;
         let justFinishedAthlete = null;
         let lastJustFinishedName = null;
 
@@ -830,11 +831,18 @@
                     justFinishedAthlete = lastAthlete;
                     if (lastAthlete.name !== lastJustFinishedName) {
                         lastJustFinishedName = lastAthlete.name;
-                        fireConfetti();
+                        // Only fire confetti on a good lift
+                        const lastVal = lastLiftingColumn ? lastAthlete[lastLiftingColumn] : null;
+                        if (lastVal && lastVal.toLowerCase().includes('g')) {
+                            fireConfetti();
+                        }
                     }
                 }
             }
-            if (currentLifter) lastLiftingName = currentLifter.name;
+            if (currentLifter) {
+                lastLiftingName = currentLifter.name;
+                lastLiftingColumn = currentColumn;
+            }
 
             // Create grid layout
             const row = document.createElement('div');
