@@ -599,7 +599,13 @@
             // Show my-athlete badge immediately from config
             const _cfg = JSON.parse(localStorage.getItem('trplConfig') || '{}');
             if (_cfg.athleteName) {
-                document.getElementById('myAthleteBadgeText').textContent = _cfg.athleteName;
+                const _gidParam = new URLSearchParams(window.location.search).get('gid');
+                let _platformLabel = '';
+                if (_gidParam && _cfg.sheets) {
+                    const _sheet = _cfg.sheets.find(s => String(s.gid) === String(_gidParam));
+                    if (_sheet) _platformLabel = ' · ' + _sheet.name;
+                }
+                document.getElementById('myAthleteBadgeText').textContent = _cfg.athleteName + _platformLabel;
                 document.getElementById('myAthleteBadgeWrap').style.display = 'block';
             }
 
@@ -1230,7 +1236,11 @@
                 } else if (myIdx === 0) statusTag = ' · Lifting';
                 else if (myIdx === 1) statusTag = ' · On Deck';
                 else if (myIdx > 1) statusTag = ` · #${myIdx + 1}`;
-                badgeText.textContent = displayName + statusTag;
+                const platformLabel = (() => {
+                    const sel = document.getElementById('platformSelect');
+                    return sel && sel.selectedIndex > 0 ? ' · ' + sel.options[sel.selectedIndex].text : '';
+                })();
+                badgeText.textContent = displayName + statusTag + platformLabel;
                 document.getElementById('myAthleteBadgeWrap').style.display = 'block';
             }
         }
