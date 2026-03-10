@@ -237,6 +237,43 @@
             margin-top: 5px;
         }
 
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 28px;
+            flex-shrink: 0;
+            margin-left: 16px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: #374151;
+            border-radius: 28px;
+            transition: background 0.2s;
+        }
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            left: 3px;
+            top: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.2s;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+        }
+        .toggle-switch input:checked + .toggle-slider { background: #ec4899; }
+        .toggle-switch input:checked + .toggle-slider::before { transform: translateX(24px); }
+
         .status-message {
             padding: 15px;
             border-radius: 5px;
@@ -573,10 +610,9 @@
                     <div style="color: white; font-weight: 700; font-size: 1rem;">Announcements</div>
                     <div style="color: rgba(255,255,255,0.55); font-size: 0.85rem; margin-top: 2px;">Get visual alerts when your athlete is lifting or on deck</div>
                 </div>
-                <label style="position: relative; display: inline-block; width: 52px; height: 28px; flex-shrink: 0; margin-left: 16px;">
-                    <input type="checkbox" id="announcementsEnabled" style="opacity:0; width:0; height:0; position:absolute;">
-                    <span onclick="document.getElementById('announcementsEnabled').click()" style="position:absolute; cursor:pointer; inset:0; background:#374151; border-radius:28px; transition:background 0.2s;" id="announcementsTrack"></span>
-                    <span onclick="document.getElementById('announcementsEnabled').click()" style="position:absolute; left:3px; top:3px; width:22px; height:22px; background:white; border-radius:50%; transition:transform 0.2s; box-shadow:0 1px 4px rgba(0,0,0,0.4);" id="announcementsThumb"></span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="announcementsEnabled">
+                    <span class="toggle-slider"></span>
                 </label>
             </div>
         </div>
@@ -638,15 +674,6 @@
 
     <script>
         let sheetCounter = 0;
-
-        function updateAnnouncementsToggle() {
-            const checked = document.getElementById('announcementsEnabled').checked;
-            document.getElementById('announcementsTrack').style.background = checked ? '#ec4899' : '#374151';
-            document.getElementById('announcementsThumb').style.transform = checked ? 'translateX(24px)' : 'translateX(0)';
-        }
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('announcementsEnabled').addEventListener('change', updateAnnouncementsToggle);
-        });
 
         // Load configuration on page load
         window.addEventListener('DOMContentLoaded', () => {
@@ -1037,7 +1064,6 @@
                 document.getElementById('schoolName').value = config.schoolName || 'Three Rivers';
                 document.getElementById('athleteName').value = config.athleteName || '';
                 document.getElementById('announcementsEnabled').checked = config.announcementsEnabled || false;
-                updateAnnouncementsToggle();
                 document.getElementById('autoRefreshSeconds').value = config.autoRefreshSeconds || 20;
                 document.getElementById('spreadsheetUrl').value = config.spreadsheetUrl || '';
 

@@ -238,6 +238,48 @@
         let schoolName = '';
         let coachGender = 'M';
         let coachStateRecords = {};
+        let lastAnnouncedStatus = null;
+
+        function announceIfNeeded(athletes, config) {
+            if (!config.announcementsEnabled || !config.athleteName) return;
+            const targetName = config.athleteName.toLowerCase().trim();
+            const athlete = athletes.find(a => (a.name || '').toLowerCase().trim() === targetName);
+            if (!athlete) return;
+
+            let currentStatus;
+            if (!athlete.hasPending) {
+                currentStatus = 'done';
+            } else if (athlete.platformPosition === 1) {
+                currentStatus = 'lifting';
+            } else if (athlete.platformPosition === 2) {
+                currentStatus = 'on-deck';
+            } else {
+                currentStatus = `position-${athlete.platformPosition}`;
+            }
+
+            if (currentStatus === lastAnnouncedStatus) return;
+
+            let text = null;
+            const name = config.athleteName;
+            if (currentStatus === 'lifting') {
+                text = `${name} is now lifting!`;
+            } else if (currentStatus === 'on-deck') {
+                text = `${name} is on deck! Get ready!`;
+            } else if (currentStatus === 'done' && lastAnnouncedStatus !== null) {
+                text = `${name} has finished their lift!`;
+            }
+
+            lastAnnouncedStatus = currentStatus;
+
+            if (text && window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.9;
+                utterance.pitch = 1.0;
+                utterance.volume = 1.0;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
 
         function toggleAutoRefresh() {
             const btn = document.getElementById('refreshToggle');
@@ -370,6 +412,8 @@
                 if (a.hasPending && !b.hasPending) return -1;
                 return (a.platformPosition || 999) - (b.platformPosition || 999);
             });
+
+            announceIfNeeded(allSchoolAthletes, config);
 
             if (allSchoolAthletes.length > 0) {
                 renderAllAthletes(allSchoolAthletes);
