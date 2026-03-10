@@ -32,50 +32,93 @@
         }
 
         .athlete-card {
-            background: #1a2236;
+            background: rgba(16, 185, 129, 0.18);
+            border: 1px solid rgba(16, 185, 129, 0.7);
+            border-left: 4px solid #60a5fa;
             border-radius: 12px;
             margin-bottom: 16px;
-            box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
             overflow: hidden;
-        }
-
-        .athlete-card-accent {
-            height: 4px;
-            background: rgba(96,165,250,0.4);
-        }
-
-        .athlete-card.lifting .athlete-card-accent {
-            background: linear-gradient(90deg, #ef4444, #f97316);
-        }
-
-        .athlete-card.on-deck .athlete-card-accent {
-            background: linear-gradient(90deg, #10b981, #34d399);
-        }
-
-        .athlete-card.done .athlete-card-accent {
-            background: rgba(255,255,255,0.1);
-        }
-
-        .athlete-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 6px;
             padding: 14px 16px;
+        }
+
+        .athlete-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.6);
+        }
+
+        .athlete-card.lifting {
+            background: rgba(239, 68, 68, 0.18);
+            border-color: rgba(239, 68, 68, 0.7);
+            border-left-color: #ef4444;
+        }
+
+        .athlete-card.on-deck {
+            background: rgba(16, 185, 129, 0.18);
+            border-color: rgba(16, 185, 129, 0.7);
+            border-left-color: #10b981;
+        }
+
+        .athlete-card.done {
+            background: rgba(30, 41, 59, 0.5);
+            border-color: rgba(255,255,255,0.12);
+            border-left-color: #6b7280;
+        }
+
+        .athlete-summary {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
             cursor: pointer;
             user-select: none;
         }
 
-        .athlete-row:hover {
-            background: rgba(255,255,255,0.03);
+        .designation-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
         }
 
-        .athlete-name {
-            font-size: 0.95rem;
-            font-weight: 700;
+        .designation-badge.varsity {
+            background: #8b5cf6;
             color: white;
-            flex: 1;
+        }
+
+        .designation-badge.jv {
+            background: #10b981;
+            color: white;
+        }
+
+        .expand-arrow {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.9rem;
+            transition: transform 0.2s;
+            flex-shrink: 0;
+        }
+
+        .total-box {
+            background: rgba(139, 92, 246, 0.07);
+            border: 1px solid rgba(139, 92, 246, 0.25);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        .total-label {
+            font-size: 0.75rem;
+            opacity: 0.95;
+            font-weight: 600;
+        }
+
+        .total-value {
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin-top: 3px;
         }
 
         .attempt-weight {
@@ -610,40 +653,39 @@
 
                 html += `
                     <div class="athlete-card ${rowClass}">
-                        <div class="athlete-card-accent"></div>
-                        <div class="athlete-row" onclick="toggleDetail('${detailId}')">
-                            <div class="athlete-name">
-                                ${athlete.name}
-                                ${athlete.weightClass ? `<span style="font-size:1rem; color:rgba(255,255,255,0.75); font-weight:700; margin-left:8px;">${athlete.designation === 'JV' ? 'JV ' : ''}${athlete.weightClass} lbs</span>` : ''}
-                                ${athlete.bodyWeight ? `<span style="font-size:0.8rem; color:rgba(255,255,255,0.5); font-weight:600; margin-left:6px;">(${athlete.bodyWeight} lbs BW)</span>` : ''}
-                                ${attemptWeight ? `<div style="font-size: 0.85rem; font-weight: 600; color: #60a5fa; margin-top: 2px;">Attempting ${attemptWeight}</div>` : ''}
+                        <div class="athlete-summary" onclick="toggleDetail('${detailId}')">
+                            <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                                <div style="font-size:1.2rem; font-weight:700; color:white; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; min-width:0;">${athlete.name}</div>
+                                <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+                                    ${status ? `<div class="status-badge ${statusClass}">${status}</div>` : ''}
+                                    <i class="fas fa-chevron-down expand-arrow" id="arrow-${detailId}"></i>
+                                </div>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end;">
-                                <a href="platform.html?gid=${athlete.platformGid}" onclick="event.stopPropagation();" style="display: inline-block; background: rgba(6,182,212,0.2); border: 1px solid rgba(6,182,212,0.6); color: #06b6d4; font-size: 1rem; font-weight: 700; padding: 5px 14px; border-radius: 12px; text-decoration: none; white-space: nowrap;">${athlete.platformName}</a>
-                                ${athlete.hasPending && overallPosition > 2 ? `<div style="color: #60a5fa; font-size: 1.2rem; font-weight: 800; white-space: nowrap;">Position ${overallPosition}</div>` : ''}
-                                ${status ? `<div class="status-badge ${statusClass}">${status}</div>` : ''}
-                                <div style="color:rgba(255,255,255,0.4); font-size:1rem; transition:transform 0.2s;" id="arrow-${detailId}">▼</div>
+                            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                                <span class="designation-badge ${athlete.designation === 'JV' ? 'jv' : 'varsity'}">${athlete.designation === 'JV' ? 'JV' : 'Varsity'}</span>
+                                <a href="platform.html?gid=${athlete.platformGid}" onclick="event.stopPropagation();" style="background:#06b6d4; color:white; padding:3px 10px; border-radius:6px; font-size:0.8rem; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><i class="fas fa-layer-group"></i> ${athlete.platformName}</a>
+                                ${athlete.weightClass ? `<span style="color:rgba(255,255,255,0.7); font-size:0.85rem; font-weight:700; white-space:nowrap;">${athlete.weightClass} lbs</span>` : ''}
+                                ${athlete.bodyWeight ? `<span style="color:rgba(255,255,255,0.5); font-size:0.8rem; font-weight:600; white-space:nowrap;">(${athlete.bodyWeight} lbs BW)</span>` : ''}
+                                ${athlete.hasPending && overallPosition > 2 ? `<span style="color:#60a5fa; font-size:0.85rem; font-weight:800; white-space:nowrap;">Position ${overallPosition}</span>` : ''}
+                                ${attemptWeight ? `<span style="color:#60a5fa; font-size:0.85rem; font-weight:700; white-space:nowrap;">Attempting ${attemptWeight}</span>` : ''}
                             </div>
                         </div>
                         <div class="athlete-details" id="${detailId}">
-                        <div style="display:flex; gap:12px; align-items:stretch;">
-                            <div style="flex:3;">
-                                <div style="font-size:0.65rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Squat</div>
+                            <div style="margin-bottom:10px;">
+                                <div style="font-size:0.65rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;"><i class="fas fa-compress-arrows-alt me-1"></i>Squat</div>
                                 <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:3px;">${renderAttempt(athlete.squat1,'sq',athlete.weightClass)}${renderAttempt(athlete.squat2,'sq',athlete.weightClass)}${renderAttempt(athlete.squat3,'sq',athlete.weightClass)}</div>
                             </div>
-                            <div style="width:1px; background:rgba(96,165,250,0.2);"></div>
-                            <div style="flex:3;">
-                                <div style="font-size:0.65rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Bench</div>
+                            <div style="margin-bottom:10px;">
+                                <div style="font-size:0.65rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;"><i class="fas fa-hands me-1"></i>Bench Press</div>
                                 <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:3px;">${renderAttempt(athlete.bench1,'bp',athlete.weightClass)}${renderAttempt(athlete.bench2,'bp',athlete.weightClass)}${renderAttempt(athlete.bench3,'bp',athlete.weightClass)}</div>
                             </div>
-                            <div style="width:1px; background:rgba(96,165,250,0.2);"></div>
-                            <div style="flex:3;">
-                                <div style="font-size:0.65rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Deadlift</div>
+                            <div style="margin-bottom:10px;">
+                                <div style="font-size:0.65rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;"><i class="fas fa-weight-hanging me-1"></i>Deadlift</div>
                                 <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:3px;">${renderAttempt(athlete.dead1,'dl',athlete.weightClass)}${renderAttempt(athlete.dead2,'dl',athlete.weightClass)}${renderAttempt(athlete.dead3,'dl',athlete.weightClass)}</div>
                             </div>
-                            ${athlete.total ? `<div style="width:1px; background:rgba(96,165,250,0.2);"></div><div style="flex:2; text-align:center; display:flex; align-items:center; justify-content:center;"><div style="background:rgba(139,92,246,0.18); border:1px solid rgba(139,92,246,0.5); border-radius:6px; padding:6px 8px; font-weight:800; font-size:0.85rem; width:100%;">Total<br>${athlete.total}</div></div>` : ''}
+                            ${athlete.total ? `<div class="total-box"><div class="total-label">TOTAL</div><div class="total-value">${athlete.total} lbs</div></div>` : ''}
                         </div>
-                    </div><!-- /.athlete-card -->
+                    </div>
                 `;
             });
 
@@ -655,7 +697,7 @@
             const el = document.getElementById(id);
             el.classList.toggle('open');
             const arrow = document.getElementById('arrow-' + id);
-            if (arrow) arrow.style.transform = el.classList.contains('open') ? 'rotate(180deg)' : '';
+            if (arrow) arrow.style.transform = el.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
         }
         function updateCacheBadge(cacheHit, cacheAge) {
             const badge = document.getElementById('cacheStatusBadge');
