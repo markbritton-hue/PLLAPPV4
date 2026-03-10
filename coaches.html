@@ -162,8 +162,9 @@
         <a href="index.html" class="btn btn-lg" style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(96, 165, 250, 0.2); color: white; text-decoration: none;">
             <i class="fas fa-home me-2"></i>Home
         </a>
-        <button id="refreshToggle" onclick="toggleAutoRefresh()" class="btn btn-lg" style="background: rgba(96, 165, 250, 0.8); border: none; color: white; cursor: pointer;">
-            <i class="fas fa-sync-alt me-2"></i>Auto-Refresh: OFF
+        <button id="refreshToggle" onclick="toggleAutoRefresh()" class="btn btn-lg" style="background: rgba(96, 165, 250, 0.8); border: none; color: white; cursor: pointer; line-height: 1.3;">
+            <span id="refreshLabel"><i class="fas fa-sync-alt me-2"></i>Auto-Refresh: OFF</span><br>
+            <span id="cacheStatusBadge" style="font-size: 0.7rem; font-family: monospace; opacity: 0.75;"></span>
         </button>
         <a href="https://venmo.com/u/Mark-Britton-18" target="_blank" rel="noopener noreferrer"
            style="display: inline-flex; align-items: center; gap: 8px; background: #008CFF; color: white; text-decoration: none; padding: 12px 20px; border-radius: 8px; font-weight: 700; box-shadow: 0 4px 12px rgba(0,140,255,0.4);">
@@ -173,11 +174,6 @@
     </div>
 
     <div id="displayContainer"></div>
-
-    <!-- Cache Status -->
-    <div id="cacheStatus" style="display: none; text-align: center; margin-top: 16px; margin-bottom: 8px;">
-        <span id="cacheStatusBadge" style="font-size: 0.75rem; font-family: monospace; padding: 3px 10px; border-radius: 20px;"></span>
-    </div>
 
     <!-- Donation Card -->
     <div style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(96, 165, 250, 0.4); border-radius: 15px; padding: 25px 30px; text-align: center; margin-top: 40px; box-shadow: 0 8px 20px rgba(0,0,0,0.5);">
@@ -198,11 +194,12 @@
         let coachStateRecords = {};
 
         function toggleAutoRefresh() {
-            const btn = document.getElementById('refreshToggle');
+            const btn   = document.getElementById('refreshToggle');
+            const label = document.getElementById('refreshLabel');
             if (autoRefreshInterval) {
                 clearInterval(autoRefreshInterval);
                 autoRefreshInterval = null;
-                btn.innerHTML = '<i class="fas fa-sync-alt me-2"></i>Auto-Refresh: OFF';
+                label.innerHTML = '<i class="fas fa-sync-alt me-2"></i>Auto-Refresh: OFF';
                 btn.style.background = 'rgba(96, 165, 250, 0.8)';
                 localStorage.setItem('coachesAutoRefresh', 'off');
             } else {
@@ -211,7 +208,7 @@
                 autoRefreshInterval = setInterval(function() {
                     loadDisplay(true);
                 }, intervalMs);
-                btn.innerHTML = `<i class="fas fa-sync-alt fa-spin me-2"></i>Auto-Refresh: ON (${cfg.autoRefreshSeconds || 20}s)`;
+                label.innerHTML = `<i class="fas fa-sync-alt fa-spin me-2"></i>Auto-Refresh: ON (${cfg.autoRefreshSeconds || 20}s)`;
                 btn.style.background = 'rgba(16, 185, 129, 0.8)';
                 localStorage.setItem('coachesAutoRefresh', 'on');
                 loadDisplay();
@@ -658,27 +655,16 @@
             if (arrow) arrow.style.transform = el.classList.contains('open') ? 'rotate(180deg)' : '';
         }
         function updateCacheBadge(cacheHit, cacheAge) {
-            const badge      = document.getElementById('cacheStatusBadge');
-            const statusWrap = document.getElementById('cacheStatus');
+            const badge = document.getElementById('cacheStatusBadge');
             if (!badge) return;
             const ageStr = cacheAge ? ` · ${cacheAge} old` : '';
             if (cacheHit === 'HIT') {
-                badge.style.background = 'rgba(34,197,94,0.15)';
-                badge.style.color = '#4ade80';
-                badge.style.border = '1px solid rgba(34,197,94,0.3)';
                 badge.textContent = `cache HIT${ageStr}`;
             } else if (cacheHit === 'STALE') {
-                badge.style.background = 'rgba(234,179,8,0.15)';
-                badge.style.color = '#facc15';
-                badge.style.border = '1px solid rgba(234,179,8,0.3)';
                 badge.textContent = `cache STALE${ageStr}`;
             } else {
-                badge.style.background = 'rgba(96,165,250,0.15)';
-                badge.style.color = '#60a5fa';
-                badge.style.border = '1px solid rgba(96,165,250,0.3)';
                 badge.textContent = 'cache MISS · fetched from Google';
             }
-            statusWrap.style.display = 'block';
         }
     </script>
 </body>
