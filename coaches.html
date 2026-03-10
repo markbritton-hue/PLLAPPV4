@@ -243,19 +243,27 @@
         let coachStateRecords = {};
         let lastAnnouncedStatus = null;
         let speechUnlocked = false;
+        let pendingAnnouncementText = null;
 
-        // Unlock speech on first user gesture (required by some browsers)
+        // Unlock speech on first user gesture and replay any pending announcement
         document.addEventListener('click', function unlockOnce() {
             if (!speechUnlocked && window.speechSynthesis) {
-                const u = new SpeechSynthesisUtterance('');
-                u.volume = 0;
-                window.speechSynthesis.speak(u);
                 speechUnlocked = true;
+                const pending = pendingAnnouncementText;
+                pendingAnnouncementText = null;
+                if (pending) {
+                    setTimeout(() => doSpeak(pending), 300);
+                } else {
+                    // Prime the engine with a silent utterance
+                    const u = new SpeechSynthesisUtterance(' ');
+                    u.volume = 0.01;
+                    window.speechSynthesis.speak(u);
+                }
             }
             document.removeEventListener('click', unlockOnce);
         });
 
-        function speakAnnouncement(text) {
+        function doSpeak(text) {
             if (!window.speechSynthesis) return;
             window.speechSynthesis.cancel();
             setTimeout(() => {
@@ -263,7 +271,16 @@
                 u.rate = 0.9; u.pitch = 1.0; u.volume = 1.0;
                 window.speechSynthesis.speak(u);
             }, 150);
+        }
+
+        function speakAnnouncement(text) {
             showAnnouncementToast(text);
+            if (!speechUnlocked) {
+                // Save for replay on first user click
+                pendingAnnouncementText = text;
+                return;
+            }
+            doSpeak(text);
         }
 
         function showAnnouncementToast(text) {
@@ -304,10 +321,16 @@
         }
 
         function announceIfNeeded(athletes, config) {
-            if (!config.announcementsEnabled || !config.athleteName) return;
+            if (!config.announcementsEnabled || !config.athleteName) {
+                console.log('[Announce] skipped — enabled:', config.announcementsEnabled, 'name:', config.athleteName);
+                return;
+            }
             const targetName = config.athleteName.toLowerCase().trim();
             const athlete = athletes.find(a => (a.name || '').toLowerCase().trim() === targetName);
-            if (!athlete) return;
+            if (!athlete) {
+                console.log('[Announce] athlete not found:', targetName, '| available:', athletes.map(a => a.name));
+                return;
+            }
 
             let currentStatus;
             if (!athlete.hasPending) {
@@ -320,6 +343,7 @@
                 currentStatus = `position-${athlete.platformPosition}`;
             }
 
+            console.log('[Announce] athlete found, status:', currentStatus, '| last:', lastAnnouncedStatus, '| unlocked:', speechUnlocked);
             if (currentStatus === lastAnnouncedStatus) return;
 
             let text = null;
