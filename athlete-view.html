@@ -716,7 +716,7 @@
                     function gapChip(label, diff, isSelf) {
                         if (diff === null) return '';
                         if (isSelf) return `<div style="text-align:center;"><div style="font-size:0.7rem;color:rgba(255,255,255,0.55);font-weight:600;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:2px;">${label}</div><div style="font-size:0.95rem;font-weight:800;color:#fbbf24;">Here</div></div>`;
-                        const color = diff >= 0 ? '#4ade80' : '#fca5a5';
+                        const color = 'white';
                         const sign  = diff > 0 ? '+' : '';
                         return `<div style="text-align:center;"><div style="font-size:0.7rem;color:rgba(255,255,255,0.55);font-weight:600;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:2px;">${label}</div><div style="font-size:0.95rem;font-weight:800;color:${color};">${sign}${diff} lbs</div></div>`;
                     }
