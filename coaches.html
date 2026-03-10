@@ -267,6 +267,14 @@
 
         async function loadPlatformsData(config, platforms) {
             const container = document.getElementById('displayContainer');
+
+            // Save which athletes have their details expanded (keyed by athlete name)
+            const expandedNames = new Set();
+            container.querySelectorAll('.athlete-details.open').forEach(el => {
+                const nameEl = el.previousElementSibling?.querySelector('.athlete-name');
+                if (nameEl) expandedNames.add(nameEl.textContent.trim().split('\n')[0].trim());
+            });
+
             container.innerHTML = '';
 
             // Load all platforms in parallel
@@ -309,6 +317,19 @@
 
             if (allSchoolAthletes.length > 0) {
                 renderAllAthletes(allSchoolAthletes);
+
+                // Restore expanded state by athlete name
+                if (expandedNames.size > 0) {
+                    container.querySelectorAll('.athlete-details').forEach(el => {
+                        const nameEl = el.previousElementSibling?.querySelector('.athlete-name');
+                        const name = nameEl?.textContent.trim().split('\n')[0].trim();
+                        if (name && expandedNames.has(name)) {
+                            el.classList.add('open');
+                            const arrow = el.previousElementSibling.querySelector('div[style*="▼"]');
+                            if (arrow) arrow.style.transform = 'rotate(180deg)';
+                        }
+                    });
+                }
             }
         }
 
