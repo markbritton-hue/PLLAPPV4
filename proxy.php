@@ -37,6 +37,8 @@ if ($type === 'sheets') {
 
 // --- Serve from cache if fresh ---
 if (file_exists($cacheFile) && (time() - filemtime($cacheFile)) < $cacheTTL) {
+    header('X-Cache: HIT');
+    header('X-Cache-Age: ' . (time() - filemtime($cacheFile)) . 's');
     readfile($cacheFile);
     exit;
 }
@@ -57,6 +59,7 @@ curl_close($ch);
 if ($data === false || $httpCode < 200 || $httpCode >= 300) {
     // Return stale cache rather than a blank error if we have one
     if (file_exists($cacheFile)) {
+        header('X-Cache: STALE');
         readfile($cacheFile);
         exit;
     }
@@ -65,4 +68,5 @@ if ($data === false || $httpCode < 200 || $httpCode >= 300) {
 }
 
 file_put_contents($cacheFile, $data);
+header('X-Cache: MISS');
 echo $data;
