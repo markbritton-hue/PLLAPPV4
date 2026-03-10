@@ -596,6 +596,13 @@
 
         // Load platforms on page load
         window.addEventListener('DOMContentLoaded', function() {
+            // Show my-athlete badge immediately from config
+            const _cfg = JSON.parse(localStorage.getItem('trplConfig') || '{}');
+            if (_cfg.athleteName) {
+                document.getElementById('myAthleteBadgeText').textContent = _cfg.athleteName;
+                document.getElementById('myAthleteBadgeWrap').style.display = 'block';
+            }
+
             loadPlatformsList();
             // Auto-select platform from URL param e.g. platform.html?gid=12345
             const gidParam = new URLSearchParams(window.location.search).get('gid');
