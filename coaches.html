@@ -240,6 +240,30 @@
         let coachStateRecords = {};
         let lastAnnouncedStatus = null;
 
+        function getLastLiftResult(athlete) {
+            // Check attempts in reverse lifting order: dl3 → dl2 → dl1 → bp3 → ... → sq1
+            const attempts = [
+                { key: 'dead3', liftKey: 'dl' }, { key: 'dead2', liftKey: 'dl' }, { key: 'dead1', liftKey: 'dl' },
+                { key: 'bench3', liftKey: 'bp' }, { key: 'bench2', liftKey: 'bp' }, { key: 'bench1', liftKey: 'bp' },
+                { key: 'squat3', liftKey: 'sq' }, { key: 'squat2', liftKey: 'sq' }, { key: 'squat1', liftKey: 'sq' },
+            ];
+            for (const { key, liftKey } of attempts) {
+                const val = athlete[key];
+                if (!val || !val.trim()) continue;
+                const lower = val.toLowerCase();
+                const failed = lower.includes('x');
+                const good = lower.includes('g');
+                if (!failed && !good) continue;
+                if (good) {
+                    const num = parseFloat(val.replace(/[xgXG]/gi, '').trim());
+                    const isRecord = isStateRecordAttempt(num, liftKey, athlete.weightClass, coachStateRecords);
+                    return isRecord ? 'record' : 'good';
+                }
+                return 'failed';
+            }
+            return null;
+        }
+
         function announceIfNeeded(athletes, config) {
             if (!config.announcementsEnabled || !config.athleteName) return;
             const targetName = config.athleteName.toLowerCase().trim();
@@ -266,7 +290,16 @@
             } else if (currentStatus === 'on-deck') {
                 text = `${name} is on deck! Get ready!`;
             } else if (currentStatus === 'done' && lastAnnouncedStatus !== null) {
-                text = `${name} has finished their lift!`;
+                const result = getLastLiftResult(athlete);
+                if (result === 'record') {
+                    text = `${name} has finished with a new state record!`;
+                } else if (result === 'good') {
+                    text = `${name} is done. Good lift!`;
+                } else if (result === 'failed') {
+                    text = `${name} is done. Failed attempt.`;
+                } else {
+                    text = `${name} has finished their lift!`;
+                }
             }
 
             lastAnnouncedStatus = currentStatus;
