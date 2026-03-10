@@ -512,6 +512,15 @@
                             value="">
                         <p class="help-text" id="schoolNameHelp">Complete Step 2 (Auto-Detect) to populate the school dropdown</p>
                     </div>
+                    <div class="form-group" style="margin-top: 12px; margin-bottom: 0;">
+                        <label for="athleteName">Your Athlete's Name (optional):</label>
+                        <input
+                            type="text"
+                            id="athleteName"
+                            placeholder="e.g. John Smith"
+                            value="">
+                        <p class="help-text">Used to highlight your athlete across the app.</p>
+                    </div>
                 </li>
                 <li style="margin-bottom: 20px;">
                     <strong>Step 4:</strong> Save your configuration
@@ -916,6 +925,7 @@
 
         function saveConfiguration() {
             const schoolName = document.getElementById('schoolName').value.trim();
+            const athleteName = document.getElementById('athleteName').value.trim();
             const autoRefreshSeconds = parseInt(document.getElementById('autoRefreshSeconds').value) || 20;
             const spreadsheetUrl = document.getElementById('spreadsheetUrl').value.trim();
 
@@ -954,6 +964,7 @@
 
             const config = {
                 schoolName,
+                athleteName,
                 autoRefreshSeconds,
                 spreadsheetId,
                 spreadsheetUrl,
@@ -997,6 +1008,7 @@
 
                 // Load school configuration and spreadsheet URL
                 document.getElementById('schoolName').value = config.schoolName || 'Three Rivers';
+                document.getElementById('athleteName').value = config.athleteName || '';
                 document.getElementById('autoRefreshSeconds').value = config.autoRefreshSeconds || 20;
                 document.getElementById('spreadsheetUrl').value = config.spreadsheetUrl || '';
 
