@@ -31,35 +31,52 @@
             font-weight: 700;
         }
 
+        .athlete-card-wrap {
+            border-radius: 10px;
+            border-left: 4px solid;
+            margin-bottom: 10px;
+            overflow: hidden;
+            transition: box-shadow 0.2s;
+        }
+
+        .athlete-card-wrap.lifting {
+            border-left-color: #ef4444;
+            box-shadow: 0 0 12px rgba(239,68,68,0.25);
+        }
+
+        .athlete-card-wrap.on-deck {
+            border-left-color: #10b981;
+            box-shadow: 0 0 10px rgba(16,185,129,0.2);
+        }
+
+        .athlete-card-wrap.done {
+            border-left-color: rgba(96,165,250,0.25);
+        }
+
+        .athlete-card-wrap.default {
+            border-left-color: rgba(96,165,250,0.3);
+        }
+
         .athlete-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 10px 15px;
-            margin-bottom: 8px;
             background: rgba(15, 23, 42, 0.8);
-            border-radius: 8px;
-            border-left: 3px solid;
-            transition: all 0.2s;
+            transition: background 0.2s;
+            cursor: pointer;
         }
 
-        .athlete-row.lifting {
-            border-left-color: #ef4444;
-            background: linear-gradient(90deg, rgba(16, 185, 129, 0.15) 0%, rgba(239, 68, 68, 0.15) 100%);
+        .athlete-card-wrap.lifting .athlete-row {
+            background: linear-gradient(90deg, rgba(239,68,68,0.15) 0%, rgba(15,23,42,0.8) 100%);
         }
 
-        .athlete-row.on-deck {
-            border-left-color: #10b981;
-            background: rgba(16, 185, 129, 0.2);
-        }
-
-        .athlete-row.default {
-            border-left-color: rgba(96, 165, 250, 0.3);
-            background: rgba(16, 185, 129, 0.1);
+        .athlete-card-wrap.on-deck .athlete-row {
+            background: linear-gradient(90deg, rgba(16,185,129,0.15) 0%, rgba(15,23,42,0.8) 100%);
         }
 
         .athlete-row:hover {
-            transform: translateX(5px);
+            background: rgba(96,165,250,0.08);
         }
 
         .athlete-name {
@@ -121,11 +138,9 @@
 
         .athlete-details {
             display: none;
-            padding: 12px;
-            background: rgba(15, 23, 42, 0.6);
-            border-radius: 0 0 8px 8px;
-            margin-top: -4px;
-            border-left: 3px solid rgba(96, 165, 250, 0.3);
+            padding: 12px 15px;
+            background: rgba(10, 17, 35, 0.7);
+            border-top: 1px solid rgba(96, 165, 250, 0.15);
         }
 
         .athlete-details.open {
@@ -600,20 +615,21 @@
                 const detailId = `detail-${idx}`;
 
                 html += `
-                    <div class="athlete-row ${rowClass}" onclick="toggleDetail('${detailId}')" style="cursor:pointer;">
-                        <div class="athlete-name">
-                            ${athlete.name}
-                            ${athlete.weightClass ? `<span style="font-size:1rem; color:rgba(255,255,255,0.75); font-weight:700; margin-left:8px;">${athlete.designation === 'JV' ? 'JV ' : ''}${athlete.weightClass} lbs</span>` : ''}
-                            ${attemptWeight ? `<div style="font-size: 0.85rem; font-weight: 600; color: #60a5fa; margin-top: 2px;">Attempting ${attemptWeight}</div>` : ''}
+                    <div class="athlete-card-wrap ${rowClass}">
+                        <div class="athlete-row" onclick="toggleDetail('${detailId}')">
+                            <div class="athlete-name">
+                                ${athlete.name}
+                                ${athlete.weightClass ? `<span style="font-size:1rem; color:rgba(255,255,255,0.75); font-weight:700; margin-left:8px;">${athlete.designation === 'JV' ? 'JV ' : ''}${athlete.weightClass} lbs</span>` : ''}
+                                ${attemptWeight ? `<div style="font-size: 0.85rem; font-weight: 600; color: #60a5fa; margin-top: 2px;">Attempting ${attemptWeight}</div>` : ''}
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end;">
+                                <a href="platform.html?gid=${athlete.platformGid}" onclick="event.stopPropagation();" style="display: inline-block; background: rgba(6,182,212,0.2); border: 1px solid rgba(6,182,212,0.6); color: #06b6d4; font-size: 1rem; font-weight: 700; padding: 5px 14px; border-radius: 12px; text-decoration: none; white-space: nowrap;">${athlete.platformName}</a>
+                                ${athlete.hasPending && overallPosition > 2 ? `<div style="color: #60a5fa; font-size: 1.2rem; font-weight: 800; white-space: nowrap;">Position ${overallPosition}</div>` : ''}
+                                ${status ? `<div class="status-badge ${statusClass}">${status}</div>` : ''}
+                                <div style="color:rgba(255,255,255,0.4); font-size:1rem;">▼</div>
+                            </div>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end;">
-                            <a href="platform.html?gid=${athlete.platformGid}" onclick="event.stopPropagation();" style="display: inline-block; background: rgba(6,182,212,0.2); border: 1px solid rgba(6,182,212,0.6); color: #06b6d4; font-size: 1rem; font-weight: 700; padding: 5px 14px; border-radius: 12px; text-decoration: none; white-space: nowrap;">${athlete.platformName}</a>
-                            ${athlete.hasPending && overallPosition > 2 ? `<div style="color: #60a5fa; font-size: 1.2rem; font-weight: 800; white-space: nowrap;">Position ${overallPosition}</div>` : ''}
-                            ${status ? `<div class="status-badge ${statusClass}">${status}</div>` : ''}
-                            <div style="color:rgba(255,255,255,0.4); font-size:1rem;">▼</div>
-                        </div>
-                    </div>
-                    <div class="athlete-details" id="${detailId}">
+                        <div class="athlete-details" id="${detailId}">
                         <div style="display:flex; gap:12px; align-items:stretch;">
                             <div style="flex:3;">
                                 <div style="font-size:0.65rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Squat</div>
@@ -631,7 +647,7 @@
                             </div>
                             ${athlete.total ? `<div style="width:1px; background:rgba(96,165,250,0.2);"></div><div style="flex:2; text-align:center; display:flex; align-items:center; justify-content:center;"><div style="background:linear-gradient(135deg,#60a5fa,#a78bfa); border-radius:6px; padding:6px 8px; font-weight:800; font-size:0.85rem; width:100%;">Total<br>${athlete.total}</div></div>` : ''}
                         </div>
-                    </div>
+                    </div><!-- /.athlete-card-wrap -->
                 `;
             });
 
