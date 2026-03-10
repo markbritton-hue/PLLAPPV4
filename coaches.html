@@ -210,8 +210,13 @@
         <button id="refreshToggle" onclick="toggleAutoRefresh()" class="btn btn-lg" style="background: rgba(96, 165, 250, 0.8); border: none; color: white; cursor: pointer;">
             <i class="fas fa-sync-alt me-2"></i>Auto-Refresh: OFF
         </button>
+        <button onclick="testVoice()" class="btn btn-lg" style="background: rgba(236,72,153,0.8); border: none; color: white; cursor: pointer;" title="Test voice announcement">
+            <i class="fas fa-volume-up"></i>
+        </button>
         <span id="cacheStatusBadge" style="font-size: 0.75rem; font-family: monospace; padding: 3px 10px; border-radius: 20px; display: none; align-self: center;"></span>
     </div>
+
+    <div id="announcementToast" style="position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:rgba(236,72,153,0.95); color:white; padding:12px 22px; border-radius:30px; font-size:0.95rem; font-weight:700; box-shadow:0 6px 20px rgba(0,0,0,0.5); z-index:9999; opacity:0; transition:opacity 0.3s, transform 0.3s; pointer-events:none; white-space:nowrap; max-width:90vw; text-align:center;"></div>
 
     <div style="text-align: center; margin-bottom: 16px;">
         <h1 style="font-size: 1.3rem; font-weight: 900; color: white; margin: 0;">
@@ -239,6 +244,42 @@
         let coachGender = 'M';
         let coachStateRecords = {};
         let lastAnnouncedStatus = null;
+        let speechUnlocked = false;
+
+        // Unlock speech on first user gesture (required by some browsers)
+        document.addEventListener('click', function unlockOnce() {
+            if (!speechUnlocked && window.speechSynthesis) {
+                const u = new SpeechSynthesisUtterance('');
+                u.volume = 0;
+                window.speechSynthesis.speak(u);
+                speechUnlocked = true;
+            }
+            document.removeEventListener('click', unlockOnce);
+        });
+
+        function speakAnnouncement(text) {
+            if (!window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
+            setTimeout(() => {
+                const u = new SpeechSynthesisUtterance(text);
+                u.rate = 0.9; u.pitch = 1.0; u.volume = 1.0;
+                window.speechSynthesis.speak(u);
+            }, 150);
+            showAnnouncementToast(text);
+        }
+
+        function showAnnouncementToast(text) {
+            let toast = document.getElementById('announcementToast');
+            if (!toast) return;
+            toast.textContent = '🔊 ' + text;
+            toast.style.opacity = '1';
+            toast.style.transform = 'translateY(0)';
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(20px)';
+            }, 4000);
+        }
 
         function getLastLiftResult(athlete) {
             // Check attempts in reverse lifting order: dl3 → dl2 → dl1 → bp3 → ... → sq1
@@ -304,14 +345,13 @@
 
             lastAnnouncedStatus = currentStatus;
 
-            if (text && window.speechSynthesis) {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.rate = 0.9;
-                utterance.pitch = 1.0;
-                utterance.volume = 1.0;
-                window.speechSynthesis.speak(utterance);
-            }
+            if (text) speakAnnouncement(text);
+        }
+
+        function testVoice() {
+            const cfg = JSON.parse(localStorage.getItem('trplConfig') || '{}');
+            const name = cfg.athleteName || 'Your athlete';
+            speakAnnouncement(`${name} is on deck! Get ready!`);
         }
 
         function toggleAutoRefresh() {
