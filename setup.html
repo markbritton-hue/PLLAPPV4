@@ -558,7 +558,27 @@
                     </div>
                 </li>
                 <li style="margin-bottom: 20px;">
-                    <strong>Step 5:</strong> Add PowerLift Live to your home screen for quick access
+                    <strong>Step 5:</strong> Set up your athlete <span style="color: rgba(255,255,255,0.5); font-weight: 400;">(optional)</span>
+                    <div style="margin-top: 12px; background: rgba(236,72,153,0.08); border: 1px solid rgba(236,72,153,0.3); border-radius: 10px; padding: 16px;">
+                        <div class="form-group" style="margin-bottom: 14px;">
+                            <label for="athleteName"><i class="fas fa-person-running me-2" style="color:#ec4899;"></i>Athlete Name:</label>
+                            <input type="text" id="athleteName" placeholder="e.g. John Smith" value="">
+                            <p class="help-text">Used to highlight your athlete and enable voice announcements.</p>
+                        </div>
+                        <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(15,23,42,0.5); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 12px 16px;">
+                            <div>
+                                <div style="color: white; font-weight: 700; font-size: 0.95rem;">Announcements</div>
+                                <div style="color: rgba(255,255,255,0.55); font-size: 0.82rem; margin-top: 2px;">Read aloud when your athlete is on deck, lifting, or just finished</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="announcementsEnabled">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </li>
+                <li style="margin-bottom: 20px;">
+                    <strong>Step 6:</strong> Add PowerLift Live to your home screen for quick access
                     <div style="margin-top: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
                         <!-- iOS -->
                         <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(96, 165, 250, 0.3); border-radius: 10px; padding: 14px;">
@@ -585,36 +605,12 @@
                     </div>
                 </li>
                 <li>
-                    <strong>Step 6:</strong> Go back to the home page to get started using the PLL app
+                    <strong>Step 7:</strong> Go back to the home page to get started using the PLL app
                     <div style="margin-top: 10px;">
                         <a href="index.html" class="btn btn-primary"><i class="fas fa-home me-2"></i>Go to Home Page</a>
                     </div>
                 </li>
             </ol>
-        </div>
-
-        <!-- My Athlete -->
-        <div class="setup-section" style="border-color: rgba(236, 72, 153, 0.4); box-shadow: 0 4px 20px rgba(236, 72, 153, 0.15);">
-            <h2 style="color: #ec4899;"><i class="fas fa-person-running me-2"></i>My Athlete</h2>
-            <div class="form-group">
-                <label for="athleteName">Athlete Name:</label>
-                <input
-                    type="text"
-                    id="athleteName"
-                    placeholder="e.g. John Smith"
-                    value="">
-                <p class="help-text">Used to highlight your athlete across the app.</p>
-            </div>
-            <div style="margin-top: 18px; display: flex; align-items: center; justify-content: space-between; background: rgba(15,23,42,0.5); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 14px 18px;">
-                <div>
-                    <div style="color: white; font-weight: 700; font-size: 1rem;">Announcements</div>
-                    <div style="color: rgba(255,255,255,0.55); font-size: 0.85rem; margin-top: 2px;">Get visual alerts when your athlete is lifting or on deck</div>
-                </div>
-                <label class="toggle-switch">
-                    <input type="checkbox" id="announcementsEnabled">
-                    <span class="toggle-slider"></span>
-                </label>
-            </div>
         </div>
 
         <!-- Auto-Refresh -->
