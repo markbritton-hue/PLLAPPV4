@@ -32,33 +32,35 @@
         }
 
         .athlete-card {
-            background: rgba(15, 23, 42, 0.85);
-            border: 1px solid rgba(96, 165, 250, 0.2);
+            background: #1a2236;
             border-radius: 12px;
-            margin-bottom: 10px;
+            margin-bottom: 16px;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.5);
             overflow: hidden;
         }
 
-        .athlete-card.lifting {
-            border-color: rgba(239, 68, 68, 0.6);
-            box-shadow: 0 4px 16px rgba(239,68,68,0.15);
+        .athlete-card-accent {
+            height: 4px;
+            background: rgba(96,165,250,0.4);
         }
 
-        .athlete-card.on-deck {
-            border-color: rgba(16, 185, 129, 0.6);
-            box-shadow: 0 4px 16px rgba(16,185,129,0.15);
+        .athlete-card.lifting .athlete-card-accent {
+            background: linear-gradient(90deg, #ef4444, #f97316);
         }
 
-        .athlete-card.done {
-            border-color: rgba(96, 165, 250, 0.1);
-            opacity: 0.75;
+        .athlete-card.on-deck .athlete-card-accent {
+            background: linear-gradient(90deg, #10b981, #34d399);
+        }
+
+        .athlete-card.done .athlete-card-accent {
+            background: rgba(255,255,255,0.1);
         }
 
         .athlete-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 16px;
+            padding: 14px 16px;
             cursor: pointer;
             user-select: none;
         }
@@ -126,9 +128,9 @@
 
         .athlete-details {
             display: none;
-            padding: 14px 16px;
-            border-top: 1px solid rgba(96, 165, 250, 0.15);
-            background: rgba(5, 10, 25, 0.6);
+            padding: 14px 16px 16px;
+            border-top: 1px solid rgba(255,255,255,0.07);
+            background: rgba(0, 0, 0, 0.25);
         }
 
         .athlete-details.open {
@@ -604,6 +606,7 @@
 
                 html += `
                     <div class="athlete-card ${rowClass}">
+                        <div class="athlete-card-accent"></div>
                         <div class="athlete-row" onclick="toggleDetail('${detailId}')">
                             <div class="athlete-name">
                                 ${athlete.name}
