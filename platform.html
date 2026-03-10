@@ -459,6 +459,7 @@
         let lastLiftingColumn = null;
         let justFinishedAthlete = null;
         let lastJustFinishedName = null;
+        let justFinishedResult = null; // 'good' | 'failed' | 'record'
         let removeCardTimer = null;
         let platformGender = 'M'; // default Men's
         let platformStateRecords = null;
@@ -1075,12 +1076,15 @@
                             const isRecord = isStateRecordAttempt(liftWeight, liftKey, lastAthlete.weightClass, platformStateRecords);
                             if (isRecord) {
                                 showStateRecordBanner(lastAthlete.name, liftName, liftWeight);
+                                justFinishedResult = 'record';
                             } else {
                                 showGoodLiftBanner(lastAthlete.name, liftName, liftWeight);
+                                justFinishedResult = 'good';
                             }
                             fireConfetti();
                         } else if (lastVal && lastVal.toLowerCase().includes('x')) {
                             showFailedAttemptBanner(lastAthlete.name, liftName, liftWeight);
+                            justFinishedResult = 'failed';
                         }
                     }
                 }
@@ -1117,7 +1121,7 @@
                     jfSchool.toLowerCase().includes(configuredSchool.toLowerCase());
                 const jfCardBg = jfIsMySchool ? 'rgba(249, 115, 22, 0.18)' : 'rgba(30, 41, 59, 0.9)';
                 const jfCardBorder = jfIsMySchool ? 'rgba(249, 115, 22, 0.7)' : 'rgba(167, 139, 250, 0.5)';
-                jfCol.innerHTML = buildAthleteCard(justFinishedAthlete, 'JUST FINISHED', '#a78bfa', null, jfCardBg, jfCardBorder, rankMap[justFinishedAthlete.name] || null);
+                jfCol.innerHTML = buildAthleteCard(justFinishedAthlete, 'JUST FINISHED', '#a78bfa', null, jfCardBg, jfCardBorder, rankMap[justFinishedAthlete.name] || null, buildResultOverlay(justFinishedResult));
                 row.appendChild(jfCol);
                 // Reset 10s removal timer on every render so card always shows a full 10s
                 scheduleCardRemoval();
@@ -1159,9 +1163,24 @@
             container.appendChild(row);
         }
 
-        function buildAthleteCard(athlete, statusLabel, statusColor, positionNum, cardBgColor, cardBorderColor, wcRank) {
+        function buildResultOverlay(result) {
+            if (!result) return '';
+            const configs = {
+                good:   { icon: '✅', text: 'Good Lift!',        gradient: 'linear-gradient(135deg, #10b981, #60a5fa)', glow: 'rgba(16,185,129,0.5)' },
+                failed: { icon: '❌', text: 'Failed Attempt!',   gradient: 'linear-gradient(135deg, #ef4444, #f97316)', glow: 'rgba(239,68,68,0.5)' },
+                record: { icon: '⭐', text: 'New State Record!', gradient: 'linear-gradient(135deg, #f59e0b, #fbbf24)', glow: 'rgba(245,158,11,0.5)' },
+            };
+            const c = configs[result];
+            return `<div style="text-align: center; margin-bottom: 14px; padding: 10px 0 6px;">
+                <div style="font-size: 2rem; margin-bottom: 4px;">${c.icon}</div>
+                <div style="font-size: 1.5rem; font-weight: 900; background: ${c.gradient}; -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; text-transform: uppercase; line-height: 1; filter: drop-shadow(0 3px 10px ${c.glow});">${c.text}</div>
+            </div>`;
+        }
+
+        function buildAthleteCard(athlete, statusLabel, statusColor, positionNum, cardBgColor, cardBorderColor, wcRank, resultHtml = '') {
             return `
                     <div class="athlete-card" style="background: ${cardBgColor}; border-color: ${cardBorderColor};">
+                        ${resultHtml}
                         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
                             <div class="athlete-name">${athlete.name}</div>
                             <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
@@ -1296,6 +1315,7 @@
                     setTimeout(() => card.remove(), 650);
                 }
                 justFinishedAthlete = null;
+                justFinishedResult = null;
                 lastLiftingName = null;
                 removeCardTimer = null;
             }, 10000);
