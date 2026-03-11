@@ -246,6 +246,7 @@
         let coachGender = 'M';
         let coachStateRecords = {};
         let announcedStatuses = {}; // { athleteNameLower: lastStatus }
+        let speechPrimed = false;
 
         function hidePrimeBanner() {
             const b = document.getElementById('voicePrimeBanner');
@@ -253,6 +254,7 @@
         }
 
         function tapToEnableVoice() {
+            speechPrimed = true;
             hidePrimeBanner();
             if (window.speechSynthesis) {
                 const primer = new SpeechSynthesisUtterance('');
@@ -266,7 +268,7 @@
             if (!window.speechSynthesis || items.length === 0) return;
             if (window.speechSynthesis.paused) window.speechSynthesis.resume();
             if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
-            showAnnouncementToast(items[0].text);
+            if (speechPrimed) showAnnouncementToast(items[0].text);
             items.forEach(function(item, i) {
                 const u = new SpeechSynthesisUtterance(item.text);
                 u.rate = 0.9; u.pitch = 1.0; u.volume = 1.0;
@@ -385,7 +387,7 @@
                 if (window.speechSynthesis && cfg.announcementsEnabled) {
                     const primer = new SpeechSynthesisUtterance('');
                     primer.volume = 0;
-                    primer.onstart = function() { hidePrimeBanner(); };
+                    primer.onstart = function() { speechPrimed = true; hidePrimeBanner(); };
                     window.speechSynthesis.speak(primer);
                 }
                 loadDisplay();
