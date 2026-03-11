@@ -17,6 +17,6 @@ jobs:
         with:
           host: 74.208.218.126
           username: root
-          password: ${{ secrets.SERVER_PASSWORD }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
           source: "*.html,*.js,*.svg,*.png"
           target: /var/www/html/
