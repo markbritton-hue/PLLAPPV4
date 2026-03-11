@@ -158,31 +158,31 @@
         }
 
         .lifts-section {
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 2px solid rgba(96, 165, 250, 0.2);
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px solid rgba(96, 165, 250, 0.2);
         }
 
         .lift-box {
             text-align: center;
-            padding: 8px;
+            padding: 3px 4px;
             background: rgba(15, 23, 42, 0.6);
             border: 1px solid rgba(96, 165, 250, 0.2);
-            border-radius: 10px;
+            border-radius: 6px;
         }
 
         .lift-name {
-            font-size: 0.75rem;
+            font-size: 0.6rem;
             color: rgba(255, 255, 255, 0.6);
             text-transform: uppercase;
             font-weight: 600;
         }
 
         .lift-value {
-            font-size: 1.1rem;
+            font-size: 0.85rem;
             font-weight: 700;
             color: #60a5fa;
-            margin-top: 3px;
+            margin-top: 1px;
         }
 
         .total-box {
@@ -1354,28 +1354,28 @@
                         </div>
 
                         <div class="lifts-section">
-                            <h6 style="color: rgba(255,255,255,0.8); font-size: 0.85rem; margin-bottom: 10px;">
-                                <i class="fas fa-compress-arrows-alt me-2"></i>Squat
+                            <h6 style="color: rgba(255,255,255,0.8); font-size: 0.7rem; margin-bottom: 4px;">
+                                <i class="fas fa-compress-arrows-alt me-1"></i>Squat
                             </h6>
-                            <div class="row g-2 mb-3">
+                            <div class="row g-1 mb-2">
                                 ${renderAttempt(athlete.squat1, '1', 'sq', athlete.weightClass, platformStateRecords)}
                                 ${renderAttempt(athlete.squat2, '2', 'sq', athlete.weightClass, platformStateRecords)}
                                 ${renderAttempt(athlete.squat3, '3', 'sq', athlete.weightClass, platformStateRecords)}
                             </div>
 
-                            <h6 style="color: rgba(255,255,255,0.8); font-size: 0.85rem; margin-bottom: 10px;">
-                                <i class="fas fa-hands me-2"></i>Bench Press
+                            <h6 style="color: rgba(255,255,255,0.8); font-size: 0.7rem; margin-bottom: 4px;">
+                                <i class="fas fa-hands me-1"></i>Bench Press
                             </h6>
-                            <div class="row g-2 mb-3">
+                            <div class="row g-1 mb-2">
                                 ${renderAttempt(athlete.bench1, '1', 'bp', athlete.weightClass, platformStateRecords)}
                                 ${renderAttempt(athlete.bench2, '2', 'bp', athlete.weightClass, platformStateRecords)}
                                 ${renderAttempt(athlete.bench3, '3', 'bp', athlete.weightClass, platformStateRecords)}
                             </div>
 
-                            <h6 style="color: rgba(255,255,255,0.8); font-size: 0.85rem; margin-bottom: 10px;">
-                                <i class="fas fa-weight-hanging me-2"></i>Deadlift
+                            <h6 style="color: rgba(255,255,255,0.8); font-size: 0.7rem; margin-bottom: 4px;">
+                                <i class="fas fa-weight-hanging me-1"></i>Deadlift
                             </h6>
-                            <div class="row g-2">
+                            <div class="row g-1">
                                 ${renderAttempt(athlete.dead1, '1', 'dl', athlete.weightClass, platformStateRecords)}
                                 ${renderAttempt(athlete.dead2, '2', 'dl', athlete.weightClass, platformStateRecords)}
                                 ${renderAttempt(athlete.dead3, '3', 'dl', athlete.weightClass, platformStateRecords)}
