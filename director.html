@@ -275,7 +275,23 @@
         </div>
     </div>
 
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <script>
+        const DIRECTOR_PASSWORD = 'PLLdirector2026';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB5FKrs0rys3ODV2U36YFjJWUu_BgFuDZk",
+            authDomain: "powerlift-live.firebaseapp.com",
+            projectId: "powerlift-live",
+            storageBucket: "powerlift-live.firebasestorage.app",
+            messagingSenderId: "627435482576",
+            appId: "1:627435482576:web:773721b007ae5b5ea35dd5"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
         document.getElementById('registrationForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
@@ -291,37 +307,37 @@
                 return;
             }
 
+            if (password !== DIRECTOR_PASSWORD) {
+                showError('Invalid password. Please check your director password and try again.');
+                return;
+            }
+
+            const match = sheetUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+            if (!match) {
+                showError('Invalid Google Sheets URL. Please paste the full shareable link.');
+                return;
+            }
+
             setLoading(true);
             hideError();
 
             try {
-                const resp = await fetch('http://74.208.218.126/api/register', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, date, time, location, sheetUrl, password })
+                await db.collection('events').add({
+                    name,
+                    date,
+                    time,
+                    location,
+                    sheetUrl,
+                    spreadsheetId: match[1],
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
-                const data = await resp.json();
-
-                if (resp.status === 401) {
-                    showError('Invalid password. Please check your director password and try again.');
-                    setLoading(false);
-                    return;
-                }
-
-                if (!resp.ok) {
-                    showError(data.error || 'An error occurred. Please try again.');
-                    setLoading(false);
-                    return;
-                }
-
-                // Success
                 document.getElementById('formSection').style.display = 'none';
                 document.getElementById('successEventName').textContent = name;
                 document.getElementById('successCard').style.display = 'block';
 
             } catch (err) {
-                showError('Could not reach the server. Please check your connection and try again.');
+                showError('Could not save event. Please try again.');
                 setLoading(false);
             }
         });
