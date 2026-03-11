@@ -348,20 +348,22 @@
 
             let text = null;
             const name = config.athleteName;
+            const platform = athlete.platformName || '';
+            const onPlatform = platform ? ` on ${platform}` : '';
             if (currentStatus === 'lifting') {
-                text = `${name} is now lifting!`;
+                text = `${name} is now lifting${onPlatform}!`;
             } else if (currentStatus === 'on-deck') {
-                text = `${name} is on deck! Get ready!`;
+                text = `${name} is on deck${onPlatform}! Get ready!`;
             } else if (currentStatus === 'done' && lastAnnouncedStatus !== null) {
                 const result = getLastLiftResult(athlete);
                 if (result === 'record') {
-                    text = `${name} has finished with a new state record!`;
+                    text = `${name} has finished${onPlatform} with a new state record!`;
                 } else if (result === 'good') {
-                    text = `${name} is done. Good lift!`;
+                    text = `${name} is done${onPlatform}. Good lift!`;
                 } else if (result === 'failed') {
-                    text = `${name} is done. Failed attempt.`;
+                    text = `${name} is done${onPlatform}. Failed attempt.`;
                 } else {
-                    text = `${name} has finished their lift!`;
+                    text = `${name} has finished their lift${onPlatform}!`;
                 }
             }
 
