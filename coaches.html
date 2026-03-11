@@ -789,9 +789,15 @@
                 }
 
                 let attemptWeight = '';
+                let isRecordAttempt = false;
                 if (athlete.currentColumn && athlete[athlete.currentColumn]) {
                     const weight = athlete[athlete.currentColumn].replace(/[xgXG]/g, '').trim();
-                    if (weight) attemptWeight = `${weight} lbs`;
+                    if (weight) {
+                        attemptWeight = `${weight} lbs`;
+                        const colLiftKey = athlete.currentColumn.startsWith('squat') ? 'sq'
+                            : athlete.currentColumn.startsWith('bench') ? 'bp' : 'dl';
+                        isRecordAttempt = !!(athlete.weightClass && isStateRecordAttempt(parseFloat(weight), colLiftKey, athlete.weightClass, coachStateRecords));
+                    }
                 }
 
                 const rowClass = statusClass || 'default';
@@ -801,7 +807,10 @@
                     <div class="athlete-card ${rowClass}">
                         <div class="athlete-summary" onclick="toggleDetail('${detailId}')">
                             <div style="display:flex; align-items:center; justify-content:space-between; gap:6px;">
-                                <div style="font-size:1rem; font-weight:700; color:white; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; min-width:0;">${athlete.name}</div>
+                                <div style="font-size:1rem; font-weight:700; color:white; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; min-width:0; display:flex; align-items:center; gap:5px;">
+                                    ${isRecordAttempt ? `<i class="fas fa-star" style="color:#f59e0b; font-size:0.85rem; flex-shrink:0;" title="State record attempt"></i>` : ''}
+                                    <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${athlete.name}</span>
+                                </div>
                                 <div style="display:flex; flex-direction:column; align-items:flex-end; gap:2px; flex-shrink:0;">
                                     <div style="display:flex; align-items:center; gap:6px;">
                                         ${athlete.hasPending && overallPosition > 2 ? `<span style="color:white; font-size:0.85rem; font-weight:800; white-space:nowrap;">Pos ${overallPosition}</span>` : ''}
@@ -815,7 +824,7 @@
                                 <span class="designation-badge ${athlete.designation === 'JV' ? 'jv' : 'varsity'}">${athlete.designation === 'JV' ? 'JV' : 'Varsity'}</span>
                                 ${athlete.weightClass ? `<span style="color:rgba(255,255,255,0.7); font-size:0.78rem; font-weight:700; white-space:nowrap;">${athlete.weightClass} lbs</span>` : ''}
                                 ${athlete.bodyWeight ? `<span style="color:rgba(255,255,255,0.5); font-size:0.75rem; font-weight:600; white-space:nowrap;">(${athlete.bodyWeight} lbs BW)</span>` : ''}
-                                ${attemptWeight ? `<span style="color:#60a5fa; font-size:0.78rem; font-weight:700; white-space:nowrap;">Attempting ${attemptWeight}</span>` : ''}
+                                ${attemptWeight ? `<span style="color:${isRecordAttempt ? '#f59e0b' : '#60a5fa'}; font-size:0.78rem; font-weight:700; white-space:nowrap;">${isRecordAttempt ? '⭐ SR Attempt ' : 'Attempting '}${attemptWeight}</span>` : ''}
                             </div>
                         </div>
                         <div class="athlete-details" id="${detailId}">
