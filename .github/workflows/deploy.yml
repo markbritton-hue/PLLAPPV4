@@ -1,4 +1,4 @@
-name: Deploy to IONOS
+name: Deploy to Server
 
 on:
   push:
@@ -12,12 +12,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy via SFTP
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+      - name: Copy files to server
+        uses: appleboy/scp-action@v0.1.7
         with:
-          server: home176860600.1and1-data.host
-          username: acc2057534952
-          password: ${{ secrets.SFTP_PASSWORD }}
-          local_path: './*'
-          remote_path: '/pllapp/'
-          sftp_only: true
+          host: 74.208.218.126
+          username: root
+          password: ${{ secrets.SERVER_PASSWORD }}
+          source: "*.html,*.js,*.svg,*.png"
+          target: /var/www/html/
