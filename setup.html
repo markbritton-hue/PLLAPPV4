@@ -1460,10 +1460,9 @@
         document.querySelector('.instructions').scrollIntoView({ behavior: 'smooth' });
     }
 
-    loadEvents();
     </script>
 
-    <!-- Firebase -->
+    <!-- Firebase — must load before loadEvents() is called -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <script>
@@ -1476,6 +1475,7 @@
             appId: "1:627435482576:web:773721b007ae5b5ea35dd5"
         });
         const db = firebase.firestore();
+        loadEvents();
     </script>
 
     <!-- QR Scanner Modal -->
