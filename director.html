@@ -8,12 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
@@ -21,351 +16,386 @@
             padding: 20px;
             color: white;
         }
-
-        .container {
-            max-width: 680px;
-            margin: 0 auto;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 36px;
-        }
-
+        .container { max-width: 720px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 28px; }
         header h1 {
-            font-size: 2.2rem;
-            font-weight: 800;
+            font-size: 2rem; font-weight: 800;
             background: linear-gradient(135deg, #60a5fa, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 8px;
-        }
-
-        header p {
-            color: rgba(255, 255, 255, 0.65);
-            font-size: 1rem;
-        }
-
-        .btn-back {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(30, 41, 59, 0.8);
-            border: 1px solid rgba(96, 165, 250, 0.25);
-            color: rgba(255, 255, 255, 0.8);
-            padding: 8px 18px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-            margin-bottom: 28px;
-        }
-
-        .btn-back:hover {
-            border-color: #60a5fa;
-            color: white;
-            background: rgba(30, 41, 59, 1);
-        }
-
-        .setup-section {
-            background: rgba(30, 41, 59, 0.7);
-            border: 1px solid rgba(96, 165, 250, 0.25);
-            border-radius: 14px;
-            padding: 28px;
-            margin-bottom: 24px;
-        }
-
-        .setup-section h2 {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #60a5fa;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .form-label {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.9rem;
-            font-weight: 600;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             margin-bottom: 6px;
         }
-
+        header p { color: rgba(255,255,255,0.55); font-size: 0.95rem; }
+        .card {
+            background: rgba(30,41,59,0.7);
+            border: 1px solid rgba(96,165,250,0.2);
+            border-radius: 14px; padding: 28px; margin-bottom: 20px;
+        }
+        .card h2 {
+            font-size: 1.1rem; font-weight: 700; color: #60a5fa;
+            margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
+        }
+        .form-label { color: rgba(255,255,255,0.8); font-size: 0.88rem; font-weight: 600; margin-bottom: 5px; }
         .form-control {
-            background: rgba(15, 23, 42, 0.7);
-            border: 1px solid rgba(96, 165, 250, 0.25);
-            border-radius: 8px;
-            color: white;
-            padding: 10px 14px;
-            font-size: 0.95rem;
-            transition: border-color 0.2s;
+            background: rgba(15,23,42,0.7); border: 1px solid rgba(96,165,250,0.25);
+            border-radius: 8px; color: white; padding: 10px 14px; font-size: 0.9rem;
+            transition: border-color 0.2s; width: 100%;
         }
-
         .form-control:focus {
-            background: rgba(15, 23, 42, 0.9);
-            border-color: #60a5fa;
-            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
-            color: white;
-            outline: none;
+            background: rgba(15,23,42,0.9); border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(96,165,250,0.15); color: white; outline: none;
         }
-
-        .form-control::placeholder {
-            color: rgba(255, 255, 255, 0.3);
-        }
-
-        /* Date and time inputs - fix calendar/clock icon colors on dark bg */
+        .form-control::placeholder { color: rgba(255,255,255,0.3); }
         input[type="date"]::-webkit-calendar-picker-indicator,
-        input[type="time"]::-webkit-calendar-picker-indicator {
-            filter: invert(1) opacity(0.6);
-            cursor: pointer;
-        }
-
-        .btn-submit {
-            width: 100%;
-            padding: 13px;
-            border-radius: 10px;
-            border: none;
+        input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(1) opacity(0.6); cursor: pointer; }
+        .btn-primary-grad {
+            padding: 11px 22px; border-radius: 9px; border: none;
             background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            color: white;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 8px;
+            color: white; font-size: 0.95rem; font-weight: 700;
+            cursor: pointer; transition: all 0.2s;
+            display: inline-flex; align-items: center; gap: 8px;
         }
-
-        .btn-submit:hover:not(:disabled) {
+        .btn-primary-grad:hover:not(:disabled) {
             background: linear-gradient(135deg, #2563eb, #7c3aed);
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.35);
+            transform: translateY(-1px); box-shadow: 0 4px 16px rgba(59,130,246,0.35);
         }
-
-        .btn-submit:disabled {
-            opacity: 0.65;
-            cursor: not-allowed;
-            transform: none;
+        .btn-primary-grad:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-sm-action {
+            padding: 5px 12px; border-radius: 6px; border: none;
+            font-size: 0.8rem; font-weight: 600; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 5px; transition: all 0.15s;
         }
-
-        .alert-success-card {
-            background: rgba(16, 185, 129, 0.12);
-            border: 1px solid rgba(16, 185, 129, 0.45);
-            border-radius: 12px;
-            padding: 24px;
-            text-align: center;
-            display: none;
+        .btn-edit  { background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.4); color: #fbbf24; }
+        .btn-edit:hover  { background: rgba(245,158,11,0.28); }
+        .btn-delete{ background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4); color: #f87171; }
+        .btn-delete:hover{ background: rgba(239,68,68,0.28); }
+        .btn-cancel{ background: rgba(100,116,139,0.2); border: 1px solid rgba(100,116,139,0.4); color: rgba(255,255,255,0.7); }
+        .btn-cancel:hover{ background: rgba(100,116,139,0.35); }
+        .event-row {
+            background: rgba(15,23,42,0.4); border: 1px solid rgba(96,165,250,0.12);
+            border-radius: 10px; padding: 14px 16px; margin-bottom: 10px;
+            display: flex; align-items: center; gap: 14px;
         }
-
-        .alert-success-card .success-icon {
-            font-size: 2.5rem;
-            color: #10b981;
-            margin-bottom: 12px;
-        }
-
-        .alert-success-card h3 {
-            color: #10b981;
-            font-weight: 700;
-            font-size: 1.15rem;
-            margin-bottom: 8px;
-        }
-
-        .alert-success-card p {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.9rem;
-            margin-bottom: 0;
-        }
-
-        .alert-success-card .event-name-badge {
-            display: inline-block;
-            background: rgba(16, 185, 129, 0.2);
-            border: 1px solid rgba(16, 185, 129, 0.4);
-            border-radius: 6px;
-            padding: 4px 12px;
-            font-weight: 700;
-            color: white;
-            font-size: 1rem;
-            margin-bottom: 12px;
-        }
-
+        .event-row-info { flex: 1; min-width: 0; }
+        .event-row-name { font-weight: 700; color: white; font-size: 0.95rem; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .event-row-meta { color: rgba(255,255,255,0.5); font-size: 0.78rem; display: flex; gap: 12px; flex-wrap: wrap; }
+        .event-row-actions { display: flex; gap: 6px; flex-shrink: 0; }
         .error-msg {
-            color: #f87171;
-            font-size: 0.88rem;
-            margin-top: 10px;
-            display: none;
-            padding: 10px 14px;
-            background: rgba(248, 113, 113, 0.1);
-            border: 1px solid rgba(248, 113, 113, 0.3);
-            border-radius: 8px;
+            color: #f87171; font-size: 0.87rem; margin-top: 10px;
+            padding: 10px 14px; background: rgba(248,113,113,0.1);
+            border: 1px solid rgba(248,113,113,0.3); border-radius: 8px; display: none;
         }
-
-        .note-text {
-            color: rgba(255, 255, 255, 0.45);
-            font-size: 0.8rem;
-            margin-top: 6px;
+        .note-text { color: rgba(255,255,255,0.4); font-size: 0.78rem; margin-top: 5px; }
+        .divider { border-color: rgba(96,165,250,0.12); margin: 18px 0; }
+        .btn-back {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(30,41,59,0.8); border: 1px solid rgba(96,165,250,0.2);
+            color: rgba(255,255,255,0.7); padding: 7px 16px; border-radius: 8px;
+            text-decoration: none; font-size: 0.85rem; transition: all 0.2s; margin-bottom: 22px;
         }
+        .btn-back:hover { border-color: #60a5fa; color: white; }
+        #addEventBtn {
+            width: 100%; padding: 11px; border-radius: 9px; border: 1px dashed rgba(96,165,250,0.4);
+            background: rgba(96,165,250,0.06); color: #60a5fa; font-size: 0.9rem;
+            font-weight: 600; cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        #addEventBtn:hover { background: rgba(96,165,250,0.12); border-color: #60a5fa; }
+        .toast-msg {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+            background: #10b981; color: white; padding: 10px 22px; border-radius: 9px;
+            font-weight: 600; font-size: 0.9rem; z-index: 9999; opacity: 0;
+            transition: opacity 0.3s; pointer-events: none;
+        }
+        .toast-msg.show { opacity: 1; }
+        /* Confirm modal */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.7); z-index: 9000;
+            align-items: center; justify-content: center;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-box {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: 1px solid rgba(239,68,68,0.4); border-radius: 16px;
+            padding: 32px; max-width: 380px; width: 90%; text-align: center;
+        }
+        .modal-box h3 { color: #f87171; font-size: 1.2rem; margin-bottom: 10px; }
+        .modal-box p { color: rgba(255,255,255,0.65); font-size: 0.9rem; margin-bottom: 24px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1><i class="fas fa-barbell" style="font-size:1.8rem; vertical-align:middle; -webkit-text-fill-color:#60a5fa;"></i> PowerLift Live | Director Portal</h1>
-            <p>Register your meet so athletes and coaches can find it instantly</p>
-        </header>
+<div class="container">
+    <header>
+        <h1><i class="fas fa-dumbbell" style="-webkit-text-fill-color:#60a5fa;font-size:1.6rem;vertical-align:middle;"></i> Director Portal</h1>
+        <p>Manage meets listed in PowerLift Live</p>
+    </header>
 
-        <a href="index.html" class="btn-back">
-            <i class="fas fa-arrow-left"></i> Back to Home
-        </a>
+    <a href="index.html" class="btn-back"><i class="fas fa-arrow-left"></i> Home</a>
 
-        <!-- Success Card (hidden until submission) -->
-        <div class="alert-success-card" id="successCard">
-            <div class="success-icon"><i class="fas fa-circle-check"></i></div>
-            <h3>Event Registered!</h3>
-            <div class="event-name-badge" id="successEventName"></div>
-            <p>Your event has been registered and will appear in the app within 30 seconds.</p>
+    <!-- PASSWORD GATE -->
+    <div id="passwordGate" class="card">
+        <h2><i class="fas fa-lock"></i> Director Login</h2>
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-control" id="gatePassword" placeholder="Enter director password" autocomplete="current-password">
         </div>
-
-        <!-- Registration Form -->
-        <div class="setup-section" id="formSection">
-            <h2><i class="fas fa-calendar-plus"></i> Register Your Event</h2>
-
-            <form id="registrationForm" novalidate>
-                <div class="mb-3">
-                    <label for="eventName" class="form-label">Event Name <span style="color:#f87171;">*</span></label>
-                    <input type="text" class="form-control" id="eventName" placeholder="e.g. MSHSL State Powerlifting Championships" required>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-sm-6 mb-3 mb-sm-0">
-                        <label for="eventDate" class="form-label">Date <span style="color:#f87171;">*</span></label>
-                        <input type="date" class="form-control" id="eventDate" required>
-                    </div>
-                    <div class="col-sm-6">
-                        <label for="eventTime" class="form-label">Time <span style="color:#f87171;">*</span></label>
-                        <input type="time" class="form-control" id="eventTime" required>
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <label for="eventLocation" class="form-label">Location / Venue <span style="color:#f87171;">*</span></label>
-                    <input type="text" class="form-control" id="eventLocation" placeholder="e.g. St. Cloud Civic Center, St. Cloud MN" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="sheetUrl" class="form-label">Google Sheet URL <span style="color:#f87171;">*</span></label>
-                    <input type="text" class="form-control" id="sheetUrl" placeholder="https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/edit?usp=sharing" required>
-                    <div class="note-text"><i class="fas fa-info-circle me-1"></i>Paste the full shareable link from your Google Sheet.</div>
-                </div>
-
-                <div class="mb-4">
-                    <label for="directorPassword" class="form-label">Director Password <span style="color:#f87171;">*</span></label>
-                    <input type="password" class="form-control" id="directorPassword" placeholder="Enter director password" required>
-                </div>
-
-                <div class="error-msg" id="errorMsg"></div>
-
-                <button type="submit" class="btn-submit" id="submitBtn">
-                    <i class="fas fa-rocket" id="submitIcon"></i>
-                    <span id="submitText">Register Event</span>
-                </button>
-            </form>
+        <div class="error-msg" id="gateError">Invalid password.</div>
+        <div style="margin-top:14px;">
+            <button class="btn-primary-grad" id="gateBtn" onclick="unlock()">
+                <i class="fas fa-unlock"></i> Unlock
+            </button>
         </div>
     </div>
 
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-    <script>
-        const DIRECTOR_PASSWORD = 'PLLdirector2026';
+    <!-- MANAGEMENT DASHBOARD (hidden until unlocked) -->
+    <div id="dashboard" style="display:none;">
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyB5FKrs0rys3ODV2U36YFjJWUu_BgFuDZk",
-            authDomain: "powerlift-live.firebaseapp.com",
-            projectId: "powerlift-live",
-            storageBucket: "powerlift-live.firebasestorage.app",
-            messagingSenderId: "627435482576",
-            appId: "1:627435482576:web:773721b007ae5b5ea35dd5"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+        <!-- Events List -->
+        <div class="card">
+            <h2><i class="fas fa-calendar-alt"></i> Events
+                <span id="eventCount" style="background:rgba(96,165,250,0.15);color:#60a5fa;font-size:0.75rem;padding:2px 10px;border-radius:20px;margin-left:auto;"></span>
+            </h2>
+            <div id="eventsList"><div style="color:rgba(255,255,255,0.3);font-size:0.9rem;padding:8px 0;">Loading...</div></div>
+            <hr class="divider">
+            <button id="addEventBtn" onclick="showForm()">
+                <i class="fas fa-plus-circle"></i> Add New Event
+            </button>
+        </div>
 
-        document.getElementById('registrationForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+        <!-- Add / Edit Form -->
+        <div class="card" id="formCard" style="display:none;border-color:rgba(167,139,250,0.35);">
+            <h2 id="formTitle"><i class="fas fa-calendar-plus"></i> Add Event</h2>
+            <input type="hidden" id="editDocId">
+            <div class="mb-3">
+                <label class="form-label">Event Name <span style="color:#f87171">*</span></label>
+                <input type="text" class="form-control" id="fName" placeholder="e.g. MHSPL State Championships">
+            </div>
+            <div class="row mb-3">
+                <div class="col-sm-6 mb-3 mb-sm-0">
+                    <label class="form-label">Date <span style="color:#f87171">*</span></label>
+                    <input type="date" class="form-control" id="fDate">
+                </div>
+                <div class="col-sm-6">
+                    <label class="form-label">Time <span style="color:#f87171">*</span></label>
+                    <input type="time" class="form-control" id="fTime">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Location / Venue <span style="color:#f87171">*</span></label>
+                <input type="text" class="form-control" id="fLocation" placeholder="e.g. Kellogg Arena, Battle Creek MI">
+            </div>
+            <div class="mb-4">
+                <label class="form-label">Google Sheet URL <span style="color:#f87171">*</span></label>
+                <input type="text" class="form-control" id="fSheetUrl" placeholder="https://docs.google.com/spreadsheets/d/...">
+                <div class="note-text"><i class="fas fa-info-circle me-1"></i>Paste the full shareable link.</div>
+            </div>
+            <div class="error-msg" id="formError"></div>
+            <div style="display:flex;gap:10px;margin-top:4px;">
+                <button class="btn-primary-grad" id="saveBtn" onclick="saveEvent()">
+                    <i class="fas fa-save" id="saveIcon"></i>
+                    <span id="saveText">Save Event</span>
+                </button>
+                <button class="btn-sm-action btn-cancel" style="padding:10px 18px;" onclick="hideForm()">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
-            const name     = document.getElementById('eventName').value.trim();
-            const date     = document.getElementById('eventDate').value;
-            const time     = document.getElementById('eventTime').value;
-            const location = document.getElementById('eventLocation').value.trim();
-            const sheetUrl = document.getElementById('sheetUrl').value.trim();
-            const password = document.getElementById('directorPassword').value;
+<!-- Delete Confirm Modal -->
+<div class="modal-overlay" id="confirmModal">
+    <div class="modal-box">
+        <h3><i class="fas fa-triangle-exclamation me-2"></i>Delete Event?</h3>
+        <p id="confirmEventName"></p>
+        <div style="display:flex;gap:10px;justify-content:center;">
+            <button class="btn-sm-action btn-delete" style="padding:9px 20px;font-size:0.9rem;" onclick="confirmDelete()">
+                <i class="fas fa-trash"></i> Delete
+            </button>
+            <button class="btn-sm-action btn-cancel" style="padding:9px 20px;font-size:0.9rem;" onclick="closeModal()">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
 
-            if (!name || !date || !time || !location || !sheetUrl || !password) {
-                showError('Please fill in all required fields.');
-                return;
-            }
+<div class="toast-msg" id="toast"></div>
 
-            if (password !== DIRECTOR_PASSWORD) {
-                showError('Invalid password. Please check your director password and try again.');
-                return;
-            }
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+    const DIRECTOR_PASSWORD = 'PLLdirector2026';
 
-            const match = sheetUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
-            if (!match) {
-                showError('Invalid Google Sheets URL. Please paste the full shareable link.');
-                return;
-            }
+    firebase.initializeApp({
+        apiKey: "AIzaSyB5FKrs0rys3ODV2U36YFjJWUu_BgFuDZk",
+        authDomain: "powerlift-live.firebaseapp.com",
+        projectId: "powerlift-live",
+        storageBucket: "powerlift-live.firebasestorage.app",
+        messagingSenderId: "627435482576",
+        appId: "1:627435482576:web:773721b007ae5b5ea35dd5"
+    });
+    const db = firebase.firestore();
 
-            setLoading(true);
-            hideError();
+    let pendingDeleteId = null;
+    let allEvents = [];
 
-            try {
-                await db.collection('events').add({
-                    name,
-                    date,
-                    time,
-                    location,
-                    sheetUrl,
-                    spreadsheetId: match[1],
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
+    // ── Auth ──────────────────────────────────────────────────
+    function unlock() {
+        const pw = document.getElementById('gatePassword').value;
+        if (pw !== DIRECTOR_PASSWORD) {
+            document.getElementById('gateError').style.display = 'block';
+            return;
+        }
+        document.getElementById('passwordGate').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        loadEvents();
+    }
+    document.getElementById('gatePassword').addEventListener('keydown', e => { if (e.key === 'Enter') unlock(); });
 
-                document.getElementById('formSection').style.display = 'none';
-                document.getElementById('successEventName').textContent = name;
-                document.getElementById('successCard').style.display = 'block';
+    // ── Load events ───────────────────────────────────────────
+    async function loadEvents() {
+        try {
+            const snap = await db.collection('events').get();
+            allEvents = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            allEvents.sort((a, b) => new Date(b.date) - new Date(a.date));
+            renderEvents();
+        } catch(e) {
+            document.getElementById('eventsList').innerHTML = '<div style="color:#f87171;font-size:0.9rem;">Failed to load events.</div>';
+        }
+    }
 
-            } catch (err) {
-                showError('Could not save event. Please try again.');
-                setLoading(false);
-            }
-        });
+    function renderEvents() {
+        const list = document.getElementById('eventsList');
+        document.getElementById('eventCount').textContent = allEvents.length + ' events';
+        if (!allEvents.length) {
+            list.innerHTML = '<div style="color:rgba(255,255,255,0.3);font-size:0.88rem;padding:6px 0;">No events yet. Add one below.</div>';
+            return;
+        }
+        list.innerHTML = allEvents.map(ev => {
+            const d = ev.date ? new Date(ev.date + 'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '';
+            const t = ev.time ? fmtTime(ev.time) : '';
+            return `<div class="event-row">
+                <div class="event-row-info">
+                    <div class="event-row-name">${ev.name}</div>
+                    <div class="event-row-meta">
+                        ${d ? `<span><i class="fas fa-calendar me-1" style="color:#60a5fa;"></i>${d}${t ? ' · ' + t : ''}</span>` : ''}
+                        ${ev.location ? `<span><i class="fas fa-map-marker-alt me-1" style="color:#60a5fa;"></i>${ev.location}</span>` : ''}
+                    </div>
+                </div>
+                <div class="event-row-actions">
+                    <button class="btn-sm-action btn-edit" onclick="editEvent('${ev.id}')"><i class="fas fa-pen"></i> Edit</button>
+                    <button class="btn-sm-action btn-delete" onclick="promptDelete('${ev.id}','${ev.name.replace(/'/g,"\\'")}')"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>`;
+        }).join('');
+    }
 
-        function setLoading(loading) {
-            const btn  = document.getElementById('submitBtn');
-            const icon = document.getElementById('submitIcon');
-            const text = document.getElementById('submitText');
-            if (loading) {
-                btn.disabled = true;
-                icon.className = 'fas fa-spinner fa-spin';
-                text.textContent = 'Registering...';
+    function fmtTime(t) {
+        const [h, m] = t.split(':');
+        const hr = parseInt(h);
+        return `${hr % 12 || 12}:${m} ${hr >= 12 ? 'PM' : 'AM'}`;
+    }
+
+    // ── Form ──────────────────────────────────────────────────
+    function showForm(ev = null) {
+        document.getElementById('formCard').style.display = 'block';
+        document.getElementById('formError').style.display = 'none';
+        document.getElementById('formTitle').innerHTML = ev
+            ? '<i class="fas fa-pen"></i> Edit Event'
+            : '<i class="fas fa-calendar-plus"></i> Add Event';
+        document.getElementById('editDocId').value = ev ? ev.id : '';
+        document.getElementById('fName').value     = ev ? ev.name : '';
+        document.getElementById('fDate').value     = ev ? ev.date : '';
+        document.getElementById('fTime').value     = ev ? ev.time : '';
+        document.getElementById('fLocation').value = ev ? ev.location : '';
+        document.getElementById('fSheetUrl').value = ev ? ev.sheetUrl : '';
+        document.getElementById('saveText').textContent = ev ? 'Save Changes' : 'Save Event';
+        document.getElementById('formCard').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function hideForm() {
+        document.getElementById('formCard').style.display = 'none';
+    }
+
+    function editEvent(id) {
+        const ev = allEvents.find(e => e.id === id);
+        if (ev) showForm(ev);
+    }
+
+    async function saveEvent() {
+        const docId    = document.getElementById('editDocId').value;
+        const name     = document.getElementById('fName').value.trim();
+        const date     = document.getElementById('fDate').value;
+        const time     = document.getElementById('fTime').value;
+        const location = document.getElementById('fLocation').value.trim();
+        const sheetUrl = document.getElementById('fSheetUrl').value.trim();
+
+        if (!name || !date || !time || !location || !sheetUrl) {
+            showFormError('Please fill in all fields.');
+            return;
+        }
+        const match = sheetUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+        if (!match) { showFormError('Invalid Google Sheets URL.'); return; }
+
+        setSaving(true);
+        try {
+            const data = { name, date, time, location, sheetUrl, spreadsheetId: match[1] };
+            if (docId) {
+                await db.collection('events').doc(docId).update(data);
+                showToast('Event updated!');
             } else {
-                btn.disabled = false;
-                icon.className = 'fas fa-rocket';
-                text.textContent = 'Register Event';
+                data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                await db.collection('events').add(data);
+                showToast('Event added!');
             }
+            hideForm();
+            await loadEvents();
+        } catch(e) {
+            showFormError('Save failed. Please try again.');
         }
+        setSaving(false);
+    }
 
-        function showError(msg) {
-            const el = document.getElementById('errorMsg');
-            el.textContent = msg;
-            el.style.display = 'block';
-        }
+    function setSaving(on) {
+        document.getElementById('saveBtn').disabled = on;
+        document.getElementById('saveIcon').className = on ? 'fas fa-spinner fa-spin' : 'fas fa-save';
+    }
+    function showFormError(msg) {
+        const el = document.getElementById('formError');
+        el.textContent = msg; el.style.display = 'block';
+    }
 
-        function hideError() {
-            document.getElementById('errorMsg').style.display = 'none';
+    // ── Delete ────────────────────────────────────────────────
+    function promptDelete(id, name) {
+        pendingDeleteId = id;
+        document.getElementById('confirmEventName').textContent = `"${name}" will be permanently removed.`;
+        document.getElementById('confirmModal').classList.add('show');
+    }
+    function closeModal() {
+        pendingDeleteId = null;
+        document.getElementById('confirmModal').classList.remove('show');
+    }
+    async function confirmDelete() {
+        if (!pendingDeleteId) return;
+        try {
+            await db.collection('events').doc(pendingDeleteId).delete();
+            closeModal();
+            showToast('Event deleted.');
+            await loadEvents();
+        } catch(e) {
+            closeModal();
+            showToast('Delete failed.');
         }
-    </script>
+    }
+
+    // ── Toast ─────────────────────────────────────────────────
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2800);
+    }
+</script>
 </body>
 </html>
