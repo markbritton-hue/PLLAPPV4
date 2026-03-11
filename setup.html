@@ -1328,15 +1328,11 @@
             const step2Check = document.getElementById('step2Check');
             const match = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
             if (!match) {
-                step2Check.innerHTML = '✅ Sheet URL loaded';
-                step2Check.style.color = '#10b981';
-                step2Check.style.display = 'block';
+                if (step2Check) { step2Check.innerHTML = '✅ Sheet URL loaded'; step2Check.style.color = '#10b981'; step2Check.style.display = 'block'; }
                 return;
             }
             const spreadsheetId = match[1];
-            step2Check.innerHTML = '⏳ Loading sheet name...';
-            step2Check.style.color = 'rgba(255,255,255,0.6)';
-            step2Check.style.display = 'block';
+            if (step2Check) { step2Check.innerHTML = '⏳ Loading sheet name...'; step2Check.style.color = 'rgba(255,255,255,0.6)'; step2Check.style.display = 'block'; }
             try {
                 const response = await fetch(`http://74.208.218.126/cache/meta_${spreadsheetId}.html`);
                 if (response.ok) {
@@ -1345,14 +1341,14 @@
                     const title = titleMatch
                         ? titleMatch[1].replace(' - Google Sheets', '').trim()
                         : 'Sheet loaded';
-                    step2Check.innerHTML = `✅ &nbsp;<span style="color: white;">${title}</span>`;
+                    if (step2Check) step2Check.innerHTML = `✅ &nbsp;<span style="color: white;">${title}</span>`;
                 } else {
-                    step2Check.innerHTML = '✅ Sheet URL loaded successfully';
+                    if (step2Check) step2Check.innerHTML = '✅ Sheet URL loaded successfully';
                 }
             } catch (e) {
-                step2Check.innerHTML = '✅ Sheet URL loaded successfully';
+                if (step2Check) step2Check.innerHTML = '✅ Sheet URL loaded successfully';
             }
-            step2Check.style.color = '#10b981';
+            if (step2Check) step2Check.style.color = '#10b981';
         }
 
         function scanQRCode() {
