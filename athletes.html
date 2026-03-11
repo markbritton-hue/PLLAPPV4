@@ -425,7 +425,7 @@
             const newMap = {};
             for (const platform of platforms) {
                 try {
-                    const csvUrl = `http://74.200.218.126/cache/sheet_${config.spreadsheetId}_${platform.gid}.csv`;
+                    const csvUrl = `http://74.208.218.126/cache/sheet_${config.spreadsheetId}_${platform.gid}.csv`;
                     const response = await fetch(csvUrl);
                     if (!response.ok) throw new Error(`Failed to fetch platform data: ${response.status}`);
                     const text = await response.text();
@@ -537,7 +537,7 @@
         }
 
         async function loadSheetByGid(spreadsheetId, gid, designation = '') {
-            const csvUrl = `http://74.200.218.126/cache/sheet_${spreadsheetId}_${gid}.csv`;
+            const csvUrl = `http://74.208.218.126/cache/sheet_${spreadsheetId}_${gid}.csv`;
 
             const response = await fetch(csvUrl);
             if (!response.ok) {

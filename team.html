@@ -438,7 +438,7 @@
                     throw new Error('Invalid Google Sheet URL');
                 }
 
-                const csvUrl = `http://74.200.218.126/cache/sheet_${parsed.spreadsheetId}_${parsed.gid}.csv`;
+                const csvUrl = `http://74.208.218.126/cache/sheet_${parsed.spreadsheetId}_${parsed.gid}.csv`;
 
                 const response = await fetch(csvUrl);
                 if (!response.ok) {

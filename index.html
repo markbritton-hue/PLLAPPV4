@@ -556,7 +556,7 @@
             } else {
                 const { spreadsheetId } = JSON.parse(config);
                 if (spreadsheetId) {
-                    fetch(`http://74.200.218.126/cache/meta_${spreadsheetId}.html`)
+                    fetch(`http://74.208.218.126/cache/meta_${spreadsheetId}.html`)
                         .then(r => r.text())
                         .then(html => {
                             const match = html.match(/<title>([^<]+)<\/title>/);

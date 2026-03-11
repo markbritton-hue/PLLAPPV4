@@ -703,7 +703,7 @@
                 // Detect gender from spreadsheet title for state record lookup
                 // Load M records immediately as default; re-render after gender confirmed
                 refreshStateRecords();
-                fetch(`http://74.200.218.126/cache/meta_${config.spreadsheetId}.html`)
+                fetch(`http://74.208.218.126/cache/meta_${config.spreadsheetId}.html`)
                     .then(r => r.text())
                     .then(html => {
                         const m = html.match(/<title>([^<]+)<\/title>/);
@@ -730,7 +730,7 @@
         async function loadAllPlatformWeightClasses(spreadsheetId, platforms) {
             const results = await Promise.all(platforms.map(async platform => {
                 try {
-                    const csvUrl = `http://74.200.218.126/cache/sheet_${spreadsheetId}_${platform.gid}.csv`;
+                    const csvUrl = `http://74.208.218.126/cache/sheet_${spreadsheetId}_${platform.gid}.csv`;
                     const response = await fetch(csvUrl);
                     if (!response.ok) return { gid: platform.gid, weightClasses: [] };
                     const csvData = parseCSV(await response.text());
@@ -817,7 +817,7 @@
                 const config = JSON.parse(configStr);
 
                 // Fetch the platform data
-                const csvUrl = `http://74.200.218.126/cache/sheet_${config.spreadsheetId}_${currentPlatformGid}.csv`;
+                const csvUrl = `http://74.208.218.126/cache/sheet_${config.spreadsheetId}_${currentPlatformGid}.csv`;
 
                 const response = await fetch(csvUrl);
                 if (!response.ok) {

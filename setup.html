@@ -732,7 +732,7 @@
 
         async function autoDetectSheetsFromHTML(spreadsheetId) {
             try {
-                const url = `http://74.200.218.126/cache/meta_${spreadsheetId}.html`;
+                const url = `http://74.208.218.126/cache/meta_${spreadsheetId}.html`;
                 const response = await fetch(url);
 
                 if (!response.ok) {
@@ -1122,7 +1122,7 @@
                 }
 
                 // Construct CSV URL
-                const csvUrl = `http://74.200.218.126/cache/sheet_${parsed.spreadsheetId}_${parsed.gid}.csv`;
+                const csvUrl = `http://74.208.218.126/cache/sheet_${parsed.spreadsheetId}_${parsed.gid}.csv`;
 
                 // Fetch the data
                 const response = await fetch(csvUrl);
@@ -1283,7 +1283,7 @@
             }
 
             async function fetchCSV(gid) {
-                const csvUrl = `http://74.200.218.126/cache/sheet_${spreadsheetId}_${gid}.csv`;
+                const csvUrl = `http://74.208.218.126/cache/sheet_${spreadsheetId}_${gid}.csv`;
                 const response = await fetch(csvUrl);
                 if (!response.ok) return null;
                 return parseCSV(await response.text());
@@ -1358,7 +1358,7 @@
             step2Check.style.color = 'rgba(255,255,255,0.6)';
             step2Check.style.display = 'block';
             try {
-                const response = await fetch(`http://74.200.218.126/cache/meta_${spreadsheetId}.html`);
+                const response = await fetch(`http://74.208.218.126/cache/meta_${spreadsheetId}.html`);
                 if (response.ok) {
                     const html = await response.text();
                     const titleMatch = html.match(/<title>([^<]+)<\/title>/);

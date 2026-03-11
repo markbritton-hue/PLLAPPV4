@@ -248,7 +248,7 @@
             document.getElementById('pageTitle').innerHTML = `<i class="fas fa-trophy me-2"></i>${sheet.name}`;
 
             try {
-                const csvUrl = `http://74.200.218.126/cache/sheet_${config.spreadsheetId}_${sheet.gid}.csv`;
+                const csvUrl = `http://74.208.218.126/cache/sheet_${config.spreadsheetId}_${sheet.gid}.csv`;
                 const response = await fetch(csvUrl);
                 if (!response.ok) throw new Error(`Failed to fetch sheet data: ${response.status}`);
                 updateCacheBadge(response.headers.get('X-Cache') || 'MISS', response.headers.get('X-Cache-Age'));
