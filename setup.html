@@ -1025,11 +1025,6 @@
             const configStr = localStorage.getItem('trplConfig');
 
             if (!configStr) {
-                // Load default configuration
-                const sampleUrl = 'https://docs.google.com/spreadsheets/d/1UIWm24ynHDIM2mqByawXotcsDKvszGwVq22vWj_2w7o/edit?usp=sharing';
-                document.getElementById('spreadsheetUrl').value = sampleUrl;
-                onQRScanned(sampleUrl);
-                autoDetectSheets();
                 return;
             }
 
