@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerLift Live | Director Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: rgba(255, 255, 255, 0.65);
+            font-size: 1rem;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(96, 165, 250, 0.25);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 8px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            margin-bottom: 28px;
+        }
+
+        .btn-back:hover {
+            border-color: #60a5fa;
+            color: white;
+            background: rgba(30, 41, 59, 1);
+        }
+
+        .setup-section {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(96, 165, 250, 0.25);
+            border-radius: 14px;
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+
+        .setup-section h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #60a5fa;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(96, 165, 250, 0.25);
+            border-radius: 8px;
+            color: white;
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            background: rgba(15, 23, 42, 0.9);
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
+            color: white;
+            outline: none;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Date and time inputs - fix calendar/clock icon colors on dark bg */
+        input[type="date"]::-webkit-calendar-picker-indicator,
+        input[type="time"]::-webkit-calendar-picker-indicator {
+            filter: invert(1) opacity(0.6);
+            cursor: pointer;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 13px;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.35);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .alert-success-card {
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.45);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            display: none;
+        }
+
+        .alert-success-card .success-icon {
+            font-size: 2.5rem;
+            color: #10b981;
+            margin-bottom: 12px;
+        }
+
+        .alert-success-card h3 {
+            color: #10b981;
+            font-weight: 700;
+            font-size: 1.15rem;
+            margin-bottom: 8px;
+        }
+
+        .alert-success-card p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+
+        .alert-success-card .event-name-badge {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            border-radius: 6px;
+            padding: 4px 12px;
+            font-weight: 700;
+            color: white;
+            font-size: 1rem;
+            margin-bottom: 12px;
+        }
+
+        .error-msg {
+            color: #f87171;
+            font-size: 0.88rem;
+            margin-top: 10px;
+            display: none;
+            padding: 10px 14px;
+            background: rgba(248, 113, 113, 0.1);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            border-radius: 8px;
+        }
+
+        .note-text {
+            color: rgba(255, 255, 255, 0.45);
+            font-size: 0.8rem;
+            margin-top: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-barbell" style="font-size:1.8rem; vertical-align:middle; -webkit-text-fill-color:#60a5fa;"></i> PowerLift Live | Director Portal</h1>
+            <p>Register your meet so athletes and coaches can find it instantly</p>
+        </header>
+
+        <a href="index.html" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+
+        <!-- Success Card (hidden until submission) -->
+        <div class="alert-success-card" id="successCard">
+            <div class="success-icon"><i class="fas fa-circle-check"></i></div>
+            <h3>Event Registered!</h3>
+            <div class="event-name-badge" id="successEventName"></div>
+            <p>Your event has been registered and will appear in the app within 30 seconds.</p>
+        </div>
+
+        <!-- Registration Form -->
+        <div class="setup-section" id="formSection">
+            <h2><i class="fas fa-calendar-plus"></i> Register Your Event</h2>
+
+            <form id="registrationForm" novalidate>
+                <div class="mb-3">
+                    <label for="eventName" class="form-label">Event Name <span style="color:#f87171;">*</span></label>
+                    <input type="text" class="form-control" id="eventName" placeholder="e.g. MSHSL State Powerlifting Championships" required>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-sm-6 mb-3 mb-sm-0">
+                        <label for="eventDate" class="form-label">Date <span style="color:#f87171;">*</span></label>
+                        <input type="date" class="form-control" id="eventDate" required>
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="eventTime" class="form-label">Time <span style="color:#f87171;">*</span></label>
+                        <input type="time" class="form-control" id="eventTime" required>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="eventLocation" class="form-label">Location / Venue <span style="color:#f87171;">*</span></label>
+                    <input type="text" class="form-control" id="eventLocation" placeholder="e.g. St. Cloud Civic Center, St. Cloud MN" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="sheetUrl" class="form-label">Google Sheet URL <span style="color:#f87171;">*</span></label>
+                    <input type="text" class="form-control" id="sheetUrl" placeholder="https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/edit?usp=sharing" required>
+                    <div class="note-text"><i class="fas fa-info-circle me-1"></i>Paste the full shareable link from your Google Sheet.</div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="directorPassword" class="form-label">Director Password <span style="color:#f87171;">*</span></label>
+                    <input type="password" class="form-control" id="directorPassword" placeholder="Enter director password" required>
+                </div>
+
+                <div class="error-msg" id="errorMsg"></div>
+
+                <button type="submit" class="btn-submit" id="submitBtn">
+                    <i class="fas fa-rocket" id="submitIcon"></i>
+                    <span id="submitText">Register Event</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('registrationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const name     = document.getElementById('eventName').value.trim();
+            const date     = document.getElementById('eventDate').value;
+            const time     = document.getElementById('eventTime').value;
+            const location = document.getElementById('eventLocation').value.trim();
+            const sheetUrl = document.getElementById('sheetUrl').value.trim();
+            const password = document.getElementById('directorPassword').value;
+
+            if (!name || !date || !time || !location || !sheetUrl || !password) {
+                showError('Please fill in all required fields.');
+                return;
+            }
+
+            setLoading(true);
+            hideError();
+
+            try {
+                const resp = await fetch('http://74.208.218.126/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, date, time, location, sheetUrl, password })
+                });
+
+                const data = await resp.json();
+
+                if (resp.status === 401) {
+                    showError('Invalid password. Please check your director password and try again.');
+                    setLoading(false);
+                    return;
+                }
+
+                if (!resp.ok) {
+                    showError(data.error || 'An error occurred. Please try again.');
+                    setLoading(false);
+                    return;
+                }
+
+                // Success
+                document.getElementById('formSection').style.display = 'none';
+                document.getElementById('successEventName').textContent = name;
+                document.getElementById('successCard').style.display = 'block';
+
+            } catch (err) {
+                showError('Could not reach the server. Please check your connection and try again.');
+                setLoading(false);
+            }
+        });
+
+        function setLoading(loading) {
+            const btn  = document.getElementById('submitBtn');
+            const icon = document.getElementById('submitIcon');
+            const text = document.getElementById('submitText');
+            if (loading) {
+                btn.disabled = true;
+                icon.className = 'fas fa-spinner fa-spin';
+                text.textContent = 'Registering...';
+            } else {
+                btn.disabled = false;
+                icon.className = 'fas fa-rocket';
+                text.textContent = 'Register Event';
+            }
+        }
+
+        function showError(msg) {
+            const el = document.getElementById('errorMsg');
+            el.textContent = msg;
+            el.style.display = 'block';
+        }
+
+        function hideError() {
+            document.getElementById('errorMsg').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
