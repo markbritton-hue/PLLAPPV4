@@ -556,7 +556,7 @@
             } else {
                 const { spreadsheetId } = JSON.parse(config);
                 if (spreadsheetId) {
-                    fetch(`proxy.php?type=sheets&id=${spreadsheetId}`)
+                    fetch(`http://74.200.218.126/cache/meta_${spreadsheetId}.html`)
                         .then(r => r.text())
                         .then(html => {
                             const match = html.match(/<title>([^<]+)<\/title>/);

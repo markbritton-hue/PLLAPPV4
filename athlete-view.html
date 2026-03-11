@@ -419,7 +419,7 @@
 
             // Detect gender for state records
             if (config.spreadsheetId) {
-                fetch(`proxy.php?type=sheets&id=${config.spreadsheetId}`)
+                fetch(`http://74.200.218.126/cache/meta_${config.spreadsheetId}.html`)
                     .then(r => r.text())
                     .then(html => {
                         const m = html.match(/<title>([^<]+)<\/title>/);
@@ -516,7 +516,7 @@
         }
 
         async function loadSheetAthletes(spreadsheetId, gid, designation, configuredSchool) {
-            const csvUrl = `proxy.php?id=${spreadsheetId}&gid=${gid}`;
+            const csvUrl = `http://74.200.218.126/cache/sheet_${spreadsheetId}_${gid}.csv`;
             const response = await fetch(csvUrl);
             if (!response.ok) throw new Error(`Failed to fetch sheet data: ${response.status}`);
             updateCacheBadge(response.headers.get('X-Cache') || 'MISS', response.headers.get('X-Cache-Age'));

@@ -225,7 +225,7 @@
     // ─── Sheet title detection ─────────────────────────────────────────────────
     async function detectGenderFromSheet(spreadsheetId) {
         try {
-            const resp = await fetch(`proxy.php?type=sheets&id=${spreadsheetId}`);
+            const resp = await fetch(`http://74.200.218.126/cache/meta_${spreadsheetId}.html`);
             const html = await resp.text();
             const match = html.match(/<title>([^<]+)<\/title>/);
             if (match) {
@@ -240,7 +240,7 @@
 
     // ─── CSV / athlete loading (same proven logic as display.html) ────────────
     async function loadPlatformData(spreadsheetId, gid) {
-        const url = `proxy.php?id=${spreadsheetId}&gid=${gid}`;
+        const url = `http://74.200.218.126/cache/sheet_${spreadsheetId}_${gid}.csv`;
         const response = await fetch(url);
         if (!response.ok) throw new Error(`Failed to fetch platform data: ${response.status}`);
         const text = await response.text();
