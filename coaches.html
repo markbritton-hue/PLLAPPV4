@@ -252,12 +252,7 @@
                 const pending = pendingAnnouncementText;
                 pendingAnnouncementText = null;
                 if (pending) {
-                    setTimeout(() => doSpeak(pending), 300);
-                } else {
-                    // Prime the engine with a silent utterance
-                    const u = new SpeechSynthesisUtterance(' ');
-                    u.volume = 0.01;
-                    window.speechSynthesis.speak(u);
+                    doSpeak(pending); // must be synchronous inside event handler for iOS
                 }
             }
             document.removeEventListener('click', unlockOnce);
@@ -265,19 +260,18 @@
 
         function doSpeak(text) {
             if (!window.speechSynthesis) return;
-            window.speechSynthesis.cancel();
-            setTimeout(() => {
-                const u = new SpeechSynthesisUtterance(text);
-                u.rate = 0.9; u.pitch = 1.0; u.volume = 1.0;
-                window.speechSynthesis.speak(u);
-            }, 150);
+            // Resume if paused (iOS bug after screen lock / background)
+            if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+            if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.rate = 0.9; u.pitch = 1.0; u.volume = 1.0;
+            window.speechSynthesis.speak(u);
         }
 
         function speakAnnouncement(text) {
             showAnnouncementToast(text);
             if (!speechUnlocked) {
-                // Save for replay on first user click
-                pendingAnnouncementText = text;
+                pendingAnnouncementText = text; // replay on first tap
                 return;
             }
             doSpeak(text);
