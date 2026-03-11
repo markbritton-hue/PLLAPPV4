@@ -245,7 +245,7 @@
         let schoolName = '';
         let coachGender = 'M';
         let coachStateRecords = {};
-        let lastAnnouncedStatus = null;
+        let announcedStatuses = {}; // { athleteNameLower: lastStatus }
 
         function hidePrimeBanner() {
             const b = document.getElementById('voicePrimeBanner');
@@ -261,23 +261,22 @@
             }
         }
 
-        function doSpeak(text, rollbackStatus) {
-            if (!window.speechSynthesis) return;
+        function speakQueue(items) {
+            // items = [{ text, key, prevStatus }]
+            if (!window.speechSynthesis || items.length === 0) return;
             if (window.speechSynthesis.paused) window.speechSynthesis.resume();
             if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
-            const u = new SpeechSynthesisUtterance(text);
-            u.rate = 0.9; u.pitch = 1.0; u.volume = 1.0;
-            u.onstart = function() { hidePrimeBanner(); };
-            u.onerror = function(e) {
-                console.log('[Speech] blocked/error:', e.error, '— will retry next refresh');
-                lastAnnouncedStatus = rollbackStatus !== undefined ? rollbackStatus : null;
-            };
-            window.speechSynthesis.speak(u);
-        }
-
-        function speakAnnouncement(text, rollbackStatus) {
-            showAnnouncementToast(text);
-            doSpeak(text, rollbackStatus);
+            showAnnouncementToast(items[0].text);
+            items.forEach(function(item, i) {
+                const u = new SpeechSynthesisUtterance(item.text);
+                u.rate = 0.9; u.pitch = 1.0; u.volume = 1.0;
+                if (i === 0) u.onstart = function() { hidePrimeBanner(); };
+                u.onerror = function(e) {
+                    console.log('[Speech] blocked:', e.error, '— will retry');
+                    announcedStatuses[item.key] = item.prevStatus; // rollback so it retries
+                };
+                window.speechSynthesis.speak(u);
+            });
         }
 
         function showAnnouncementToast(text) {
@@ -318,61 +317,50 @@
         }
 
         function announceIfNeeded(athletes, config) {
-            if (!config.announcementsEnabled || !config.athleteName) {
-                console.log('[Announce] skipped — enabled:', config.announcementsEnabled, 'name:', config.athleteName);
-                return;
-            }
-            const targetName = config.athleteName.toLowerCase().trim();
-            const athlete = athletes.find(a => (a.name || '').toLowerCase().trim() === targetName);
-            if (!athlete) {
-                console.log('[Announce] athlete not found:', targetName, '| available:', athletes.map(a => a.name));
-                return;
-            }
+            if (!config.announcementsEnabled) return;
 
-            let currentStatus;
-            if (!athlete.hasPending) {
-                currentStatus = 'done';
-            } else if (athlete.platformPosition === 1) {
-                currentStatus = 'lifting';
-            } else if (athlete.platformPosition === 2) {
-                currentStatus = 'on-deck';
-            } else {
-                currentStatus = `position-${athlete.platformPosition}`;
-            }
+            const toSpeak = [];
 
-            console.log('[Announce] athlete found, status:', currentStatus, '| last:', lastAnnouncedStatus);
-            if (currentStatus === lastAnnouncedStatus) return;
+            for (const athlete of athletes) {
+                const key = (athlete.name || '').toLowerCase().trim();
+                if (!key) continue;
 
-            let text = null;
-            const name = config.athleteName;
-            const platform = athlete.platformName || '';
-            const onPlatform = platform ? ` on ${platform}` : '';
-            if (currentStatus === 'lifting') {
-                text = `${name} is now lifting${onPlatform}!`;
-            } else if (currentStatus === 'on-deck') {
-                text = `${name} is on deck${onPlatform}! Get ready!`;
-            } else if (currentStatus === 'done' && lastAnnouncedStatus !== null) {
-                const result = getLastLiftResult(athlete);
-                if (result === 'record') {
-                    text = `${name} has finished${onPlatform} with a new state record!`;
-                } else if (result === 'good') {
-                    text = `${name} is done${onPlatform}. Good lift!`;
-                } else if (result === 'failed') {
-                    text = `${name} is done${onPlatform}. Failed attempt.`;
+                let currentStatus;
+                if (!athlete.hasPending) {
+                    currentStatus = 'done';
+                } else if (athlete.platformPosition === 1) {
+                    currentStatus = 'lifting';
+                } else if (athlete.platformPosition === 2) {
+                    currentStatus = 'on-deck';
                 } else {
-                    text = `${name} has finished their lift${onPlatform}!`;
+                    currentStatus = `position-${athlete.platformPosition}`;
                 }
+
+                const lastStatus = announcedStatuses[key];
+                if (currentStatus === lastStatus) continue;
+
+                const name = athlete.name;
+                const platform = athlete.platformName || '';
+                const onPlatform = platform ? ` on ${platform}` : '';
+                let text = null;
+
+                if (currentStatus === 'lifting') {
+                    text = `${name} is now lifting${onPlatform}!`;
+                } else if (currentStatus === 'on-deck') {
+                    text = `${name} is on deck${onPlatform}! Get ready!`;
+                } else if (currentStatus === 'done' && lastStatus !== undefined && lastStatus !== 'done') {
+                    const result = getLastLiftResult(athlete);
+                    if (result === 'record') text = `${name} finished${onPlatform} with a new state record!`;
+                    else if (result === 'good') text = `${name} is done${onPlatform}. Good lift!`;
+                    else if (result === 'failed') text = `${name} is done${onPlatform}. Failed attempt.`;
+                    else text = `${name} has finished${onPlatform}!`;
+                }
+
+                announcedStatuses[key] = currentStatus;
+                if (text) toSpeak.push({ text, key, prevStatus: lastStatus });
             }
 
-            const prevStatus = lastAnnouncedStatus;
-            lastAnnouncedStatus = currentStatus;
-            if (text) speakAnnouncement(text, prevStatus);
-        }
-
-        function testVoice() {
-            const cfg = JSON.parse(localStorage.getItem('trplConfig') || '{}');
-            const name = cfg.athleteName || 'Your athlete';
-            speakAnnouncement(`${name} is on deck! Get ready!`);
+            if (toSpeak.length > 0) speakQueue(toSpeak);
         }
 
         function toggleAutoRefresh() {
@@ -392,7 +380,7 @@
                 btn.innerHTML = `<i class="fas fa-sync-alt fa-spin me-2"></i>Auto-Refresh: ON`;
                 btn.style.background = 'rgba(16, 185, 129, 0.8)';
                 localStorage.setItem('coachesAutoRefresh', 'on');
-                lastAnnouncedStatus = null; // Reset so current status re-announces
+                announcedStatuses = {}; // Reset so current statuses re-announce
                 // Prime speech synthesis inside user gesture so timer-based announcements work
                 if (window.speechSynthesis && cfg.announcementsEnabled) {
                     const primer = new SpeechSynthesisUtterance('');
@@ -421,7 +409,7 @@
         // Re-announce current status when user returns to this tab
         document.addEventListener('visibilitychange', function() {
             if (!document.hidden) {
-                lastAnnouncedStatus = null;
+                announcedStatuses = {};
             }
         });
 
