@@ -444,7 +444,7 @@
                     throw new Error('Invalid Google Sheet URL');
                 }
 
-                const csvUrl = `http://pllv4.streamwaveprod.com/cache/sheet_${parsed.spreadsheetId}_${parsed.gid}.csv`;
+                const csvUrl = `https://pllv4.streamwaveprod.com/cache/sheet_${parsed.spreadsheetId}_${parsed.gid}.csv`;
 
                 const response = await fetch(csvUrl);
                 if (!response.ok) {

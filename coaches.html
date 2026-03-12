@@ -450,7 +450,7 @@
                 // Init state records and detect gender from sheet title
                 initStateRecordsStorage();
                 coachStateRecords = JSON.parse(localStorage.getItem('trplStateRecords2_M') || '{}');
-                fetch(`http://pllv4.streamwaveprod.com/cache/meta_${config.spreadsheetId}.html`)
+                fetch(`https://pllv4.streamwaveprod.com/cache/meta_${config.spreadsheetId}.html`)
                     .then(r => r.text()).then(html => {
                         const m = html.match(/<title>([^<]+)<\/title>/);
                         if (m) {
@@ -557,7 +557,7 @@
         }
 
         async function loadPlatformData(spreadsheetId, gid) {
-            const csvUrl = `http://pllv4.streamwaveprod.com/cache/sheet_${spreadsheetId}_${gid}.csv`;
+            const csvUrl = `https://pllv4.streamwaveprod.com/cache/sheet_${spreadsheetId}_${gid}.csv`;
 
             const response = await fetch(csvUrl);
             if (!response.ok) throw new Error(`Failed to fetch platform data: ${response.status}`);

@@ -565,7 +565,7 @@
             } else {
                 const { spreadsheetId } = JSON.parse(config);
                 if (spreadsheetId) {
-                    fetch(`http://pllv4.streamwaveprod.com/cache/meta_${spreadsheetId}.html`)
+                    fetch(`https://pllv4.streamwaveprod.com/cache/meta_${spreadsheetId}.html`)
                         .then(r => r.text())
                         .then(html => {
                             const match = html.match(/<title>([^<]+)<\/title>/);

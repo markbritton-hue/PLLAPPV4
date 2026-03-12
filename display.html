@@ -309,7 +309,7 @@
         }
 
         async function loadPlatformData(spreadsheetId, gid) {
-            const csvUrl = `http://pllv4.streamwaveprod.com/cache/sheet_${spreadsheetId}_${gid}.csv`;
+            const csvUrl = `https://pllv4.streamwaveprod.com/cache/sheet_${spreadsheetId}_${gid}.csv`;
 
             const response = await fetch(csvUrl);
             if (!response.ok) throw new Error(`Failed to fetch platform data: ${response.status}`);
