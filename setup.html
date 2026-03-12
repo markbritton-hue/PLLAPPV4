@@ -616,6 +616,7 @@
 
     <script>
         let sheetCounter = 0;
+        let detectedSheets = [];
 
         // Load configuration on page load
         window.addEventListener('DOMContentLoaded', () => {
@@ -717,6 +718,7 @@
                 const sc1 = document.getElementById('sheetsContainer');
                 if (sc1) sc1.innerHTML = '';
                 sheetCounter = 0;
+                detectedSheets = sheets;
 
                 // Add each detected sheet
                 sheets.forEach(sheet => {
@@ -941,21 +943,21 @@
                 return;
             }
 
-            // Gather all sheets
-            const sheets = [];
+            // Gather all sheets — from DOM if available, otherwise from detectedSheets
+            let sheets = [];
             const sheetItems = document.querySelectorAll('.sheet-item');
-
-            sheetItems.forEach(item => {
-                const name = item.querySelector('.sheet-name').value.trim();
-                const gid = item.querySelector('.sheet-gid').value.trim();
-
-                if (name && gid) {
-                    sheets.push({ name, gid });
-                }
-            });
+            if (sheetItems.length > 0) {
+                sheetItems.forEach(item => {
+                    const name = item.querySelector('.sheet-name').value.trim();
+                    const gid = item.querySelector('.sheet-gid').value.trim();
+                    if (name && gid) sheets.push({ name, gid });
+                });
+            } else {
+                sheets = detectedSheets;
+            }
 
             if (sheets.length === 0) {
-                showStatus('Please add at least one sheet', 'error');
+                showStatus('Please select a meet first so sheets can be detected', 'error');
                 return;
             }
 
@@ -1013,6 +1015,7 @@
 
                 // Load sheets
                 if (config.sheets && config.sheets.length > 0) {
+                    detectedSheets = config.sheets;
                     config.sheets.forEach(sheet => {
                         const url = `https://docs.google.com/spreadsheets/d/${config.spreadsheetId}/edit#gid=${sheet.gid}`;
                         addSheetField(sheet.name, sheet.gid, url);
