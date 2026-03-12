@@ -552,9 +552,10 @@
             fetch('https://api.github.com/repos/markbritton-hue/PLLAPPV4/tags')
                 .then(r => r.json())
                 .then(tags => {
-                    if (tags && tags.length > 0) {
-                        document.getElementById('versionFooter').textContent = tags[0].name;
-                    }
+                    const version = tags && tags.length > 0 ? tags[0].name : '';
+                    const date = new Date().toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'});
+                    const footer = document.getElementById('versionFooter');
+                    if (version) footer.textContent = version + ' · ' + date;
                 })
                 .catch(() => {});
             initStateRecordsStorage();
