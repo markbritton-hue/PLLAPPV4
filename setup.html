@@ -714,7 +714,8 @@
                 }
 
                 // Clear existing sheets
-                document.getElementById('sheetsContainer').innerHTML = '';
+                const sc1 = document.getElementById('sheetsContainer');
+                if (sc1) sc1.innerHTML = '';
                 sheetCounter = 0;
 
                 // Add each detected sheet
@@ -848,6 +849,7 @@
         function addSheetField(name = '', gid = '', url = '') {
             sheetCounter++;
             const container = document.getElementById('sheetsContainer');
+            if (!container) return;
 
             const sheetDiv = document.createElement('div');
             sheetDiv.className = 'sheet-item';
@@ -1005,7 +1007,8 @@
                 document.getElementById('spreadsheetUrl').value = config.spreadsheetUrl || '';
 
                 // Clear existing sheets
-                document.getElementById('sheetsContainer').innerHTML = '';
+                const sc2 = document.getElementById('sheetsContainer');
+                if (sc2) sc2.innerHTML = '';
                 sheetCounter = 0;
 
                 // Load sheets
