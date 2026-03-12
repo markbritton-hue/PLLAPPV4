@@ -494,22 +494,20 @@
 
         <div id="statusMessage" class="status-message"></div>
 
-        <!-- Event Picker -->
-        <div class="setup-section" style="border-color: rgba(167,139,250,0.4); margin-bottom: 20px;">
-            <h2 style="color: #a78bfa;"><i class="fas fa-calendar-alt me-2"></i>Select Your Meet</h2>
-            <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-bottom: 16px;">Tap your event below to auto-configure.</p>
-            <div id="eventsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px;">
-                <div id="eventsLoading" style="color: rgba(255,255,255,0.4); font-size: 0.9rem; padding: 10px;">Loading events...</div>
-            </div>
-        </div>
-
         <!-- Instructions -->
         <div class="setup-section instructions">
             <h2>📋 Setup Instructions</h2>
             <ol style="font-size: 1.1rem; line-height: 1.6; color: rgba(255, 255, 255, 0.9);">
                 <input type="hidden" id="spreadsheetUrl" value="">
                 <li style="margin-bottom: 20px;">
-                    <strong>Step 1:</strong> Select your high school
+                    <strong>Step 1:</strong> Select your meet
+                    <p style="color: rgba(255,255,255,0.6); font-size: 0.85rem; margin: 6px 0 12px;">Tap your event below to auto-configure.</p>
+                    <div id="eventsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px;">
+                        <div id="eventsLoading" style="color: rgba(255,255,255,0.4); font-size: 0.9rem; padding: 10px;">Loading events...</div>
+                    </div>
+                </li>
+                <li style="margin-bottom: 20px;">
+                    <strong>Step 2:</strong> Select your high school
                     <div class="form-group" style="margin-top: 10px; margin-bottom: 0;">
                         <label for="schoolName">Your School Name:</label>
                         <select id="schoolNameSelect" style="display: none; width: 100%; padding: 12px; border: 2px solid rgba(96, 165, 250, 0.3); border-radius: 5px; font-size: 14px; background: rgba(15, 23, 42, 0.6); color: white;" onchange="document.getElementById('schoolName').value = this.value">
@@ -524,7 +522,7 @@
                     </div>
                 </li>
                 <li style="margin-bottom: 20px;">
-                    <strong>Step 2:</strong> Set up your athlete <span style="color: rgba(255,255,255,0.5); font-weight: 400;">(optional)</span>
+                    <strong>Step 3:</strong> Set up your athlete <span style="color: rgba(255,255,255,0.5); font-weight: 400;">(optional)</span>
                     <div style="margin-top: 12px; background: rgba(236,72,153,0.08); border: 1px solid rgba(236,72,153,0.3); border-radius: 10px; padding: 16px;">
                         <div class="form-group" style="margin-bottom: 14px;">
                             <label for="athleteName"><i class="fas fa-person-running me-2" style="color:#ec4899;"></i>Athlete Name:</label>
@@ -544,14 +542,14 @@
                     </div>
                 </li>
                 <li style="margin-bottom: 20px;">
-                    <strong>Step 3:</strong> Save your configuration
+                    <strong>Step 4:</strong> Save your configuration
                     <div style="margin-top: 10px;">
                         <button class="btn btn-success" onclick="saveConfiguration()">💾 Save Configuration</button>
                         <div id="step4Check" style="display: none; margin-top: 12px; font-weight: 600; font-size: 1rem;"></div>
                     </div>
                 </li>
                 <li style="margin-bottom: 20px;">
-                    <strong>Step 4:</strong> Add PowerLift Live to your home screen for quick access
+                    <strong>Step 5:</strong> Add PowerLift Live to your home screen for quick access
                     <div style="margin-top: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
                         <!-- iOS -->
                         <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(96, 165, 250, 0.3); border-radius: 10px; padding: 14px;">
