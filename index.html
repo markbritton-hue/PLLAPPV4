@@ -266,6 +266,14 @@
 </head>
 <body>
     <div class="container">
+        <!-- Server offline banner -->
+        <div id="serverOfflineBanner" style="display:none; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4); border-radius: 10px; padding: 14px 18px; margin-bottom: 16px; margin-top: 10px; display:none; align-items:center; gap:12px;">
+            <i class="fas fa-server" style="color:#f87171; font-size:1.3rem;"></i>
+            <div>
+                <div style="color:#f87171; font-weight:700; font-size:0.95rem;">No Active Meets At This Time</div>
+                <div style="color:rgba(255,255,255,0.5); font-size:0.82rem;">The live results server is currently offline. Check back on meet day.</div>
+            </div>
+        </div>
         <div style="display: flex; justify-content: flex-end; gap: 10px; padding: 10px 0 0;">
             <a href="guide.html" style="display: inline-flex; align-items: center; gap: 8px; background: rgba(96, 165, 250, 0.8); color: white; text-decoration: none; padding: 10px 18px; border-radius: 8px; font-weight: 700; font-size: 0.95rem; box-shadow: 0 4px 12px rgba(96,165,250,0.3);">
                 <i class="fas fa-book-open"></i> App Guide
@@ -576,6 +584,14 @@
                         .catch(() => {});
                 }
             }
+
+            // Check if cache server is online
+            fetch('https://pllv4.streamwaveprod.com/cache/stats.json?_=' + Date.now())
+                .then(r => { if (!r.ok) throw new Error(); })
+                .catch(() => {
+                    const banner = document.getElementById('serverOfflineBanner');
+                    if (banner) banner.style.display = 'flex';
+                });
 
             // What's New popup — show once per session (clears when tab/browser closes)
             if (!sessionStorage.getItem('pllWhatsNew_v3')) {
