@@ -600,31 +600,6 @@
             </div>
         </div>
 
-        <!-- Reload Configuration -->
-        <div class="setup-section">
-            <h2>⚙️ Advanced</h2>
-            <div class="button-group">
-                <button class="btn btn-secondary" onclick="loadConfiguration()">🔄 Reload Saved Configuration</button>
-            </div>
-        </div>
-
-        <!-- Sheet Configuration -->
-        <div class="setup-section">
-            <h2 class="collapsible-header" onclick="toggleCollapse('sheetConfig')">
-                <span class="collapse-icon collapsed">▼</span>
-                📑 Sheet Configuration (Advanced)
-            </h2>
-            <div id="sheetConfig" class="collapsible-content collapsed">
-                <p style="margin-bottom: 20px;">Add all the sheets/tabs from your Google Spreadsheet below.</p>
-
-                <div id="sheetsContainer" style="max-height: 500px; overflow-y: auto; padding-right: 8px; margin-bottom: 15px;">
-                    <!-- Sheets will be added here dynamically -->
-                </div>
-
-                <button class="btn btn-primary" onclick="addSheetField()">+ Add Sheet</button>
-            </div>
-        </div>
-
         <!-- Current Configuration Display -->
         <div class="setup-section">
             <h2 class="collapsible-header" onclick="toggleCollapse('currentConfig')">
