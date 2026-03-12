@@ -549,12 +549,12 @@
     <script src="state-records-data.js"></script>
     <script>
         window.addEventListener('DOMContentLoaded', function() {
-            fetch('https://api.github.com/repos/markbritton-hue/PLLAPPV4/commits/main')
+            fetch('https://api.github.com/repos/markbritton-hue/PLLAPPV4/tags')
                 .then(r => r.json())
-                .then(data => {
-                    const sha = data.sha.substring(0, 7);
-                    const date = new Date(data.commit.committer.date).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
-                    document.getElementById('versionFooter').textContent = 'Build ' + sha + ' · ' + date;
+                .then(tags => {
+                    if (tags && tags.length > 0) {
+                        document.getElementById('versionFooter').textContent = tags[0].name;
+                    }
                 })
                 .catch(() => {});
             initStateRecordsStorage();
