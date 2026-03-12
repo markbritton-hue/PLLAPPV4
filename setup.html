@@ -509,14 +509,7 @@
             <ol style="font-size: 1.1rem; line-height: 1.6; color: rgba(255, 255, 255, 0.9);">
                 <input type="hidden" id="spreadsheetUrl" value="">
                 <li style="margin-bottom: 20px;">
-                    <strong>Step 1:</strong> Auto-detect your competition sheets
-                    <div style="margin-top: 10px;">
-                        <button class="btn btn-primary" onclick="autoDetectSheets()">🔍 Auto-Detect All Sheets</button>
-                        <div id="step3Check" style="display: none; margin-top: 12px; font-weight: 600; font-size: 1rem;"></div>
-                    </div>
-                </li>
-                <li style="margin-bottom: 20px;">
-                    <strong>Step 2:</strong> Select your high school
+                    <strong>Step 1:</strong> Select your high school
                     <div class="form-group" style="margin-top: 10px; margin-bottom: 0;">
                         <label for="schoolName">Your School Name:</label>
                         <select id="schoolNameSelect" style="display: none; width: 100%; padding: 12px; border: 2px solid rgba(96, 165, 250, 0.3); border-radius: 5px; font-size: 14px; background: rgba(15, 23, 42, 0.6); color: white;" onchange="document.getElementById('schoolName').value = this.value">
@@ -527,11 +520,11 @@
                             id="schoolName"
                             placeholder="Will be populated after Auto-Detect"
                             value="">
-                        <p class="help-text" id="schoolNameHelp">Complete Step 1 (Auto-Detect) to populate the school dropdown</p>
+                        <p class="help-text" id="schoolNameHelp">Select a meet above to populate the school dropdown</p>
                     </div>
                 </li>
                 <li style="margin-bottom: 20px;">
-                    <strong>Step 3:</strong> Set up your athlete <span style="color: rgba(255,255,255,0.5); font-weight: 400;">(optional)</span>
+                    <strong>Step 2:</strong> Set up your athlete <span style="color: rgba(255,255,255,0.5); font-weight: 400;">(optional)</span>
                     <div style="margin-top: 12px; background: rgba(236,72,153,0.08); border: 1px solid rgba(236,72,153,0.3); border-radius: 10px; padding: 16px;">
                         <div class="form-group" style="margin-bottom: 14px;">
                             <label for="athleteName"><i class="fas fa-person-running me-2" style="color:#ec4899;"></i>Athlete Name:</label>
@@ -551,14 +544,14 @@
                     </div>
                 </li>
                 <li style="margin-bottom: 20px;">
-                    <strong>Step 4:</strong> Save your configuration
+                    <strong>Step 3:</strong> Save your configuration
                     <div style="margin-top: 10px;">
                         <button class="btn btn-success" onclick="saveConfiguration()">💾 Save Configuration</button>
                         <div id="step4Check" style="display: none; margin-top: 12px; font-weight: 600; font-size: 1rem;"></div>
                     </div>
                 </li>
                 <li style="margin-bottom: 20px;">
-                    <strong>Step 5:</strong> Add PowerLift Live to your home screen for quick access
+                    <strong>Step 4:</strong> Add PowerLift Live to your home screen for quick access
                     <div style="margin-top: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
                         <!-- iOS -->
                         <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(96, 165, 250, 0.3); border-radius: 10px; padding: 14px;">
@@ -1398,7 +1391,8 @@
         grid.innerHTML = events.map(ev => {
             const d = ev.date ? new Date(ev.date + 'T12:00:00').toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric', year:'numeric'}) : '';
             const t = ev.time ? formatTime(ev.time) : '';
-            return `<div data-meet-url="${ev.sheetUrl}" onclick="selectEvent('${ev.sheetUrl}')" style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.3);border-radius:10px;padding:14px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='#a78bfa';this.style.background='rgba(167,139,250,0.2)'" onmouseout="highlightSelectedCard()">
+            return `<div data-meet-url="${ev.sheetUrl}" onclick="selectEvent('${ev.sheetUrl}')" style="position:relative;background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.3);border-radius:10px;padding:14px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='#a78bfa';this.style.background='rgba(167,139,250,0.2)'" onmouseout="highlightSelectedCard()">
+                <div class="meet-check-badge" style="display:none;position:absolute;top:10px;right:10px;background:#10b981;color:white;border-radius:20px;padding:2px 8px;font-size:0.75rem;font-weight:700;">✓ Selected</div>
                 <div style="font-weight:700;color:white;font-size:0.95rem;margin-bottom:6px;">${ev.name}</div>
                 <div style="color:rgba(255,255,255,0.6);font-size:0.8rem;display:flex;flex-direction:column;gap:3px;">
                     ${d || t ? `<span><i class="fas fa-calendar me-1" style="color:#a78bfa;width:14px;"></i>${d}${t ? ' · ' + t : ''}</span>` : ''}
@@ -1428,6 +1422,8 @@
             el.style.background = isSelected ? 'rgba(167,139,250,0.35)' : 'rgba(167,139,250,0.1)';
             el.style.borderColor = isSelected ? '#a78bfa' : 'rgba(167,139,250,0.3)';
             el.style.boxShadow = isSelected ? '0 0 0 2px #a78bfa' : 'none';
+            const badge = el.querySelector('.meet-check-badge');
+            if (badge) badge.style.display = isSelected ? 'block' : 'none';
         });
     }
 
