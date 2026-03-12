@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerLift Live | Stats</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        .btn-back {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(30,41,59,0.8); border: 1px solid rgba(96,165,250,0.3);
+            color: rgba(255,255,255,0.8); padding: 8px 18px; border-radius: 8px;
+            text-decoration: none; font-weight: 600; font-size: 0.9rem;
+            transition: all 0.2s; margin-bottom: 24px; display: inline-block;
+        }
+        .btn-back:hover { border-color: #60a5fa; color: white; }
+        h1 {
+            font-size: 1.8rem; font-weight: 800;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+        .subtitle { color: rgba(255,255,255,0.45); font-size: 0.85rem; margin-bottom: 28px; }
+        .stat-card {
+            background: rgba(30,41,59,0.7);
+            border: 1px solid rgba(96,165,250,0.15);
+            border-radius: 14px;
+            padding: 24px 20px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .stat-card:hover { border-color: rgba(96,165,250,0.4); transform: translateY(-2px); }
+        .stat-icon { font-size: 1.8rem; margin-bottom: 10px; }
+        .stat-value {
+            font-size: 2.8rem; font-weight: 800; line-height: 1;
+            margin-bottom: 6px;
+        }
+        .stat-label { color: rgba(255,255,255,0.5); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.8px; }
+        .section-title {
+            color: rgba(255,255,255,0.5); font-size: 0.75rem;
+            text-transform: uppercase; letter-spacing: 1px;
+            margin: 28px 0 12px;
+        }
+        .sheet-row {
+            background: rgba(15,23,42,0.6);
+            border: 1px solid rgba(96,165,250,0.1);
+            border-radius: 10px;
+            padding: 12px 16px;
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.88rem;
+        }
+        .sheet-name { color: white; font-weight: 600; }
+        .sheet-meta { color: rgba(255,255,255,0.4); font-size: 0.8rem; }
+        .badge-live {
+            background: rgba(16,185,129,0.15); color: #10b981;
+            border: 1px solid rgba(16,185,129,0.3);
+            border-radius: 20px; padding: 2px 10px; font-size: 0.75rem; font-weight: 700;
+        }
+        .badge-stale {
+            background: rgba(239,68,68,0.15); color: #f87171;
+            border: 1px solid rgba(239,68,68,0.3);
+            border-radius: 20px; padding: 2px 10px; font-size: 0.75rem; font-weight: 700;
+        }
+        .refresh-info {
+            color: rgba(255,255,255,0.25); font-size: 0.75rem;
+            text-align: right; margin-top: 20px;
+        }
+        .error-msg {
+            background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3);
+            border-radius: 10px; padding: 16px; color: #f87171;
+            font-size: 0.9rem; text-align: center; margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="director.html" class="btn-back"><i class="fas fa-arrow-left"></i> Back</a>
+
+        <h1><i class="fas fa-chart-line me-2"></i>Live Stats</h1>
+        <p class="subtitle">Server cache activity — auto-refreshes every 30 seconds</p>
+
+        <!-- Top stat cards -->
+        <div class="row g-3 mb-2">
+            <div class="col-6 col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-value" id="statActive" style="color:#10b981;">—</div>
+                    <div class="stat-label">Active Users<br><span style="font-size:0.7rem;">(last 5 min)</span></div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-value" id="statTotal" style="color:#60a5fa;">—</div>
+                    <div class="stat-label">Requests<br><span style="font-size:0.7rem;">Today</span></div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-value" id="statRpm" style="color:#a78bfa;">—</div>
+                    <div class="stat-label">Requests<br><span style="font-size:0.7rem;">Per Minute</span></div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon">🔄</div>
+                    <div class="stat-value" id="statAge" style="color:#f59e0b; font-size:1.8rem;">—</div>
+                    <div class="stat-label">Last Sheet<br><span style="font-size:0.7rem;">Refresh</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cached sheets list -->
+        <div class="section-title"><i class="fas fa-database me-1"></i> Cached Sheets</div>
+        <div id="sheetsList"><div style="color:rgba(255,255,255,0.3);font-size:0.85rem;padding:10px;">Loading...</div></div>
+
+        <div id="errorMsg"></div>
+        <div class="refresh-info" id="refreshInfo"></div>
+    </div>
+
+    <script>
+        const CACHE_BASE = 'http://74.208.218.126/cache/';
+
+        async function loadStats() {
+            try {
+                const res = await fetch(CACHE_BASE + 'stats.json?_=' + Date.now());
+                if (!res.ok) throw new Error('stats.json not found');
+                const s = await res.json();
+
+                document.getElementById('statActive').textContent = s.activeUsers ?? '—';
+                document.getElementById('statTotal').textContent = (s.requestsToday ?? 0).toLocaleString();
+                document.getElementById('statRpm').textContent = s.requestsPerMin ?? '—';
+
+                if (s.lastCsvFetch && s.lastCsvFetch > 0) {
+                    const ageSec = Math.floor(Date.now() / 1000) - s.lastCsvFetch;
+                    document.getElementById('statAge').textContent = ageSec < 60
+                        ? ageSec + 's ago'
+                        : Math.floor(ageSec / 60) + 'm ago';
+                }
+
+                const genDate = s.generatedAt ? new Date(s.generatedAt * 1000).toLocaleTimeString() : '—';
+                document.getElementById('refreshInfo').textContent = 'Last updated: ' + genDate + ' · auto-refresh in 30s';
+                document.getElementById('errorMsg').innerHTML = '';
+            } catch (e) {
+                document.getElementById('errorMsg').innerHTML =
+                    '<div class="error-msg"><i class="fas fa-exclamation-triangle me-2"></i>Could not load stats.json — make sure gen_stats.sh is running on the server.</div>';
+            }
+        }
+
+        async function loadSheets() {
+            try {
+                // Fetch the meta files list by checking Firestore events then listing cached files
+                const res = await fetch('https://firestore.googleapis.com/v1/projects/powerlift-live/databases/(default)/documents/events');
+                const data = await res.json();
+                const docs = data.documents || [];
+
+                if (!docs.length) {
+                    document.getElementById('sheetsList').innerHTML = '<div style="color:rgba(255,255,255,0.3);font-size:0.85rem;padding:10px;">No events in Firestore.</div>';
+                    return;
+                }
+
+                const rows = await Promise.all(docs.map(async doc => {
+                    const fields = doc.fields || {};
+                    const name = fields.name?.stringValue || 'Unknown';
+                    const sheetUrl = fields.sheetUrl?.stringValue || '';
+                    const idMatch = sheetUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                    const sheetId = idMatch ? idMatch[1] : null;
+
+                    let ageText = 'No cache';
+                    let fresh = false;
+                    if (sheetId) {
+                        try {
+                            const r = await fetch(CACHE_BASE + 'meta_' + sheetId + '.html', { method: 'HEAD' });
+                            if (r.ok) {
+                                const lastMod = r.headers.get('Last-Modified');
+                                if (lastMod) {
+                                    const ageSec = Math.floor((Date.now() - new Date(lastMod)) / 1000);
+                                    fresh = ageSec < 60;
+                                    ageText = ageSec < 60 ? ageSec + 's ago' : Math.floor(ageSec / 60) + 'm ago';
+                                } else {
+                                    ageText = 'Cached'; fresh = true;
+                                }
+                            }
+                        } catch {}
+                    }
+
+                    return `<div class="sheet-row">
+                        <div>
+                            <div class="sheet-name">${name}</div>
+                            <div class="sheet-meta">${sheetId ? sheetId.substring(0,20) + '…' : 'No sheet ID'}</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <span class="${fresh ? 'badge-live' : 'badge-stale'}">${fresh ? '● Live' : '○ ' + ageText}</span>
+                        </div>
+                    </div>`;
+                }));
+
+                document.getElementById('sheetsList').innerHTML = rows.join('');
+            } catch (e) {
+                document.getElementById('sheetsList').innerHTML = '<div style="color:rgba(255,255,255,0.3);font-size:0.85rem;padding:10px;">Could not load sheet list.</div>';
+            }
+        }
+
+        function refresh() {
+            loadStats();
+            loadSheets();
+        }
+
+        refresh();
+        setInterval(refresh, 30000);
+    </script>
+</body>
+</html>
