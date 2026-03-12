@@ -1398,7 +1398,7 @@
         grid.innerHTML = events.map(ev => {
             const d = ev.date ? new Date(ev.date + 'T12:00:00').toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric', year:'numeric'}) : '';
             const t = ev.time ? formatTime(ev.time) : '';
-            return `<div onclick="selectEvent('${ev.sheetUrl}')" style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.3);border-radius:10px;padding:14px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='#a78bfa';this.style.background='rgba(167,139,250,0.2)'" onmouseout="this.style.borderColor='rgba(167,139,250,0.3)';this.style.background='rgba(167,139,250,0.1)'">
+            return `<div data-meet-url="${ev.sheetUrl}" onclick="selectEvent('${ev.sheetUrl}')" style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.3);border-radius:10px;padding:14px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='#a78bfa';this.style.background='rgba(167,139,250,0.2)'" onmouseout="highlightSelectedCard()">
                 <div style="font-weight:700;color:white;font-size:0.95rem;margin-bottom:6px;">${ev.name}</div>
                 <div style="color:rgba(255,255,255,0.6);font-size:0.8rem;display:flex;flex-direction:column;gap:3px;">
                     ${d || t ? `<span><i class="fas fa-calendar me-1" style="color:#a78bfa;width:14px;"></i>${d}${t ? ' · ' + t : ''}</span>` : ''}
@@ -1406,6 +1406,12 @@
                 </div>
             </div>`;
         }).join('');
+        highlightSelectedCard();
+        // Restore saved meet on page load
+        const savedUrl = localStorage.getItem('selectedMeetUrl');
+        if (savedUrl) {
+            document.getElementById('spreadsheetUrl').value = savedUrl;
+        }
     }
 
     function formatTime(t) {
@@ -1415,7 +1421,19 @@
         return `${hour % 12 || 12}:${m} ${ampm}`;
     }
 
+    function highlightSelectedCard() {
+        const saved = localStorage.getItem('selectedMeetUrl');
+        document.querySelectorAll('[data-meet-url]').forEach(el => {
+            const isSelected = el.dataset.meetUrl === saved;
+            el.style.background = isSelected ? 'rgba(167,139,250,0.35)' : 'rgba(167,139,250,0.1)';
+            el.style.borderColor = isSelected ? '#a78bfa' : 'rgba(167,139,250,0.3)';
+            el.style.boxShadow = isSelected ? '0 0 0 2px #a78bfa' : 'none';
+        });
+    }
+
     function selectEvent(sheetUrl) {
+        localStorage.setItem('selectedMeetUrl', sheetUrl);
+        highlightSelectedCard();
         document.getElementById('spreadsheetUrl').value = sheetUrl;
         onQRScanned(sheetUrl);
         autoDetectSheets();
