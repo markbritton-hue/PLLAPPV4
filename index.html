@@ -538,10 +538,25 @@
         </div>
     </div>
 
+    <div style="text-align: center; padding: 20px 0 30px; color: rgba(255,255,255,0.3); font-size: 0.75rem;" id="versionFooter"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="state-records-data.js"></script>
     <script>
         window.addEventListener('DOMContentLoaded', function() {
+            fetch('https://api.github.com/repos/markbritton-hue/PLLAPPV4/tags')
+                .then(r => r.json())
+                .then(tags => {
+                    if (!tags || !tags.length) return;
+                    const tag = tags[0];
+                    return fetch(tag.commit.url)
+                        .then(r => r.json())
+                        .then(commit => {
+                            const date = new Date(commit.commit.author.date).toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'});
+                            document.getElementById('versionFooter').textContent = tag.name + ' · ' + date;
+                        });
+                })
+                .catch(() => {});
             initStateRecordsStorage();
             const config = localStorage.getItem('trplConfig');
             if (!config) {
