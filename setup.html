@@ -1387,8 +1387,11 @@
             const t = ev.time ? formatTime(ev.time) : '';
             return `<div data-meet-url="${ev.sheetUrl}" onclick="selectEvent('${ev.sheetUrl}')" style="position:relative;background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.3);border-radius:10px;padding:14px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='#a78bfa';this.style.background='rgba(167,139,250,0.2)'" onmouseout="highlightSelectedCard()">
                 <div class="meet-check-badge" style="display:none;position:absolute;top:10px;right:10px;background:#10b981;color:white;border-radius:20px;padding:2px 8px;font-size:0.75rem;font-weight:700;">✓ Selected</div>
-                <div style="font-weight:700;color:white;font-size:0.95rem;margin-bottom:6px;">${ev.name}</div>
-                <div style="color:rgba(255,255,255,0.6);font-size:0.8rem;display:flex;flex-direction:column;gap:3px;">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                    <img src="https://static.wixstatic.com/media/1521f7_30fa5c8aa1ca411c8a846d6a214703ba~mv2.jpg" alt="MHSPLA" style="width:36px;height:36px;object-fit:cover;border-radius:6px;flex-shrink:0;">
+                    <div style="font-weight:700;color:white;font-size:0.95rem;">${ev.name}</div>
+                </div>
+                <div style="color:rgba(255,255,255,0.6);font-size:0.8rem;display:flex;flex-direction:column;gap:3px;padding-left:46px;">
                     ${d || t ? `<span><i class="fas fa-calendar me-1" style="color:#a78bfa;width:14px;"></i>${d}${t ? ' · ' + t : ''}</span>` : ''}
                     ${ev.location ? `<span><i class="fas fa-map-marker-alt me-1" style="color:#a78bfa;width:14px;"></i>${ev.location}</span>` : ''}
                 </div>
