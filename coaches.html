@@ -249,19 +249,33 @@
         let speechPrimed = false;
         let pendingAnnouncements = []; // saved items to replay on tap
 
-        function hidePrimeBanner() {
-            const b = document.getElementById('voicePrimeBanner');
-            if (b) b.style.display = 'none';
+        function setVoiceActive(active) {
             const icon = document.getElementById('voiceBtnIcon');
-            if (icon) { icon.className = 'fas fa-volume-high'; icon.style.color = '#10b981'; }
             const btn = document.getElementById('voiceBtn');
-            if (btn) { btn.style.background = 'rgba(16,185,129,0.15)'; btn.style.borderColor = 'rgba(16,185,129,0.4)'; btn.title = 'Voice announcements active'; }
+            if (active) {
+                if (icon) { icon.className = 'fas fa-volume-high'; icon.style.color = '#10b981'; }
+                if (btn) { btn.style.background = 'rgba(16,185,129,0.15)'; btn.style.borderColor = 'rgba(16,185,129,0.4)'; btn.title = 'Voice announcements active'; }
+            } else {
+                if (icon) { icon.className = 'fas fa-volume-xmark'; icon.style.color = '#ec4899'; }
+                if (btn) { btn.style.background = 'rgba(236,72,153,0.15)'; btn.style.borderColor = 'rgba(236,72,153,0.4)'; btn.title = 'Enable voice announcements'; }
+            }
         }
 
+        function hidePrimeBanner() { setVoiceActive(true); }
+
         function tapToEnableVoice() {
+            if (speechPrimed) {
+                // Toggle off
+                speechPrimed = false;
+                localStorage.setItem('coachesVoicePrimed', 'off');
+                setVoiceActive(false);
+                if (window.speechSynthesis) window.speechSynthesis.cancel();
+                return;
+            }
+            // Toggle on
             speechPrimed = true;
             localStorage.setItem('coachesVoicePrimed', 'on');
-            hidePrimeBanner();
+            setVoiceActive(true);
             if (!window.speechSynthesis) return;
             if (window.speechSynthesis.paused) window.speechSynthesis.resume();
             if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
@@ -276,7 +290,6 @@
                     window.speechSynthesis.speak(u);
                 });
             } else {
-                // Nothing pending — prime with silence so future calls work
                 const primer = new SpeechSynthesisUtterance('');
                 primer.volume = 0;
                 window.speechSynthesis.speak(primer);
@@ -423,10 +436,12 @@
             const cfg = JSON.parse(localStorage.getItem('trplConfig') || '{}');
             if (cfg.announcementsEnabled) {
                 document.getElementById('voiceBtn').style.display = 'flex';
-                // Restore primed state if user had enabled it before
-                if (localStorage.getItem('coachesVoicePrimed') === 'on') {
+                const savedVoice = localStorage.getItem('coachesVoicePrimed');
+                if (savedVoice === 'on') {
                     speechPrimed = true;
-                    hidePrimeBanner();
+                    setVoiceActive(true);
+                } else {
+                    setVoiceActive(false);
                 }
             }
             // Restore auto-refresh state (toggleAutoRefresh calls loadDisplay internally)
