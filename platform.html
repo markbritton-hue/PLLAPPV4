@@ -472,18 +472,33 @@
         let platformSpeechPrimed = false;
         let platformPendingAnnouncement = null; // { text, rollbackStatus }
 
-        function hidePrimeBanner() {
-            const b = document.getElementById('voicePrimeBanner');
-            if (b) b.style.display = 'none';
+        function setVoiceActive(active) {
             const icon = document.getElementById('voiceBtnIcon');
-            if (icon) { icon.className = 'fas fa-volume-high'; icon.style.color = '#10b981'; }
             const btn = document.getElementById('voiceBtn');
-            if (btn) { btn.style.background = 'rgba(16,185,129,0.15)'; btn.style.borderColor = 'rgba(16,185,129,0.4)'; btn.title = 'Voice announcements active'; }
+            if (active) {
+                if (icon) { icon.className = 'fas fa-volume-high'; icon.style.color = '#10b981'; }
+                if (btn) { btn.style.background = 'rgba(16,185,129,0.15)'; btn.style.borderColor = 'rgba(16,185,129,0.4)'; btn.title = 'Voice announcements active'; }
+            } else {
+                if (icon) { icon.className = 'fas fa-volume-xmark'; icon.style.color = '#ec4899'; }
+                if (btn) { btn.style.background = 'rgba(236,72,153,0.15)'; btn.style.borderColor = 'rgba(236,72,153,0.4)'; btn.title = 'Enable voice announcements'; }
+            }
         }
 
+        function hidePrimeBanner() { setVoiceActive(true); }
+
         function tapToEnableVoice() {
+            if (platformSpeechPrimed) {
+                // Toggle off
+                platformSpeechPrimed = false;
+                localStorage.setItem('platformVoicePrimed', 'off');
+                setVoiceActive(false);
+                if (window.speechSynthesis) window.speechSynthesis.cancel();
+                return;
+            }
+            // Toggle on
             platformSpeechPrimed = true;
-            hidePrimeBanner();
+            localStorage.setItem('platformVoicePrimed', 'on');
+            setVoiceActive(true);
             if (!window.speechSynthesis) return;
             if (window.speechSynthesis.paused) window.speechSynthesis.resume();
             if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
@@ -511,7 +526,7 @@
             window.speechSynthesis.cancel();
             const u = new SpeechSynthesisUtterance(text);
             u.rate = 0.9; u.pitch = 1.0; u.volume = 1.0;
-            u.onstart = function() { hidePrimeBanner(); };
+            u.onstart = function() { if (platformSpeechPrimed) setVoiceActive(true); };
             u.onerror = function(e) {
                 console.log('[Speech] blocked/error:', e.error, '— will retry next refresh');
                 platformLastAnnouncedStatus = rollbackStatus !== undefined ? rollbackStatus : null;
@@ -632,7 +647,7 @@
                 if (window.speechSynthesis && cfg.announcementsEnabled) {
                     const primer = new SpeechSynthesisUtterance('');
                     primer.volume = 0;
-                    primer.onstart = function() { platformSpeechPrimed = true; hidePrimeBanner(); };
+                    primer.onstart = function() { if (platformSpeechPrimed) setVoiceActive(true); };
                     window.speechSynthesis.speak(primer);
                 }
                 loadPlatformData();
@@ -645,6 +660,13 @@
             const _cfg = JSON.parse(localStorage.getItem('trplConfig') || '{}');
             if (_cfg.announcementsEnabled) {
                 document.getElementById('voiceBtn').style.display = 'flex';
+                const savedVoice = localStorage.getItem('platformVoicePrimed');
+                if (savedVoice === 'on') {
+                    platformSpeechPrimed = true;
+                    setVoiceActive(true);
+                } else {
+                    setVoiceActive(false);
+                }
             }
             // Show my-athlete badge immediately from config
             if (_cfg.athleteName) {
