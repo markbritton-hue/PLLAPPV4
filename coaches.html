@@ -210,15 +210,12 @@
         <button id="refreshToggle" onclick="toggleAutoRefresh()" class="btn" style="background: rgba(96, 165, 250, 0.8); border: none; color: white; cursor: pointer; white-space: nowrap; flex-shrink: 0;">
             <i class="fas fa-sync-alt me-2"></i>Auto-Refresh: OFF
         </button>
-
-        
+        <button id="voiceBtn" onclick="tapToEnableVoice()" style="display:none; background:rgba(236,72,153,0.15); border:1px solid rgba(236,72,153,0.4); border-radius:8px; color:white; cursor:pointer; padding:8px 12px; flex-shrink:0;" title="Enable voice announcements">
+            <i id="voiceBtnIcon" class="fas fa-volume-xmark" style="color:#ec4899; font-size:1.1rem;"></i>
+        </button>
     </div>
 
     <div id="announcementToast" style="position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:rgba(236,72,153,0.95); color:white; padding:12px 22px; border-radius:30px; font-size:0.95rem; font-weight:700; box-shadow:0 6px 20px rgba(0,0,0,0.5); z-index:9999; opacity:0; transition:opacity 0.3s, transform 0.3s; pointer-events:none; white-space:nowrap; max-width:90vw; text-align:center;"></div>
-
-    <div id="voicePrimeBanner" onclick="tapToEnableVoice()" style="display:none; background:rgba(236,72,153,0.15); border:1px solid rgba(236,72,153,0.6); border-radius:10px; color:white; text-align:center; padding:12px 16px; margin-bottom:14px; cursor:pointer; font-weight:600;">
-        <i class="fas fa-volume-up me-2" style="color:#ec4899;"></i>Tap here to enable voice announcements
-    </div>
 
     <div style="text-align: center; margin-bottom: 16px;">
         <h1 style="font-size: 1.3rem; font-weight: 900; color: white; margin: 0;">
@@ -252,6 +249,10 @@
         function hidePrimeBanner() {
             const b = document.getElementById('voicePrimeBanner');
             if (b) b.style.display = 'none';
+            const icon = document.getElementById('voiceBtnIcon');
+            if (icon) { icon.className = 'fas fa-volume-high'; icon.style.color = '#10b981'; }
+            const btn = document.getElementById('voiceBtn');
+            if (btn) { btn.style.background = 'rgba(16,185,129,0.15)'; btn.style.borderColor = 'rgba(16,185,129,0.4)'; btn.title = 'Voice announcements active'; }
         }
 
         function tapToEnableVoice() {
@@ -414,10 +415,10 @@
         }
 
         window.addEventListener('DOMContentLoaded', function() {
-            // Show voice primer banner if announcements are enabled
+            // Show voice icon button if announcements are enabled
             const cfg = JSON.parse(localStorage.getItem('trplConfig') || '{}');
             if (cfg.announcementsEnabled) {
-                document.getElementById('voicePrimeBanner').style.display = 'block';
+                document.getElementById('voiceBtn').style.display = 'flex';
             }
             // Restore auto-refresh state (toggleAutoRefresh calls loadDisplay internally)
             if (localStorage.getItem('coachesAutoRefresh') === 'on') {
