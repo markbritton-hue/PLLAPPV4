@@ -309,7 +309,7 @@
             items.forEach(function(item, i) {
                 const u = new SpeechSynthesisUtterance(item.text);
                 u.rate = 0.9; u.pitch = 1.0; u.volume = 1.0;
-                if (i === 0) u.onstart = function() { hidePrimeBanner(); };
+                if (i === 0) u.onstart = function() { if (speechPrimed) setVoiceActive(true); };
                 u.onerror = function(e) {
                     console.log('[Speech] blocked:', e.error, '— will retry');
                     announcedStatuses[item.key] = item.prevStatus;
@@ -424,7 +424,7 @@
                 if (window.speechSynthesis && cfg.announcementsEnabled) {
                     const primer = new SpeechSynthesisUtterance('');
                     primer.volume = 0;
-                    primer.onstart = function() { speechPrimed = true; hidePrimeBanner(); };
+                    primer.onstart = function() { if (speechPrimed) setVoiceActive(true); };
                     window.speechSynthesis.speak(primer);
                 }
                 loadDisplay();
