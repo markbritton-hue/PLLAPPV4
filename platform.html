@@ -1269,6 +1269,15 @@
                 ? sortedAthletes.filter(a => a.name !== justFinishedAthlete.name)
                 : sortedAthletes;
 
+            // Pin "your athlete" at position 1 if configured and not already shown as just-finished
+            if (announcementName) {
+                const myAthleteIdx = displayAthletes.findIndex(a => a.name.toLowerCase().trim() === announcementName);
+                if (myAthleteIdx > 0) {
+                    const [myAthlete] = displayAthletes.splice(myAthleteIdx, 1);
+                    displayAthletes.unshift(myAthlete);
+                }
+            }
+
             displayAthletes.forEach((athlete, index) => {
                 const col = document.createElement('div');
                 col.className = 'col-lg-4 col-md-6';
