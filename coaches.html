@@ -260,6 +260,7 @@
 
         function tapToEnableVoice() {
             speechPrimed = true;
+            localStorage.setItem('coachesVoicePrimed', 'on');
             hidePrimeBanner();
             if (!window.speechSynthesis) return;
             if (window.speechSynthesis.paused) window.speechSynthesis.resume();
@@ -422,6 +423,11 @@
             const cfg = JSON.parse(localStorage.getItem('trplConfig') || '{}');
             if (cfg.announcementsEnabled) {
                 document.getElementById('voiceBtn').style.display = 'flex';
+                // Restore primed state if user had enabled it before
+                if (localStorage.getItem('coachesVoicePrimed') === 'on') {
+                    speechPrimed = true;
+                    hidePrimeBanner();
+                }
             }
             // Restore auto-refresh state (toggleAutoRefresh calls loadDisplay internally)
             if (localStorage.getItem('coachesAutoRefresh') === 'on') {
