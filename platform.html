@@ -1232,7 +1232,8 @@
                 const jfCardBg = jfIsMySchool ? 'rgba(249, 115, 22, 0.18)' : 'rgba(30, 41, 59, 0.9)';
                 const jfCardBorder = jfIsMySchool ? 'rgba(249, 115, 22, 0.7)' : 'rgba(167, 139, 250, 0.5)';
                 jfCol.dataset.athleteName = justFinishedAthlete.name;
-                jfCol.innerHTML = buildAthleteCard(justFinishedAthlete, 'JUST FINISHED', '#a78bfa', null, jfCardBg, jfCardBorder, rankMap[justFinishedAthlete.name] || null, buildResultOverlay(justFinishedResult));
+                const jfIsMyAthlete = announcementName && justFinishedAthlete.name.toLowerCase().includes(announcementName);
+                jfCol.innerHTML = buildAthleteCard(justFinishedAthlete, 'JUST FINISHED', '#a78bfa', null, jfCardBg, jfCardBorder, rankMap[justFinishedAthlete.name] || null, buildResultOverlay(justFinishedResult), jfIsMyAthlete);
                 row.appendChild(jfCol);
                 // Reset 10s removal timer on every render so card always shows a full 10s
                 scheduleCardRemoval();
@@ -1266,8 +1267,9 @@
                 const cardBgColor = isMySchool ? 'rgba(249, 115, 22, 0.18)' : 'rgba(30, 41, 59, 0.9)';
                 const cardBorderColor = isMySchool ? 'rgba(249, 115, 22, 0.7)' : 'rgba(96, 165, 250, 0.2)';
                 const wcRank = rankMap[athlete.name] || null;
+                const isMyAthlete = announcementName && athlete.name.toLowerCase().includes(announcementName);
 
-                col.innerHTML = buildAthleteCard(athlete, statusLabel, statusColor, overallPosition > 2 ? overallPosition : null, cardBgColor, cardBorderColor, wcRank);
+                col.innerHTML = buildAthleteCard(athlete, statusLabel, statusColor, overallPosition > 2 ? overallPosition : null, cardBgColor, cardBorderColor, wcRank, '', isMyAthlete);
 
                 row.appendChild(col);
             });
@@ -1329,12 +1331,15 @@
             </div>`;
         }
 
-        function buildAthleteCard(athlete, statusLabel, statusColor, positionNum, cardBgColor, cardBorderColor, wcRank, resultHtml = '') {
+        function buildAthleteCard(athlete, statusLabel, statusColor, positionNum, cardBgColor, cardBorderColor, wcRank, resultHtml = '', isMyAthlete = false) {
             return `
-                    <div class="athlete-card" style="background: ${cardBgColor}; border-color: ${cardBorderColor};">
+                    <div class="athlete-card" style="background: ${cardBgColor}; border-color: ${cardBorderColor}; ${isMyAthlete ? 'border-left-color: #ec4899;' : ''}">
                         ${resultHtml}
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-                            <div class="athlete-name">${athlete.name}</div>
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <div class="athlete-name">${athlete.name}</div>
+                                ${isMyAthlete ? `<span style="background:rgba(236,72,153,0.85);color:white;font-size:0.65rem;font-weight:700;padding:2px 7px;border-radius:10px;white-space:nowrap;">⭐ My Athlete</span>` : ''}
+                            </div>
                             <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
                                 ${statusLabel ? `<div style="background: ${statusColor}; color: white; padding: 4px 12px; border-radius: 10px; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.5px;">${statusLabel}</div>` : ''}
                                 ${positionNum ? `<div style="color: #60a5fa; font-size: 1rem; font-weight: 800; white-space: nowrap;">Position ${positionNum}</div>` : ''}
