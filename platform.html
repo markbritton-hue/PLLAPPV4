@@ -1271,7 +1271,7 @@
 
             // Pin "your athlete" at position 1 if configured and not already shown as just-finished
             if (announcementName) {
-                const myAthleteIdx = displayAthletes.findIndex(a => a.name.toLowerCase().trim() === announcementName);
+                const myAthleteIdx = displayAthletes.findIndex(a => a.name.toLowerCase().includes(announcementName));
                 if (myAthleteIdx > 0) {
                     const [myAthlete] = displayAthletes.splice(myAthleteIdx, 1);
                     displayAthletes.unshift(myAthlete);
@@ -1280,10 +1280,12 @@
 
             // True when "your athlete" is pinned at slot 0 but has all lifts completed
             const allLiftColumns = ['squat1','squat2','squat3','bench1','bench2','bench3','dead1','dead2','dead3'];
-            const myAthleteIsDone = announcementName
-                && displayAthletes.length > 0
-                && displayAthletes[0].name.toLowerCase().includes(announcementName)
-                && !allLiftColumns.some(col => hasPendingInColumn(displayAthletes[0], col));
+            const myAthlete = announcementName
+                ? displayAthletes.find(a => a.name.toLowerCase().includes(announcementName))
+                : null;
+            const myAthleteIsDone = myAthlete
+                && displayAthletes[0] === myAthlete
+                && !allLiftColumns.some(col => hasPendingInColumn(myAthlete, col));
 
             displayAthletes.forEach((athlete, index) => {
                 const col = document.createElement('div');
