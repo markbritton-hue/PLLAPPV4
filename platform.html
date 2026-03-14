@@ -1362,15 +1362,15 @@
                         <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
                             <div>
                                 <div style="color:rgba(255,255,255,0.6); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px;"><i class="fas fa-compress-arrows-alt me-1"></i>Squat</div>
-                                <div class="row g-1">${renderAttempt(myAthleteData.squat1,'1','sq',wc,platformStateRecords)}${renderAttempt(myAthleteData.squat2,'2','sq',wc,platformStateRecords)}${renderAttempt(myAthleteData.squat3,'3','sq',wc,platformStateRecords)}</div>
+                                <div class="row g-1">${renderAttempt(myAthleteData.squat1,'1','sq',wc,platformStateRecords,true)}${renderAttempt(myAthleteData.squat2,'2','sq',wc,platformStateRecords,true)}${renderAttempt(myAthleteData.squat3,'3','sq',wc,platformStateRecords,true)}</div>
                             </div>
                             <div>
                                 <div style="color:rgba(255,255,255,0.6); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px;"><i class="fas fa-hands me-1"></i>Bench</div>
-                                <div class="row g-1">${renderAttempt(myAthleteData.bench1,'1','bp',wc,platformStateRecords)}${renderAttempt(myAthleteData.bench2,'2','bp',wc,platformStateRecords)}${renderAttempt(myAthleteData.bench3,'3','bp',wc,platformStateRecords)}</div>
+                                <div class="row g-1">${renderAttempt(myAthleteData.bench1,'1','bp',wc,platformStateRecords,true)}${renderAttempt(myAthleteData.bench2,'2','bp',wc,platformStateRecords,true)}${renderAttempt(myAthleteData.bench3,'3','bp',wc,platformStateRecords,true)}</div>
                             </div>
                             <div>
                                 <div style="color:rgba(255,255,255,0.6); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px;"><i class="fas fa-weight-hanging me-1"></i>Deadlift</div>
-                                <div class="row g-1">${renderAttempt(myAthleteData.dead1,'1','dl',wc,platformStateRecords)}${renderAttempt(myAthleteData.dead2,'2','dl',wc,platformStateRecords)}${renderAttempt(myAthleteData.dead3,'3','dl',wc,platformStateRecords)}</div>
+                                <div class="row g-1">${renderAttempt(myAthleteData.dead1,'1','dl',wc,platformStateRecords,true)}${renderAttempt(myAthleteData.dead2,'2','dl',wc,platformStateRecords,true)}${renderAttempt(myAthleteData.dead3,'3','dl',wc,platformStateRecords,true)}</div>
                             </div>
                         </div>`;
                 }
@@ -1497,12 +1497,12 @@
         }
 
         // Render single attempt
-        function renderAttempt(attempt, attemptNum, liftKey, weightClass, stateRecords) {
+        function renderAttempt(attempt, attemptNum, liftKey, weightClass, stateRecords, compact = false) {
             if (!attempt) {
                 return `
                     <div class="col-4">
                         <div class="lift-box" style="opacity: 0.3;">
-                            <div class="lift-name">Attempt ${attemptNum}</div>
+                            ${compact ? '' : `<div class="lift-name">Attempt ${attemptNum}</div>`}
                             <div class="lift-value">-</div>
                         </div>
                     </div>
@@ -1541,7 +1541,7 @@
             return `
                 <div class="col-4">
                     <div class="lift-box" style="background: ${bgColor}; border-color: ${borderColor};">
-                        <div class="lift-name" style="color: ${labelColor};">Attempt ${attemptNum}</div>
+                        ${compact ? '' : `<div class="lift-name" style="color: ${labelColor};">Attempt ${attemptNum}</div>`}
                         <div class="lift-value" style="color: ${textColor};">
                             ${value}${isFailed ? '<i class="fas fa-times ms-1"></i>' : ''}${isGood ? '<i class="fas fa-check ms-1" style="color: #10b981;"></i>' : ''}${isRecordAttempt ? '<i class="fas fa-star ms-1" style="color: #ef4444;" title="State record attempt"></i>' : ''}
                         </div>
