@@ -295,6 +295,16 @@
             </select>
         </div>
 
+        <!-- My Athlete Panel -->
+        <div id="myAthletePanel" style="display:none; background: rgba(249,115,22,0.12); border: 2px solid rgba(249,115,22,0.5); border-radius: 14px; padding: 14px 20px; margin-bottom: 0;">
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
+                <span id="myAthletePanelName" style="background:rgba(249,115,22,0.9);color:white;font-size:1rem;font-weight:700;padding:5px 12px;border-radius:10px;white-space:nowrap;align-self:flex-start;"></span>
+                <span id="myAthletePanelStatus" style="padding:5px 16px; border-radius:10px; font-weight:700; font-size:0.95rem; color:white;"></span>
+            </div>
+            <div id="myAthletePanelBody"></div>
+        </div>
+        <hr id="myAthleteSeparator" style="display:none; border:none; border-top:3px solid rgba(255,255,255,0.3); margin:14px 0;">
+
         <!-- Cards Container -->
         <div id="athleteCards">
             <div class="empty-state"><i class="fas fa-dumbbell me-2"></i>Select a weight class to view athletes</div>
@@ -787,9 +797,134 @@
             html += buildCards(jv, 'JV', '#10b981');
 
             container.innerHTML = html;
+            updateMyAthletePanel();
+        }
+
+        function updateMyAthletePanel() {
+            const cfg = JSON.parse(localStorage.getItem('trplConfig') || '{}');
+            const athleteName = (cfg.athleteName || '').toLowerCase().trim();
+            const panel = document.getElementById('myAthletePanel');
+            const sep   = document.getElementById('myAthleteSeparator');
+
+            if (!athleteName) { panel.style.display = 'none'; sep.style.display = 'none'; return; }
+
+            document.getElementById('myAthletePanelName').innerHTML = `<i class="fas fa-person-running me-1"></i>${cfg.athleteName}`;
+            panel.style.display = 'block';
+            sep.style.display = 'block';
+
+            if (Object.keys(allGrouped).length === 0) return;
+
+            let myAthlete = null, myWC = null;
+            for (const [wc, athletes] of Object.entries(allGrouped)) {
+                const found = athletes.find(a => a.name.toLowerCase().includes(athleteName));
+                if (found) { myAthlete = found; myWC = wc; break; }
+            }
+            if (!myAthlete) return;
+
+            const group = allGrouped[myWC].filter(a => a.designation === myAthlete.designation).sort((a, b) => b.total - a.total);
+            const rank = group.findIndex(a => a.name.toLowerCase().includes(athleteName)) + 1;
+            const medals = ['🥇', '🥈', '🥉'];
+            const medal = medals[rank - 1] || '';
+
+            const statusEl = document.getElementById('myAthletePanelStatus');
+            statusEl.textContent = `${medal} Rank #${rank}`;
+            statusEl.style.background = myAthlete.designation === 'JV' ? '#10b981' : '#8b5cf6';
+
+            const leaderSquat = Math.max(...group.map(a => a.squat));
+            const leaderBench = Math.max(...group.map(a => a.bench));
+            const leaderDead  = Math.max(...group.map(a => a.deadlift));
+            const leaderTotal = group[0].total;
+            const thirdTotal  = group[2]?.total ?? null;
+            const tenthTotal  = group[9]?.total ?? null;
+            const aboveTotal  = rank > 1 ? group[rank - 2].total : null;
+
+            const diffSquat = myAthlete.squat - leaderSquat;
+            const diffBench = myAthlete.bench - leaderBench;
+            const diffDead  = myAthlete.deadlift - leaderDead;
+            const diffTotal = myAthlete.total - leaderTotal;
+            const diffToNext = aboveTotal !== null ? myAthlete.total - aboveTotal : null;
+            const diffTo3rd  = thirdTotal !== null ? myAthlete.total - thirdTotal : null;
+            const diffTo10th = tenthTotal !== null ? myAthlete.total - tenthTotal : null;
+
+            function diffHtml(best, diff) {
+                const bestStr = best ? `<span style="color:#60a5fa; font-weight:800;">${best} lbs</span>` : '';
+                if (diff === 0) return `<div class="lift-diff leader" style="display:flex;justify-content:space-between;align-items:center;">${bestStr}<span>★ Leader</span></div>`;
+                return `<div class="lift-diff behind" style="display:flex;justify-content:space-between;align-items:center;">${bestStr}<span>${diff} lbs</span></div>`;
+            }
+
+            function gapChip(label, diff, isSelf) {
+                if (diff === null) return '';
+                if (isSelf) return `<div style="text-align:center;"><div style="font-size:0.7rem;color:rgba(255,255,255,0.55);font-weight:600;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:2px;">${label}</div><div style="font-size:0.95rem;font-weight:800;color:#fbbf24;">Here</div></div>`;
+                const sign = diff > 0 ? '+' : '';
+                return `<div style="text-align:center;"><div style="font-size:0.7rem;color:rgba(255,255,255,0.55);font-weight:600;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:2px;">${label}</div><div style="font-size:0.95rem;font-weight:800;color:white;">${sign}${diff} lbs</div></div>`;
+            }
+
+            const isJV = myAthlete.designation === 'JV';
+            const squatBg = myAthlete.squatDone ? 'background:rgba(16,185,129,0.12); border-radius:8px; padding:8px;' : '';
+            const benchBg = myAthlete.benchDone ? 'background:rgba(16,185,129,0.12); border-radius:8px; padding:8px;' : '';
+            const deadBg  = myAthlete.deadDone  ? 'background:rgba(16,185,129,0.12); border-radius:8px; padding:8px;' : '';
+
+            document.getElementById('myAthletePanelBody').innerHTML = `
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap;">
+                    <span class="designation-badge ${isJV ? 'jv' : 'varsity'}" style="margin-bottom:0;">${isJV ? 'JV' : 'Varsity'}</span>
+                    <span style="color:rgba(255,255,255,0.85); font-size:0.85rem; font-weight:700;">${myAthlete.school || '—'}</span>
+                    <span style="color:rgba(255,255,255,0.5); font-size:0.8rem;">${myWC} lbs WC</span>
+                    ${myAthlete.bodyWeight ? `<span style="color:rgba(255,255,255,0.65); font-size:0.85rem; font-weight:700; margin-left:auto;">BW: ${myAthlete.bodyWeight} lbs${myAthlete.bodyWeight > 0 ? ` &nbsp;<span style="color:#a78bfa;">(${(myAthlete.total/myAthlete.bodyWeight).toFixed(2)} lb/lb)</span>` : ''}</span>` : ''}
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:8px;">
+                    <div class="event-section" style="${squatBg}">
+                        <div class="event-header"><i class="fas fa-compress-arrows-alt me-1"></i>Squat</div>
+                        <div class="attempts-row">
+                            ${renderAttempt(myAthlete.sq1, '1', 'sq', myWC)}
+                            ${renderAttempt(myAthlete.sq2, '2', 'sq', myWC)}
+                            ${renderAttempt(myAthlete.sq3, '3', 'sq', myWC)}
+                        </div>
+                        ${diffHtml(myAthlete.squat, diffSquat)}
+                    </div>
+                    <div class="event-section" style="${benchBg}">
+                        <div class="event-header"><i class="fas fa-hands me-1"></i>Bench</div>
+                        <div class="attempts-row">
+                            ${renderAttempt(myAthlete.bp1, '1', 'bp', myWC)}
+                            ${renderAttempt(myAthlete.bp2, '2', 'bp', myWC)}
+                            ${renderAttempt(myAthlete.bp3, '3', 'bp', myWC)}
+                        </div>
+                        ${diffHtml(myAthlete.bench, diffBench)}
+                    </div>
+                    <div class="event-section" style="${deadBg}">
+                        <div class="event-header"><i class="fas fa-weight-hanging me-1"></i>Deadlift</div>
+                        <div class="attempts-row">
+                            ${renderAttempt(myAthlete.dl1, '1', 'dl', myWC)}
+                            ${renderAttempt(myAthlete.dl2, '2', 'dl', myWC)}
+                            ${renderAttempt(myAthlete.dl3, '3', 'dl', myWC)}
+                        </div>
+                        ${diffHtml(myAthlete.deadlift, diffDead)}
+                    </div>
+                </div>
+                <div class="total-box" style="flex-direction:column; gap:10px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                        <div>
+                            <div class="total-label">Total</div>
+                            <div class="total-value">${myAthlete.total} lbs</div>
+                        </div>
+                        <div style="text-align:center;">
+                            <div style="font-size:0.7rem;color:rgba(255,255,255,0.6);font-weight:600;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:2px;">Rank</div>
+                            <div style="font-size:1.4rem;font-weight:800;color:white;">#${rank}</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-size:0.7rem;color:rgba(255,255,255,0.6);font-weight:600;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:2px;">vs Leader</div>
+                            <div style="font-size:0.95rem;font-weight:800;color:${diffTotal === 0 ? '#fbbf24' : 'white'};">${diffTotal === 0 ? '★ Leader' : diffTotal + ' lbs'}</div>
+                        </div>
+                    </div>
+                    <div style="display:flex; justify-content:space-around; width:100%; border-top:1px solid rgba(255,255,255,0.15); padding-top:8px;">
+                        ${gapChip('Up 1 Ranking', diffToNext, rank === 1)}
+                        ${gapChip('To 3rd', diffTo3rd, rank <= 3)}
+                        ${gapChip('To 10th', diffTo10th, rank <= 10)}
+                    </div>
+                </div>`;
         }
 
         window.addEventListener('DOMContentLoaded', function() {
+            updateMyAthletePanel();
             if (localStorage.getItem('athleteViewAutoRefresh') === 'on') {
                 toggleAutoRefresh();
             } else {
