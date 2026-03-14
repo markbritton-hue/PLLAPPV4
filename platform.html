@@ -1278,11 +1278,12 @@
                 }
             }
 
-            // True when "your athlete" is pinned at slot 0 but has no more pending attempts
+            // True when "your athlete" is pinned at slot 0 but has all lifts completed
+            const allLiftColumns = ['squat1','squat2','squat3','bench1','bench2','bench3','dead1','dead2','dead3'];
             const myAthleteIsDone = announcementName
                 && displayAthletes.length > 0
-                && displayAthletes[0].name.toLowerCase().trim() === announcementName
-                && !hasPendingInColumn(displayAthletes[0], currentColumn);
+                && displayAthletes[0].name.toLowerCase().includes(announcementName)
+                && !allLiftColumns.some(col => hasPendingInColumn(displayAthletes[0], col));
 
             displayAthletes.forEach((athlete, index) => {
                 const col = document.createElement('div');
@@ -1333,9 +1334,9 @@
                 const badgeText = document.getElementById('myAthleteBadgeText');
                 const cfg2 = JSON.parse(localStorage.getItem('trplConfig') || '{}');
                 const displayName = cfg2.athleteName || '';
-                const myIdx = displayAthletes.findIndex(a => a.name.toLowerCase().trim() === announcementName);
+                const myIdx = displayAthletes.findIndex(a => a.name.toLowerCase().includes(announcementName));
                 let statusTag = '';
-                if (justFinishedAthlete && justFinishedAthlete.name.toLowerCase().trim() === announcementName) {
+                if (justFinishedAthlete && justFinishedAthlete.name.toLowerCase().includes(announcementName)) {
                     statusTag = ' · Just Finished';
                 } else if (myIdx === 0 && myAthleteIsDone) statusTag = ' · Done';
                 else if (myIdx === 0) statusTag = ' · Lifting';
