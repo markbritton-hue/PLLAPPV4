@@ -213,7 +213,7 @@
         <button id="refreshToggle" onclick="toggleAutoRefresh()" class="btn" style="background: rgba(96, 165, 250, 0.8); border: none; color: white; cursor: pointer; white-space: nowrap; flex-shrink: 0;">
             <i class="fas fa-sync-alt me-2"></i>Auto-Refresh: OFF
         </button>
-        <button id="voiceBtn" onclick="tapToEnableVoice()" style="display:none; background:rgba(236,72,153,0.15); border:1px solid rgba(236,72,153,0.4); border-radius:8px; color:white; cursor:pointer; padding:8px 12px; flex-shrink:0;" title="Enable voice announcements">
+        <button id="voiceBtn" onclick="tapToEnableVoice()" style="display:flex; background:rgba(236,72,153,0.15); border:1px solid rgba(236,72,153,0.4); border-radius:8px; color:white; cursor:pointer; padding:8px 12px; flex-shrink:0;" title="Enable voice announcements">
             <i id="voiceBtnIcon" class="fas fa-volume-xmark" style="color:#ec4899; font-size:1.1rem;"></i>
         </button>
     </div>
@@ -357,7 +357,6 @@
         }
 
         function announceIfNeeded(athletes, config) {
-            if (!config.announcementsEnabled) return;
 
             const toSpeak = [];
 
@@ -422,7 +421,7 @@
                 localStorage.setItem('coachesAutoRefresh', 'on');
                 announcedStatuses = {}; // Reset so current statuses re-announce
                 // Prime speech synthesis inside user gesture so timer-based announcements work
-                if (window.speechSynthesis && cfg.announcementsEnabled) {
+                if (window.speechSynthesis) {
                     const primer = new SpeechSynthesisUtterance('');
                     primer.volume = 0;
                     primer.onstart = function() { if (speechPrimed) setVoiceActive(true); };
@@ -433,17 +432,13 @@
         }
 
         window.addEventListener('DOMContentLoaded', function() {
-            // Show voice icon button if announcements are enabled
-            const cfg = JSON.parse(localStorage.getItem('trplConfig') || '{}');
-            if (cfg.announcementsEnabled) {
-                document.getElementById('voiceBtn').style.display = 'flex';
-                const savedVoice = localStorage.getItem('coachesVoicePrimed');
-                if (savedVoice === 'on') {
-                    speechPrimed = true;
-                    setVoiceActive(true);
-                } else {
-                    setVoiceActive(false);
-                }
+            // Restore voice primed state
+            const savedVoice = localStorage.getItem('coachesVoicePrimed');
+            if (savedVoice === 'on') {
+                speechPrimed = true;
+                setVoiceActive(true);
+            } else {
+                setVoiceActive(false);
             }
             // Restore auto-refresh state (toggleAutoRefresh calls loadDisplay internally)
             if (localStorage.getItem('coachesAutoRefresh') === 'on') {
