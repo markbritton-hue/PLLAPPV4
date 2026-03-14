@@ -828,10 +828,15 @@
             }
             if (!myAthlete) return;
 
-            // Make name badge a link to the athlete's platform
-            if (myAthlete.platformGid) {
-                document.getElementById('myAthletePanelName').href = `platform.html?gid=${myAthlete.platformGid}`;
-            }
+            // Clicking the name badge selects the athlete's weight class on this page
+            const nameEl = document.getElementById('myAthletePanelName');
+            nameEl.href = '#';
+            nameEl.onclick = function(e) {
+                e.preventDefault();
+                document.getElementById('wcSelect').value = myWC;
+                renderWeightClass();
+                document.getElementById('athleteCards').scrollIntoView({ behavior: 'smooth' });
+            };
 
             const group = allGrouped[myWC].filter(a => a.designation === myAthlete.designation).sort((a, b) => b.total - a.total);
             const rank = group.findIndex(a => a.name.toLowerCase().includes(athleteName)) + 1;
