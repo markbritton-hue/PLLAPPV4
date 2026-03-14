@@ -248,35 +248,42 @@
         let coachStateRecords = {};
         let announcedStatuses = {}; // { athleteNameLower: lastStatus }
         let speechPrimed = false;
+        let sessionPrimed = false; // true only after user taps voice btn this session (iOS requires gesture)
         let pendingAnnouncements = []; // saved items to replay on tap
 
-        function setVoiceActive(active) {
+        function setVoiceActive(state) {
+            // state: 'on' | 'off' | 'pending' (primed preference but needs tap to unlock audio)
             const icon = document.getElementById('voiceBtnIcon');
             const btn = document.getElementById('voiceBtn');
-            if (active) {
+            if (state === 'on') {
                 if (icon) { icon.className = 'fas fa-volume-high'; icon.style.color = '#10b981'; }
                 if (btn) { btn.style.background = 'rgba(16,185,129,0.15)'; btn.style.borderColor = 'rgba(16,185,129,0.4)'; btn.title = 'Voice announcements active'; }
+            } else if (state === 'pending') {
+                if (icon) { icon.className = 'fas fa-volume-low'; icon.style.color = '#f59e0b'; }
+                if (btn) { btn.style.background = 'rgba(245,158,11,0.15)'; btn.style.borderColor = 'rgba(245,158,11,0.4)'; btn.title = 'Tap to resume voice announcements'; }
             } else {
                 if (icon) { icon.className = 'fas fa-volume-xmark'; icon.style.color = '#ec4899'; }
                 if (btn) { btn.style.background = 'rgba(236,72,153,0.15)'; btn.style.borderColor = 'rgba(236,72,153,0.4)'; btn.title = 'Enable voice announcements'; }
             }
         }
 
-        function hidePrimeBanner() { setVoiceActive(true); }
+        function hidePrimeBanner() { setVoiceActive('on'); }
 
         function tapToEnableVoice() {
-            if (speechPrimed) {
+            if (speechPrimed && sessionPrimed) {
                 // Toggle off
                 speechPrimed = false;
+                sessionPrimed = false;
                 localStorage.setItem('coachesVoicePrimed', 'off');
-                setVoiceActive(false);
+                setVoiceActive('off');
                 if (window.speechSynthesis) window.speechSynthesis.cancel();
                 return;
             }
-            // Toggle on
+            // Toggle on (or re-activate after page reload)
             speechPrimed = true;
+            sessionPrimed = true;
             localStorage.setItem('coachesVoicePrimed', 'on');
-            setVoiceActive(true);
+            setVoiceActive('on');
             if (!window.speechSynthesis) return;
             if (window.speechSynthesis.paused) window.speechSynthesis.resume();
             if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
@@ -312,6 +319,7 @@
             // Always save as pending so tap-to-enable can replay them
             pendingAnnouncements = items;
             if (!speechPrimed) return; // wait for user tap
+            if (!sessionPrimed) return; // wait for user tap to unlock audio this session
             pendingAnnouncements = [];
             if (window.speechSynthesis.paused) window.speechSynthesis.resume();
             if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
@@ -319,7 +327,7 @@
             items.forEach(function(item, i) {
                 const u = new SpeechSynthesisUtterance(item.text);
                 u.rate = 0.9; u.pitch = 1.0; u.volume = 1.0;
-                if (i === 0) u.onstart = function() { if (speechPrimed) setVoiceActive(true); };
+                if (i === 0) u.onstart = function() { if (speechPrimed) setVoiceActive('on'); };
                 u.onerror = function(e) {
                     console.log('[Speech] blocked:', e.error, '— will retry');
                     announcedStatuses[item.key] = item.prevStatus;
@@ -441,17 +449,20 @@
         }
 
         window.addEventListener('DOMContentLoaded', function() {
-            // On page refresh keep saved voice state; on fresh navigation always start off
+            // On page refresh restore voice preference but require one tap to re-unlock audio.
+            // On fresh navigation always start off.
             const navType = (performance.getEntriesByType('navigation')[0] || {}).type;
             const isReload = navType === 'reload';
             const savedVoice = localStorage.getItem('coachesVoicePrimed');
             if (isReload && savedVoice === 'on') {
                 speechPrimed = true;
-                setVoiceActive(true);
+                sessionPrimed = false; // needs tap to re-unlock audio this session
+                setVoiceActive('pending');
             } else {
                 speechPrimed = false;
+                sessionPrimed = false;
                 localStorage.setItem('coachesVoicePrimed', 'off');
-                setVoiceActive(false);
+                setVoiceActive('off');
             }
             // Restore auto-refresh state (toggleAutoRefresh calls loadDisplay internally)
             if (localStorage.getItem('coachesAutoRefresh') === 'on') {
