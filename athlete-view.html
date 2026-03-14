@@ -302,7 +302,10 @@
                     <a id="myAthletePanelName" href="#" style="background:rgba(249,115,22,0.9);color:white;font-size:1rem;font-weight:700;padding:5px 12px;border-radius:10px;white-space:nowrap;align-self:flex-start;text-decoration:none;cursor:pointer;"></a>
                     <div id="myAthletePanelSubLine" style="display:none; align-items:center; gap:8px; flex-wrap:wrap;"></div>
                 </div>
-                <span id="myAthletePanelStatus" style="padding:5px 16px; border-radius:10px; font-weight:700; font-size:0.95rem; color:white;"></span>
+                <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-end;">
+                    <span id="myAthletePanelStatus" style="padding:5px 16px; border-radius:10px; font-weight:700; font-size:0.95rem; color:white;"></span>
+                    <span id="myAthletePanelPosition" style="display:none;"></span>
+                </div>
             </div>
             <div id="myAthletePanelBody"></div>
         </div>
@@ -937,8 +940,11 @@
                 positionBadgeHtml = `<span style="background:${statusColor};color:white;font-weight:700;font-size:0.8rem;padding:3px 10px;border-radius:6px;white-space:nowrap;">${statusLabel} · ${liftLabel}</span>`;
             }
 
-            subLine.innerHTML = platformBadgeHtml + positionBadgeHtml;
-            subLine.style.display = 'flex';
+            subLine.innerHTML = platformBadgeHtml;
+            subLine.style.display = platformBadgeHtml ? 'flex' : 'none';
+            const posEl = document.getElementById('myAthletePanelPosition');
+            posEl.innerHTML = positionBadgeHtml;
+            posEl.style.display = positionBadgeHtml ? 'inline' : 'none';
 
             const isJV = myAthlete.designation === 'JV';
             const squatBg = myAthlete.squatDone ? 'background:rgba(16,185,129,0.12); border-radius:8px; padding:8px;' : '';
