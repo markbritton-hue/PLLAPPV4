@@ -224,6 +224,7 @@
         <h1 style="font-size: 1.3rem; font-weight: 900; color: white; margin: 0;">
             <i class="fas fa-clipboard-user" style="color: #ec4899; margin-right: 8px;"></i>Coaches View
         </h1>
+        <div id="coachesSchoolName" style="color: rgba(255,255,255,0.6); font-size: 0.95rem; font-weight: 600; margin-top: 4px;"></div>
     </div>
 
     <div id="displayContainer"></div>
@@ -471,6 +472,8 @@
             try {
                 const config = JSON.parse(configStr);
                 schoolName = config.schoolName || '';
+                const schoolEl = document.getElementById('coachesSchoolName');
+                if (schoolEl && schoolName) schoolEl.textContent = schoolName;
 
                 // Init state records and detect gender from sheet title
                 initStateRecordsStorage();
