@@ -673,14 +673,18 @@
                     setVoiceActive(false);
                 }
             }
-            // Show my-athlete badge immediately from config
+            // Show My Athlete panel immediately from config (before platform is selected)
             if (_cfg.athleteName) {
-                const _gidParam = new URLSearchParams(window.location.search).get('gid');
-                let _platformLabel = '';
-                if (_gidParam && _cfg.sheets) {
-                    const _sheet = _cfg.sheets.find(s => String(s.gid) === String(_gidParam));
-                    if (_sheet) _platformLabel = ' · ' + _sheet.name;
+                const storedPlatform = (() => { try { return JSON.parse(localStorage.getItem('myAthletePlatform') || 'null'); } catch(e) { return null; } })();
+                document.getElementById('myAthletePanelName').innerHTML = `<i class="fas fa-person-running me-1"></i>${_cfg.athleteName}`;
+                const platformBadge = document.getElementById('myAthletePanelPlatform');
+                if (storedPlatform && storedPlatform.name) {
+                    platformBadge.textContent = storedPlatform.name;
+                    platformBadge.href = storedPlatform.gid ? `platform.html?gid=${storedPlatform.gid}` : '#';
+                    platformBadge.style.display = '';
                 }
+                document.getElementById('myAthletePanelStatus').style.background = '';
+                document.getElementById('myAthletePanel').style.display = 'block';
             }
 
             loadPlatformsList();
