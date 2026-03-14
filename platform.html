@@ -413,7 +413,7 @@
                     <i class="fas fa-person-running" style="color:#f97316; font-size:1.3rem;"></i>
                     <span id="myAthletePanelName" style="color:#f97316; font-weight:800; font-size:1.15rem;"></span>
                     <span style="color:rgba(255,255,255,0.5); font-size:0.85rem;">· Your Athlete</span>
-                    <span id="myAthletePanelPlatform" style="display:none; background:rgba(96,165,250,0.15); border:1px solid rgba(96,165,250,0.35); color:#93c5fd; font-size:0.75rem; font-weight:700; padding:3px 10px; border-radius:6px; white-space:nowrap;"></span>
+                    <a id="myAthletePanelPlatform" href="#" style="display:none; background:rgba(96,165,250,0.15); border:1px solid rgba(96,165,250,0.35); color:#93c5fd; font-size:0.75rem; font-weight:700; padding:3px 10px; border-radius:6px; white-space:nowrap; text-decoration:none; cursor:pointer;"></a>
                 </div>
                 <span id="myAthletePanelStatus" style="padding:5px 16px; border-radius:10px; font-weight:700; font-size:0.95rem; color:white;"></span>
             </div>
@@ -1341,8 +1341,11 @@
 
                 document.getElementById('myAthletePanelName').textContent = displayName;
                 const platformBadge = document.getElementById('myAthletePanelPlatform');
-                if (platformName) { platformBadge.textContent = platformName; platformBadge.style.display = ''; }
-                else platformBadge.style.display = 'none';
+                if (platformName) {
+                    platformBadge.textContent = platformName;
+                    platformBadge.href = currentPlatformGid ? `platform.html?gid=${currentPlatformGid}` : '#';
+                    platformBadge.style.display = '';
+                } else platformBadge.style.display = 'none';
                 const statusEl = document.getElementById('myAthletePanelStatus');
                 statusEl.textContent = panelLabel;
                 statusEl.style.background = panelColor;
