@@ -339,6 +339,16 @@
             catch (e) { return athleteViewGender === 'M' ? BUILTIN_M_RECORDS : BUILTIN_W_RECORDS; }
         }
 
+        function toggleStateRecords() {
+            const body = document.getElementById('stateRecordsBody');
+            const icon = document.getElementById('stateRecordsChevron');
+            if (!body) return;
+            const isOpen = body.style.display !== 'none';
+            body.style.display = isOpen ? 'none' : 'flex';
+            icon.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+            localStorage.setItem('athleteViewStateRecordsOpen', isOpen ? 'false' : 'true');
+        }
+
         function renderStateRecordLegend(wc) {
             if (!athleteViewRecords || !wc) return '';
             const rec = athleteViewRecords[String(wc)];
@@ -346,15 +356,21 @@
             const sq = rec.sq?.weight || '—';
             const bp = rec.bp?.weight || '—';
             const dl = rec.dl?.weight || '—';
-            const sqName = rec.sq?.name ? ` <span style="color:rgba(255,255,255,0.6); font-size:0.9rem;">(${rec.sq.name})</span>` : '';
-            const bpName = rec.bp?.name ? ` <span style="color:rgba(255,255,255,0.6); font-size:0.9rem;">(${rec.bp.name})</span>` : '';
-            const dlName = rec.dl?.name ? ` <span style="color:rgba(255,255,255,0.6); font-size:0.9rem;">(${rec.dl.name})</span>` : '';
+            const sqName = rec.sq?.name ? ` <span style="color:rgba(255,255,255,0.6); font-size:0.85rem;">(${rec.sq.name})</span>` : '';
+            const bpName = rec.bp?.name ? ` <span style="color:rgba(255,255,255,0.6); font-size:0.85rem;">(${rec.bp.name})</span>` : '';
+            const dlName = rec.dl?.name ? ` <span style="color:rgba(255,255,255,0.6); font-size:0.85rem;">(${rec.dl.name})</span>` : '';
+            const isOpen = localStorage.getItem('athleteViewStateRecordsOpen') === 'true';
+            const bodyDisplay = isOpen ? 'flex' : 'none';
+            const chevronRotate = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
             return `
-                <div style="background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.3); border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 12px 28px; align-items: center;">
-                    <div style="display:flex; align-items:center; gap:8px; color:rgba(255,255,255,0.85); font-size:1rem; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap;">
-                        <i class="fas fa-star" style="color:#ef4444; font-size:1.1rem;"></i> State Records — ${wc} lbs
+                <div style="background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.3); border-radius: 12px; margin-bottom: 20px; overflow:hidden;">
+                    <div onclick="toggleStateRecords()" style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; padding:12px 20px; user-select:none;">
+                        <div style="display:flex; align-items:center; gap:8px; color:rgba(255,255,255,0.85); font-size:1rem; font-weight:800; text-transform:uppercase; letter-spacing:0.5px;">
+                            <i class="fas fa-star" style="color:#ef4444; font-size:1.1rem;"></i> State Records — ${wc} lbs
+                        </div>
+                        <i id="stateRecordsChevron" class="fas fa-chevron-down" style="color:rgba(255,255,255,0.5); font-size:0.9rem; transition:transform 0.2s; transform:${chevronRotate};"></i>
                     </div>
-                    <div style="display:flex; flex-wrap:wrap; gap:12px 28px; flex:1;">
+                    <div id="stateRecordsBody" style="display:${bodyDisplay}; flex-wrap:wrap; gap:12px 28px; padding:0 20px 16px;">
                         <span style="font-size:1rem; white-space:nowrap;">
                             <span style="color:rgba(255,255,255,0.7); font-size:0.95rem; font-weight:600;">Squat</span>
                             <strong style="color:#ff4444; font-size:1.15rem; margin-left:8px;">${sq} lbs</strong>${sqName}
