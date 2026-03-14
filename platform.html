@@ -413,7 +413,7 @@
 
         <!-- My Athlete Panel -->
         <div id="myAthletePanel" style="display:none; background: rgba(249,115,22,0.12); border: 2px solid rgba(249,115,22,0.5); border-radius: 14px; padding: 14px 20px; margin-bottom: 14px;">
-            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
                 <div style="display:flex; align-items:center; gap:10px;">
                     <i class="fas fa-person-running" style="color:#f97316; font-size:1.3rem;"></i>
                     <span id="myAthletePanelName" style="color:#f97316; font-weight:800; font-size:1.15rem;"></span>
@@ -421,6 +421,7 @@
                 </div>
                 <span id="myAthletePanelStatus" style="padding:5px 16px; border-radius:10px; font-weight:700; font-size:0.95rem; color:white;"></span>
             </div>
+            <div id="myAthletePanelLifts"></div>
         </div>
 
         <!-- Status Message -->
@@ -1344,6 +1345,28 @@
                 const statusEl = document.getElementById('myAthletePanelStatus');
                 statusEl.textContent = panelLabel;
                 statusEl.style.background = panelColor;
+
+                // Render lift attempts for my athlete
+                const myAthleteData = athletes.find(a => a.name.toLowerCase().includes(announcementName));
+                if (myAthleteData) {
+                    const wc = myAthleteData.weightClass;
+                    document.getElementById('myAthletePanelLifts').innerHTML = `
+                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+                            <div>
+                                <div style="color:rgba(255,255,255,0.6); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px;"><i class="fas fa-compress-arrows-alt me-1"></i>Squat</div>
+                                <div class="row g-1">${renderAttempt(myAthleteData.squat1,'1','sq',wc,platformStateRecords)}${renderAttempt(myAthleteData.squat2,'2','sq',wc,platformStateRecords)}${renderAttempt(myAthleteData.squat3,'3','sq',wc,platformStateRecords)}</div>
+                            </div>
+                            <div>
+                                <div style="color:rgba(255,255,255,0.6); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px;"><i class="fas fa-hands me-1"></i>Bench</div>
+                                <div class="row g-1">${renderAttempt(myAthleteData.bench1,'1','bp',wc,platformStateRecords)}${renderAttempt(myAthleteData.bench2,'2','bp',wc,platformStateRecords)}${renderAttempt(myAthleteData.bench3,'3','bp',wc,platformStateRecords)}</div>
+                            </div>
+                            <div>
+                                <div style="color:rgba(255,255,255,0.6); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px;"><i class="fas fa-weight-hanging me-1"></i>Deadlift</div>
+                                <div class="row g-1">${renderAttempt(myAthleteData.dead1,'1','dl',wc,platformStateRecords)}${renderAttempt(myAthleteData.dead2,'2','dl',wc,platformStateRecords)}${renderAttempt(myAthleteData.dead3,'3','dl',wc,platformStateRecords)}</div>
+                            </div>
+                        </div>`;
+                }
+
                 document.getElementById('myAthletePanel').style.display = 'block';
 
                 // Keep header badge in sync
