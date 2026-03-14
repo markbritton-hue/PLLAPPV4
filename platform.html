@@ -1278,42 +1278,45 @@
                 }
             }
 
-            // True when "your athlete" is pinned at slot 0 but has all lifts completed
+            // Determine "your athlete" and whether they are fully done
             const allLiftColumns = ['squat1','squat2','squat3','bench1','bench2','bench3','dead1','dead2','dead3'];
             const myAthlete = announcementName
                 ? displayAthletes.find(a => a.name.toLowerCase().includes(announcementName))
                 : null;
             const myAthleteIsDone = myAthlete
-                && displayAthletes[0] === myAthlete
                 && !allLiftColumns.some(col => hasPendingInColumn(myAthlete, col));
+
+            // The actual lift queue: athletes with a pending attempt in the current column, in sorted order
+            const liftQueue = sortedAthletes.filter(a => hasPendingInColumn(a, currentColumn));
 
             displayAthletes.forEach((athlete, index) => {
                 const col = document.createElement('div');
                 col.className = 'col-lg-4 col-md-6';
                 col.dataset.athleteName = athlete.name;
 
-                const isMyAthlete = announcementName && athlete.name.toLowerCase().includes(announcementName);
+                const isMyAthlete = myAthlete && athlete === myAthlete;
 
                 let statusLabel = '';
                 let statusColor = '';
                 let positionNum = null;
 
-                if (myAthleteIsDone && index === 0) {
-                    // Pinned "your athlete" card — mark it clearly, not as LIFTING
+                if (isMyAthlete && myAthleteIsDone) {
+                    // Done — label the card as "YOUR ATHLETE", not a queue position
                     statusLabel = 'YOUR ATHLETE';
-                    statusColor = '#f97316'; // orange
+                    statusColor = '#f97316';
                 } else {
-                    // Shift effective position by -1 when your athlete occupies slot 0 but is done
-                    const effectivePosition = myAthleteIsDone ? index : index + 1;
-                    if (effectivePosition === 1) {
+                    // Label based on actual queue position, independent of visual slot
+                    const queuePos = liftQueue.findIndex(a => a.name === athlete.name);
+                    if (queuePos === 0) {
                         statusLabel = 'LIFTING';
                         statusColor = '#ef4444';
-                    } else if (effectivePosition === 2) {
+                    } else if (queuePos === 1) {
                         statusLabel = 'ON DECK';
                         statusColor = '#10b981';
-                    } else {
-                        positionNum = effectivePosition;
+                    } else if (queuePos > 1) {
+                        positionNum = queuePos + 1;
                     }
+                    // queuePos === -1 means no pending attempt (done but not my athlete) — no label
                 }
 
                 // Check if this athlete's school matches configured school
@@ -1336,14 +1339,14 @@
                 const badgeText = document.getElementById('myAthleteBadgeText');
                 const cfg2 = JSON.parse(localStorage.getItem('trplConfig') || '{}');
                 const displayName = cfg2.athleteName || '';
-                const myIdx = displayAthletes.findIndex(a => a.name.toLowerCase().includes(announcementName));
+                const myQueuePos = myAthlete ? liftQueue.findIndex(a => a.name === myAthlete.name) : -1;
                 let statusTag = '';
                 if (justFinishedAthlete && justFinishedAthlete.name.toLowerCase().includes(announcementName)) {
                     statusTag = ' · Just Finished';
-                } else if (myIdx === 0 && myAthleteIsDone) statusTag = ' · Done';
-                else if (myIdx === 0) statusTag = ' · Lifting';
-                else if (myIdx === 1) statusTag = ' · On Deck';
-                else if (myIdx > 1) statusTag = ` · #${myIdx + 1}`;
+                } else if (myAthleteIsDone) statusTag = ' · Done';
+                else if (myQueuePos === 0) statusTag = ' · Lifting';
+                else if (myQueuePos === 1) statusTag = ' · On Deck';
+                else if (myQueuePos > 1) statusTag = ` · #${myQueuePos + 1}`;
                 const platformLabel = (() => {
                     const sel = document.getElementById('platformSelect');
                     return sel && sel.selectedIndex > 0 ? ' · ' + sel.options[sel.selectedIndex].text : '';
