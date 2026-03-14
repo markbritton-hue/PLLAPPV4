@@ -298,7 +298,10 @@
         <!-- My Athlete Panel -->
         <div id="myAthletePanel" style="display:none; background: rgba(249,115,22,0.12); border: 2px solid rgba(249,115,22,0.5); border-radius: 14px; padding: 14px 20px; margin-bottom: 0;">
             <div style="display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
-                <a id="myAthletePanelName" href="#" style="background:rgba(249,115,22,0.9);color:white;font-size:1rem;font-weight:700;padding:5px 12px;border-radius:10px;white-space:nowrap;align-self:flex-start;text-decoration:none;cursor:pointer;"></a>
+                <div style="display:flex; flex-direction:column; gap:6px;">
+                    <a id="myAthletePanelName" href="#" style="background:rgba(249,115,22,0.9);color:white;font-size:1rem;font-weight:700;padding:5px 12px;border-radius:10px;white-space:nowrap;align-self:flex-start;text-decoration:none;cursor:pointer;"></a>
+                    <div id="myAthletePanelSubLine" style="display:none; align-items:center; gap:8px; flex-wrap:wrap;"></div>
+                </div>
                 <span id="myAthletePanelStatus" style="padding:5px 16px; border-radius:10px; font-weight:700; font-size:0.95rem; color:white;"></span>
             </div>
             <div id="myAthletePanelBody"></div>
@@ -906,13 +909,20 @@
                 return `<div style="text-align:center;"><div style="font-size:0.7rem;color:rgba(255,255,255,0.55);font-weight:600;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:2px;">${label}</div><div style="font-size:0.95rem;font-weight:800;color:white;">${sign}${diff} lbs</div></div>`;
             }
 
-            // Compute platform position
+            // Compute platform position and populate sub-line
             const colLabels = { sq1:'Squat Att 1',sq2:'Squat Att 2',sq3:'Squat Att 3', bp1:'Bench Att 1',bp2:'Bench Att 2',bp3:'Bench Att 3', dl1:'Deadlift Att 1',dl2:'Deadlift Att 2',dl3:'Deadlift Att 3' };
             const platformAthletes = Object.values(allGrouped).flat().filter(a => a.platformGid === myAthlete.platformGid);
             const currentCol = getAVCurrentColumn(platformAthletes);
-            let positionHtml = '';
+            const subLine = document.getElementById('myAthletePanelSubLine');
+
+            // Platform badge
+            const platformBadgeHtml = myAthlete.platformName
+                ? `<span style="background:rgba(96,165,250,0.15);border:1px solid rgba(96,165,250,0.35);color:#93c5fd;font-size:0.75rem;font-weight:700;padding:3px 10px;border-radius:6px;white-space:nowrap;">${myAthlete.platformName}</span>`
+                : '';
+
+            let positionBadgeHtml = '';
             if (!currentCol) {
-                positionHtml = `<div style="background:#f97316;color:white;font-weight:700;font-size:0.9rem;text-align:center;border-radius:8px;padding:6px 12px;margin-bottom:8px;">DONE</div>`;
+                positionBadgeHtml = `<span style="background:#f97316;color:white;font-weight:700;font-size:0.8rem;padding:3px 10px;border-radius:6px;white-space:nowrap;">DONE</span>`;
             } else {
                 const queue = platformAthletes
                     .filter(a => avHasPending(a, currentCol))
@@ -924,15 +934,18 @@
                 else if (qPos === 1) { statusLabel = 'ON DECK';      statusColor = '#10b981'; }
                 else if (qPos > 1)   { statusLabel = `#${qPos + 1} IN QUEUE`; statusColor = '#60a5fa'; }
                 else                 { statusLabel = 'DONE';         statusColor = '#f97316'; }
-                positionHtml = `<div style="background:${statusColor};color:white;font-weight:700;font-size:0.9rem;text-align:center;border-radius:8px;padding:6px 12px;margin-bottom:8px;display:flex;justify-content:center;gap:10px;"><span>${statusLabel}</span><span style="opacity:0.75;">·</span><span style="opacity:0.9;">${liftLabel}</span></div>`;
+                positionBadgeHtml = `<span style="background:${statusColor};color:white;font-weight:700;font-size:0.8rem;padding:3px 10px;border-radius:6px;white-space:nowrap;">${statusLabel} · ${liftLabel}</span>`;
             }
+
+            subLine.innerHTML = platformBadgeHtml + positionBadgeHtml;
+            subLine.style.display = 'flex';
 
             const isJV = myAthlete.designation === 'JV';
             const squatBg = myAthlete.squatDone ? 'background:rgba(16,185,129,0.12); border-radius:8px; padding:8px;' : '';
             const benchBg = myAthlete.benchDone ? 'background:rgba(16,185,129,0.12); border-radius:8px; padding:8px;' : '';
             const deadBg  = myAthlete.deadDone  ? 'background:rgba(16,185,129,0.12); border-radius:8px; padding:8px;' : '';
 
-            document.getElementById('myAthletePanelBody').innerHTML = positionHtml + `
+            document.getElementById('myAthletePanelBody').innerHTML = `
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap;">
                     <span class="designation-badge ${isJV ? 'jv' : 'varsity'}" style="margin-bottom:0;">${isJV ? 'JV' : 'Varsity'}</span>
                     <span style="color:rgba(255,255,255,0.85); font-size:0.85rem; font-weight:700;">${myAthlete.school || '—'}</span>
