@@ -1511,6 +1511,8 @@
                 justFinishedAthlete = null;
                 justFinishedResult = null;
                 removeCardTimer = null;
+                // Re-render from cache so the athlete reappears at position 1 immediately
+                if (window._lastAthletes) renderAthletes(window._lastAthletes);
             }, 10000);
         }
 
