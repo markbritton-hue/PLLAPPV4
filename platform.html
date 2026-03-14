@@ -1278,21 +1278,39 @@
                 }
             }
 
+            // True when "your athlete" is pinned at slot 0 but has no more pending attempts
+            const myAthleteIsDone = announcementName
+                && displayAthletes.length > 0
+                && displayAthletes[0].name.toLowerCase().trim() === announcementName
+                && !hasPendingInColumn(displayAthletes[0], currentColumn);
+
             displayAthletes.forEach((athlete, index) => {
                 const col = document.createElement('div');
                 col.className = 'col-lg-4 col-md-6';
                 col.dataset.athleteName = athlete.name;
 
-                // Determine status label and color based on sorted position
-                const overallPosition = index + 1;
+                const isMyAthlete = announcementName && athlete.name.toLowerCase().includes(announcementName);
+
                 let statusLabel = '';
                 let statusColor = '';
-                if (overallPosition === 1) {
-                    statusLabel = 'LIFTING';
-                    statusColor = '#ef4444'; // red
-                } else if (overallPosition === 2) {
-                    statusLabel = 'ON DECK';
-                    statusColor = '#10b981'; // green
+                let positionNum = null;
+
+                if (myAthleteIsDone && index === 0) {
+                    // Pinned "your athlete" card — mark it clearly, not as LIFTING
+                    statusLabel = 'YOUR ATHLETE';
+                    statusColor = '#f97316'; // orange
+                } else {
+                    // Shift effective position by -1 when your athlete occupies slot 0 but is done
+                    const effectivePosition = myAthleteIsDone ? index : index + 1;
+                    if (effectivePosition === 1) {
+                        statusLabel = 'LIFTING';
+                        statusColor = '#ef4444';
+                    } else if (effectivePosition === 2) {
+                        statusLabel = 'ON DECK';
+                        statusColor = '#10b981';
+                    } else {
+                        positionNum = effectivePosition;
+                    }
                 }
 
                 // Check if this athlete's school matches configured school
@@ -1301,9 +1319,8 @@
                 const cardBgColor = isMySchool ? 'rgba(249, 115, 22, 0.18)' : 'rgba(30, 41, 59, 0.9)';
                 const cardBorderColor = isMySchool ? 'rgba(249, 115, 22, 0.7)' : 'rgba(96, 165, 250, 0.2)';
                 const wcRank = rankMap[athlete.name] || null;
-                const isMyAthlete = announcementName && athlete.name.toLowerCase().includes(announcementName);
 
-                col.innerHTML = buildAthleteCard(athlete, statusLabel, statusColor, overallPosition > 2 ? overallPosition : null, cardBgColor, cardBorderColor, wcRank, '', isMyAthlete);
+                col.innerHTML = buildAthleteCard(athlete, statusLabel, statusColor, positionNum, cardBgColor, cardBorderColor, wcRank, '', isMyAthlete);
 
                 row.appendChild(col);
             });
@@ -1320,7 +1337,8 @@
                 let statusTag = '';
                 if (justFinishedAthlete && justFinishedAthlete.name.toLowerCase().trim() === announcementName) {
                     statusTag = ' · Just Finished';
-                } else if (myIdx === 0) statusTag = ' · Lifting';
+                } else if (myIdx === 0 && myAthleteIsDone) statusTag = ' · Done';
+                else if (myIdx === 0) statusTag = ' · Lifting';
                 else if (myIdx === 1) statusTag = ' · On Deck';
                 else if (myIdx > 1) statusTag = ` · #${myIdx + 1}`;
                 const platformLabel = (() => {
