@@ -411,6 +411,18 @@
             <span style="color: rgba(255,255,255,0.8); font-size: 0.85rem;"><i class="fas fa-star" style="color: #ef4444;"></i> &nbsp;State Record Attempt</span>
         </div>
 
+        <!-- My Athlete Panel -->
+        <div id="myAthletePanel" style="display:none; background: rgba(249,115,22,0.12); border: 2px solid rgba(249,115,22,0.5); border-radius: 14px; padding: 14px 20px; margin-bottom: 14px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <i class="fas fa-person-running" style="color:#f97316; font-size:1.3rem;"></i>
+                    <span id="myAthletePanelName" style="color:#f97316; font-weight:800; font-size:1.15rem;"></span>
+                    <span style="color:rgba(255,255,255,0.5); font-size:0.85rem;">· Your Athlete</span>
+                </div>
+                <span id="myAthletePanelStatus" style="padding:5px 16px; border-radius:10px; font-weight:700; font-size:0.95rem; color:white;"></span>
+            </div>
+        </div>
+
         <!-- Status Message -->
         <!-- Athletes Container -->
         <div id="athletesContainer"></div>
@@ -1269,24 +1281,7 @@
                 ? sortedAthletes.filter(a => a.name !== justFinishedAthlete.name)
                 : sortedAthletes;
 
-            // Pin "your athlete" at position 1 if configured and not already shown as just-finished
-            if (announcementName) {
-                const myAthleteIdx = displayAthletes.findIndex(a => a.name.toLowerCase().includes(announcementName));
-                if (myAthleteIdx > 0) {
-                    const [myAthlete] = displayAthletes.splice(myAthleteIdx, 1);
-                    displayAthletes.unshift(myAthlete);
-                }
-            }
-
-            // Determine "your athlete" and whether they are fully done
-            const allLiftColumns = ['squat1','squat2','squat3','bench1','bench2','bench3','dead1','dead2','dead3'];
-            const myAthlete = announcementName
-                ? displayAthletes.find(a => a.name.toLowerCase().includes(announcementName))
-                : null;
-            const myAthleteIsDone = myAthlete
-                && !allLiftColumns.some(col => hasPendingInColumn(myAthlete, col));
-
-            // The actual lift queue: athletes with a pending attempt in the current column, in sorted order
+            // Lift queue: athletes with a pending attempt in the current column, in sorted order
             const liftQueue = sortedAthletes.filter(a => hasPendingInColumn(a, currentColumn));
 
             displayAthletes.forEach((athlete, index) => {
@@ -1294,29 +1289,21 @@
                 col.className = 'col-lg-4 col-md-6';
                 col.dataset.athleteName = athlete.name;
 
-                const isMyAthlete = myAthlete && athlete === myAthlete;
+                const isMyAthlete = announcementName && athlete.name.toLowerCase().includes(announcementName);
 
                 let statusLabel = '';
                 let statusColor = '';
                 let positionNum = null;
 
-                if (isMyAthlete) {
-                    // My Athlete is always pinned to slot 1 — always labeled YOUR ATHLETE
-                    statusLabel = 'YOUR ATHLETE';
-                    statusColor = '#f97316';
-                } else {
-                    // Label based on actual queue position, independent of visual slot
-                    const queuePos = liftQueue.findIndex(a => a.name === athlete.name);
-                    if (queuePos === 0) {
-                        statusLabel = 'LIFTING';
-                        statusColor = '#ef4444';
-                    } else if (queuePos === 1) {
-                        statusLabel = 'ON DECK';
-                        statusColor = '#10b981';
-                    } else if (queuePos > 1) {
-                        positionNum = queuePos + 1;
-                    }
-                    // queuePos === -1 means no pending attempt (done) — no label
+                const queuePos = liftQueue.findIndex(a => a.name === athlete.name);
+                if (queuePos === 0) {
+                    statusLabel = 'LIFTING';
+                    statusColor = '#ef4444';
+                } else if (queuePos === 1) {
+                    statusLabel = 'ON DECK';
+                    statusColor = '#10b981';
+                } else if (queuePos > 1) {
+                    positionNum = queuePos + 1;
                 }
 
                 // Check if this athlete's school matches configured school
@@ -1333,25 +1320,34 @@
 
             container.appendChild(row);
 
-            // Update my-athlete badge
+            // Update My Athlete panel and header badge
             if (announcementName) {
-                const badge = document.getElementById('myAthleteBadge');
-                const badgeText = document.getElementById('myAthleteBadgeText');
                 const cfg2 = JSON.parse(localStorage.getItem('trplConfig') || '{}');
                 const displayName = cfg2.athleteName || '';
-                const myQueuePos = myAthlete ? liftQueue.findIndex(a => a.name === myAthlete.name) : -1;
-                let statusTag = '';
+                const myQueuePos = liftQueue.findIndex(a => a.name.toLowerCase().includes(announcementName));
+
+                let panelLabel = '';
+                let panelColor = '';
                 if (justFinishedAthlete && justFinishedAthlete.name.toLowerCase().includes(announcementName)) {
-                    statusTag = ' · Just Finished';
-                } else if (myAthleteIsDone) statusTag = ' · Done';
-                else if (myQueuePos === 0) statusTag = ' · Lifting';
-                else if (myQueuePos === 1) statusTag = ' · On Deck';
-                else if (myQueuePos > 1) statusTag = ` · #${myQueuePos + 1}`;
-                const platformLabel = (() => {
-                    const sel = document.getElementById('platformSelect');
-                    return sel && sel.selectedIndex > 0 ? ' · ' + sel.options[sel.selectedIndex].text : '';
-                })();
-                badgeText.textContent = displayName + statusTag;
+                    panelLabel = 'JUST FINISHED'; panelColor = '#a78bfa';
+                } else if (myQueuePos === 0) {
+                    panelLabel = 'LIFTING'; panelColor = '#ef4444';
+                } else if (myQueuePos === 1) {
+                    panelLabel = 'ON DECK'; panelColor = '#10b981';
+                } else if (myQueuePos > 1) {
+                    panelLabel = `#${myQueuePos + 1}`; panelColor = '#60a5fa';
+                } else {
+                    panelLabel = 'DONE'; panelColor = '#f97316';
+                }
+
+                document.getElementById('myAthletePanelName').textContent = displayName;
+                const statusEl = document.getElementById('myAthletePanelStatus');
+                statusEl.textContent = panelLabel;
+                statusEl.style.background = panelColor;
+                document.getElementById('myAthletePanel').style.display = 'block';
+
+                // Keep header badge in sync
+                document.getElementById('myAthleteBadgeText').textContent = displayName + ' · ' + panelLabel;
                 document.getElementById('myAthleteBadgeWrap').style.display = 'block';
             }
         }
