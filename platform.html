@@ -1300,8 +1300,8 @@
                 let statusColor = '';
                 let positionNum = null;
 
-                if (isMyAthlete && myAthleteIsDone) {
-                    // Done — label the card as "YOUR ATHLETE", not a queue position
+                if (isMyAthlete) {
+                    // My Athlete is always pinned to slot 1 — always labeled YOUR ATHLETE
                     statusLabel = 'YOUR ATHLETE';
                     statusColor = '#f97316';
                 } else {
@@ -1316,7 +1316,7 @@
                     } else if (queuePos > 1) {
                         positionNum = queuePos + 1;
                     }
-                    // queuePos === -1 means no pending attempt (done but not my athlete) — no label
+                    // queuePos === -1 means no pending attempt (done) — no label
                 }
 
                 // Check if this athlete's school matches configured school
