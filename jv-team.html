@@ -724,17 +724,23 @@
                 if (!r.ok) return;
                 const data = await r.json();
                 const ageSecs = Math.floor(Date.now() / 1000) - data.ts;
+                const btn = document.getElementById('refreshToggle');
+                if (!btn) return;
                 if (ageSecs > 30) {
-                    const badge = document.getElementById('cacheStatusBadge');
-                    if (!badge) return;
                     const mins = Math.floor(ageSecs / 60);
                     const secs = ageSecs % 60;
                     const ageStr = mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
-                    badge.style.background = 'rgba(239,68,68,0.15)';
-                    badge.style.color = '#f87171';
-                    badge.style.border = '1px solid rgba(239,68,68,0.4)';
-                    badge.textContent = `⚠ Data not refreshing · ${ageStr} old`;
-                    badge.style.display = 'inline-block';
+                    btn.style.background = 'rgba(239,68,68,0.8)';
+                    btn.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i>Data Stale · ${ageStr}`;
+                } else {
+                    // Data is fresh — restore normal button appearance if it was showing stale
+                    if (btn.innerHTML.includes('Data Stale')) {
+                        btn.style.background = 'rgba(96,165,250,0.8)';
+                        const isOn = !!window.autoRefreshInterval;
+                        btn.innerHTML = isOn
+                            ? '<i class="fas fa-sync-alt fa-spin me-2"></i>Auto-Refresh: ON'
+                            : '<i class="fas fa-sync-alt me-2"></i>Auto-Refresh: OFF';
+                    }
                 }
             } catch(e) { /* network error — ignore */ }
         }
