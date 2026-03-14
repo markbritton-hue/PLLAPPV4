@@ -441,14 +441,10 @@
         }
 
         window.addEventListener('DOMContentLoaded', function() {
-            // Restore voice primed state
-            const savedVoice = localStorage.getItem('coachesVoicePrimed');
-            if (savedVoice === 'on') {
-                speechPrimed = true;
-                setVoiceActive(true);
-            } else {
-                setVoiceActive(false);
-            }
+            // Always start with voice off — user must tap to enable each session
+            speechPrimed = false;
+            localStorage.setItem('coachesVoicePrimed', 'off');
+            setVoiceActive(false);
             // Restore auto-refresh state (toggleAutoRefresh calls loadDisplay internally)
             if (localStorage.getItem('coachesAutoRefresh') === 'on') {
                 toggleAutoRefresh();
