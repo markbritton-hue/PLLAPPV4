@@ -391,11 +391,6 @@
             </button>
         </div>
 
-        <div id="myAthleteBadgeWrap" style="display:none; margin-bottom: 12px; margin-top: 0;">
-            <button id="myAthleteBadge" onclick="scrollToMyAthlete()" style="background: rgba(249,115,22,0.9); border: 1px solid rgba(249,115,22,0.5); color: white; cursor: pointer; white-space: nowrap; padding: 8px 18px; border-radius: 20px; font-weight: 700; font-size: 0.95rem; box-shadow: 0 2px 10px rgba(249,115,22,0.3);">
-                <i class="fas fa-person-running me-2"></i><span id="myAthleteBadgeText"></span>
-            </button>
-        </div>
 
         <!-- Platform Selection -->
         <div class="control-section">
@@ -692,8 +687,6 @@
                     const _sheet = _cfg.sheets.find(s => String(s.gid) === String(_gidParam));
                     if (_sheet) _platformLabel = ' · ' + _sheet.name;
                 }
-                document.getElementById('myAthleteBadgeText').textContent = _cfg.athleteName;
-                document.getElementById('myAthleteBadgeWrap').style.display = 'block';
             }
 
             loadPlatformsList();
@@ -1370,8 +1363,6 @@
                 document.getElementById('myAthletePanel').style.display = 'block';
 
                 // Keep header badge in sync
-                document.getElementById('myAthleteBadgeText').textContent = displayName + ' · ' + panelLabel;
-                document.getElementById('myAthleteBadgeWrap').style.display = 'block';
             }
         }
 
