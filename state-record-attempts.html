@@ -490,6 +490,8 @@
             if (hits.length > 0) results.push({ athlete: a, hits: hits });
         });
 
+        results.sort(function(a, b) { return (a.athlete.platformPosition || 999) - (b.athlete.platformPosition || 999); });
+
         if (results.length === 0) {
             container.innerHTML = '<div class="no-records-msg"><i class="fas fa-hourglass-half" style="color:#10b981;"></i><h4 style="color:rgba(255,255,255,0.7);margin-bottom:10px;">No Records Beaten or Failed Yet</h4><p style="color:rgba(255,255,255,0.4);">No completed attempts above a state record have been recorded yet.</p></div>';
             return;
@@ -565,6 +567,8 @@
             const hits = getRecordAttempts(a, records);
             if (hits.length > 0) recordAttempts.push({ athlete: a, hits });
         });
+
+        recordAttempts.sort((a, b) => (a.athlete.platformPosition || 999) - (b.athlete.platformPosition || 999));
 
         if (recordAttempts.length === 0) {
             container.innerHTML = `
