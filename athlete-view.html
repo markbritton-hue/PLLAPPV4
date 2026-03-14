@@ -537,6 +537,7 @@
             const response = await fetch(csvUrl);
             if (!response.ok) throw new Error(`Failed to fetch sheet data: ${response.status}`);
             updateCacheBadge(response.headers.get('X-Cache') || 'MISS', response.headers.get('X-Cache-Age'));
+            checkHeartbeat();
 
             const csv = await response.text();
             const csvData = parseCSV(csv);
@@ -827,6 +828,27 @@
                 loadData();
             }
         });
+
+        async function checkHeartbeat() {
+            try {
+                const r = await fetch('https://pllv4.streamwaveprod.com/cache/heartbeat.json?_=' + Date.now());
+                if (!r.ok) return;
+                const data = await r.json();
+                const ageSecs = Math.floor(Date.now() / 1000) - data.ts;
+                if (ageSecs > 30) {
+                    const badge = document.getElementById('cacheStatusBadge');
+                    if (!badge) return;
+                    const mins = Math.floor(ageSecs / 60);
+                    const secs = ageSecs % 60;
+                    const ageStr = mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+                    badge.style.background = 'rgba(239,68,68,0.15)';
+                    badge.style.color = '#f87171';
+                    badge.style.border = '1px solid rgba(239,68,68,0.4)';
+                    badge.textContent = `⚠ Data not refreshing · ${ageStr} old`;
+                    badge.style.display = 'inline-block';
+                }
+            } catch(e) { /* network error — ignore */ }
+        }
     </script>
 </body>
 </html>
