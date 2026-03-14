@@ -654,6 +654,7 @@
         function renderWeightClass() {
             const wc = document.getElementById('wcSelect').value;
             const container = document.getElementById('athleteCards');
+            const announcementName = (JSON.parse(localStorage.getItem('trplConfig') || '{}').athleteName || '').toLowerCase().trim();
 
             if (!wc || !allGrouped[wc]) {
                 container.innerHTML = '<div class="empty-state"><i class="fas fa-dumbbell me-2"></i>Select a weight class to view athletes</div>';
@@ -720,12 +721,16 @@
                     const benchBg = athlete.benchDone ? 'background:rgba(16,185,129,0.12); border-radius:8px; padding:8px;' : '';
                     const deadBg  = athlete.deadDone  ? 'background:rgba(16,185,129,0.12); border-radius:8px; padding:8px;' : '';
 
+                    const isMyAthlete = announcementName && athlete.name.toLowerCase().includes(announcementName);
                     html += `
                     <div class="col-12 col-sm-6 col-xl-4">
                         <div class="athlete-card ${rankClass} ${mySchoolClass}">
                             <div class="card-rank">${medal} Rank #${rank}</div>
                             <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px;">
-                                <div class="card-name">${athlete.name}</div>
+                                ${isMyAthlete
+                                    ? `<div style="background:rgba(249,115,22,0.9);color:white;font-size:0.95rem;font-weight:700;padding:3px 10px;border-radius:10px;white-space:nowrap;"><i class="fas fa-person-running me-1"></i>${athlete.name}</div>`
+                                    : `<div class="card-name">${athlete.name}</div>`
+                                }
                                 <div style="text-align: right;">
                                     ${athlete.bodyWeight ? `<div style="color: rgba(255,255,255,0.65); font-size: 1.1rem; font-weight: 700; white-space: nowrap;">${athlete.bodyWeight} lbs</div>` : ''}
                                     ${athlete.bodyWeight > 0 ? `<div style="font-size: 0.75rem; font-weight: 600;"><span style="color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.5px;">lb/lb</span> <span style="color: #a78bfa;">${(athlete.total / athlete.bodyWeight).toFixed(2)}</span></div>` : ''}
