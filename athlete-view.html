@@ -807,6 +807,20 @@
             updateMyAthletePanel();
         }
 
+        function getAVCurrentColumn(athletes) {
+            const cols = ['sq1','sq2','sq3','bp1','bp2','bp3','dl1','dl2','dl3'];
+            for (const col of cols) {
+                if (athletes.some(a => { const v = a[col] || ''; return v && !v.toLowerCase().includes('g') && !v.toLowerCase().includes('x'); })) return col;
+            }
+            return null;
+        }
+
+        function avHasPending(athlete, col) {
+            if (!col) return false;
+            const v = athlete[col] || '';
+            return v && !v.toLowerCase().includes('g') && !v.toLowerCase().includes('x');
+        }
+
         function updateMyAthletePanel() {
             const cfg = JSON.parse(localStorage.getItem('trplConfig') || '{}');
             const athleteName = (cfg.athleteName || '').toLowerCase().trim();
@@ -876,12 +890,33 @@
                 return `<div style="text-align:center;"><div style="font-size:0.7rem;color:rgba(255,255,255,0.55);font-weight:600;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:2px;">${label}</div><div style="font-size:0.95rem;font-weight:800;color:white;">${sign}${diff} lbs</div></div>`;
             }
 
+            // Compute platform position
+            const colLabels = { sq1:'Squat Att 1',sq2:'Squat Att 2',sq3:'Squat Att 3', bp1:'Bench Att 1',bp2:'Bench Att 2',bp3:'Bench Att 3', dl1:'Deadlift Att 1',dl2:'Deadlift Att 2',dl3:'Deadlift Att 3' };
+            const platformAthletes = Object.values(allGrouped).flat().filter(a => a.platformGid === myAthlete.platformGid);
+            const currentCol = getAVCurrentColumn(platformAthletes);
+            let positionHtml = '';
+            if (!currentCol) {
+                positionHtml = `<div style="background:#f97316;color:white;font-weight:700;font-size:0.9rem;text-align:center;border-radius:8px;padding:6px 12px;margin-bottom:8px;">DONE</div>`;
+            } else {
+                const queue = platformAthletes
+                    .filter(a => avHasPending(a, currentCol))
+                    .sort((a, b) => (parseFloat((a[currentCol]||'').replace(/[xgXGfF]/g,'').trim())||0) - (parseFloat((b[currentCol]||'').replace(/[xgXGfF]/g,'').trim())||0));
+                const qPos = queue.findIndex(a => a.name.toLowerCase().includes(athleteName));
+                const liftLabel = colLabels[currentCol] || currentCol;
+                let statusLabel, statusColor;
+                if (qPos === 0)      { statusLabel = 'LIFTING';      statusColor = '#ef4444'; }
+                else if (qPos === 1) { statusLabel = 'ON DECK';      statusColor = '#10b981'; }
+                else if (qPos > 1)   { statusLabel = `#${qPos + 1} IN QUEUE`; statusColor = '#60a5fa'; }
+                else                 { statusLabel = 'DONE';         statusColor = '#f97316'; }
+                positionHtml = `<div style="background:${statusColor};color:white;font-weight:700;font-size:0.9rem;text-align:center;border-radius:8px;padding:6px 12px;margin-bottom:8px;display:flex;justify-content:center;gap:10px;"><span>${statusLabel}</span><span style="opacity:0.75;">·</span><span style="opacity:0.9;">${liftLabel}</span></div>`;
+            }
+
             const isJV = myAthlete.designation === 'JV';
             const squatBg = myAthlete.squatDone ? 'background:rgba(16,185,129,0.12); border-radius:8px; padding:8px;' : '';
             const benchBg = myAthlete.benchDone ? 'background:rgba(16,185,129,0.12); border-radius:8px; padding:8px;' : '';
             const deadBg  = myAthlete.deadDone  ? 'background:rgba(16,185,129,0.12); border-radius:8px; padding:8px;' : '';
 
-            document.getElementById('myAthletePanelBody').innerHTML = `
+            document.getElementById('myAthletePanelBody').innerHTML = positionHtml + `
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap;">
                     <span class="designation-badge ${isJV ? 'jv' : 'varsity'}" style="margin-bottom:0;">${isJV ? 'JV' : 'Varsity'}</span>
                     <span style="color:rgba(255,255,255,0.85); font-size:0.85rem; font-weight:700;">${myAthlete.school || '—'}</span>
