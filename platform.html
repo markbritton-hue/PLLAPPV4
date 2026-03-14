@@ -413,6 +413,7 @@
                     <i class="fas fa-person-running" style="color:#f97316; font-size:1.3rem;"></i>
                     <span id="myAthletePanelName" style="color:#f97316; font-weight:800; font-size:1.15rem;"></span>
                     <span style="color:rgba(255,255,255,0.5); font-size:0.85rem;">· Your Athlete</span>
+                    <span id="myAthletePanelPlatform" style="display:none; background:rgba(96,165,250,0.15); border:1px solid rgba(96,165,250,0.35); color:#93c5fd; font-size:0.75rem; font-weight:700; padding:3px 10px; border-radius:6px; white-space:nowrap;"></span>
                 </div>
                 <span id="myAthletePanelStatus" style="padding:5px 16px; border-radius:10px; font-weight:700; font-size:0.95rem; color:white;"></span>
             </div>
@@ -1123,6 +1124,10 @@
             const container = document.getElementById('athletesContainer');
             container.innerHTML = '';
 
+            // Get current platform name
+            const _pSel = document.getElementById('platformSelect');
+            const platformName = _pSel && _pSel.selectedIndex > 0 ? _pSel.options[_pSel.selectedIndex].text : '';
+
             // Get configured school name + athlete announcements
             const configStr = localStorage.getItem('trplConfig');
             let configuredSchool = '', announcementName = '', announcementsOn = false;
@@ -1264,7 +1269,7 @@
                 const jfCardBorder = jfIsMySchool ? 'rgba(249, 115, 22, 0.7)' : 'rgba(167, 139, 250, 0.5)';
                 jfCol.dataset.athleteName = justFinishedAthlete.name;
                 const jfIsMyAthlete = announcementName && justFinishedAthlete.name.toLowerCase().includes(announcementName);
-                jfCol.innerHTML = buildAthleteCard(justFinishedAthlete, 'JUST FINISHED', '#a78bfa', null, jfCardBg, jfCardBorder, rankMap[justFinishedAthlete.name] || null, buildResultOverlay(justFinishedResult), jfIsMyAthlete);
+                jfCol.innerHTML = buildAthleteCard(justFinishedAthlete, 'JUST FINISHED', '#a78bfa', null, jfCardBg, jfCardBorder, rankMap[justFinishedAthlete.name] || null, buildResultOverlay(justFinishedResult), jfIsMyAthlete, platformName);
                 row.appendChild(jfCol);
                 // Reset 10s removal timer on every render so card always shows a full 10s
                 scheduleCardRemoval();
@@ -1307,7 +1312,7 @@
                 const cardBorderColor = isMySchool ? 'rgba(249, 115, 22, 0.7)' : 'rgba(96, 165, 250, 0.2)';
                 const wcRank = rankMap[athlete.name] || null;
 
-                col.innerHTML = buildAthleteCard(athlete, statusLabel, statusColor, positionNum, cardBgColor, cardBorderColor, wcRank, '', isMyAthlete);
+                col.innerHTML = buildAthleteCard(athlete, statusLabel, statusColor, positionNum, cardBgColor, cardBorderColor, wcRank, '', isMyAthlete, platformName);
 
                 row.appendChild(col);
             });
@@ -1335,6 +1340,9 @@
                 }
 
                 document.getElementById('myAthletePanelName').textContent = displayName;
+                const platformBadge = document.getElementById('myAthletePanelPlatform');
+                if (platformName) { platformBadge.textContent = platformName; platformBadge.style.display = ''; }
+                else platformBadge.style.display = 'none';
                 const statusEl = document.getElementById('myAthletePanelStatus');
                 statusEl.textContent = panelLabel;
                 statusEl.style.background = panelColor;
@@ -1399,7 +1407,7 @@
             </div>`;
         }
 
-        function buildAthleteCard(athlete, statusLabel, statusColor, positionNum, cardBgColor, cardBorderColor, wcRank, resultHtml = '', isMyAthlete = false) {
+        function buildAthleteCard(athlete, statusLabel, statusColor, positionNum, cardBgColor, cardBorderColor, wcRank, resultHtml = '', isMyAthlete = false, platformName = '') {
             return `
                     <div class="athlete-card" style="background: ${cardBgColor}; border-color: ${cardBorderColor}; ${isMyAthlete ? 'border-left-color: #f97316;' : ''}">
                         ${resultHtml}
@@ -1415,9 +1423,10 @@
                                 ${wcRank ? `<div style="color: rgba(255,255,255,0.55); font-size: 0.8rem; font-weight: 700; white-space: nowrap;">Ranked #${wcRank}</div>` : ''}
                             </div>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap:wrap;">
                             <span class="designation-badge ${athlete.designation === 'JV' ? 'jv' : 'varsity'}">${athlete.designation === 'JV' ? 'JV' : 'Varsity'}</span>
                             <span class="athlete-school">${athlete.school}</span>
+                            ${platformName ? `<span style="background:rgba(96,165,250,0.15); border:1px solid rgba(96,165,250,0.35); color:#93c5fd; font-size:0.72rem; font-weight:700; padding:2px 8px; border-radius:6px; white-space:nowrap;"><i class="fas fa-layer-group me-1"></i>${platformName}</span>` : ''}
                         </div>
 
                         <div class="row g-2">
