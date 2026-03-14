@@ -298,7 +298,7 @@
         <!-- My Athlete Panel -->
         <div id="myAthletePanel" style="display:none; background: rgba(249,115,22,0.12); border: 2px solid rgba(249,115,22,0.5); border-radius: 14px; padding: 14px 20px; margin-bottom: 0;">
             <div style="display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
-                <span id="myAthletePanelName" style="background:rgba(249,115,22,0.9);color:white;font-size:1rem;font-weight:700;padding:5px 12px;border-radius:10px;white-space:nowrap;align-self:flex-start;"></span>
+                <a id="myAthletePanelName" href="#" style="background:rgba(249,115,22,0.9);color:white;font-size:1rem;font-weight:700;padding:5px 12px;border-radius:10px;white-space:nowrap;align-self:flex-start;text-decoration:none;cursor:pointer;"></a>
                 <span id="myAthletePanelStatus" style="padding:5px 16px; border-radius:10px; font-weight:700; font-size:0.95rem; color:white;"></span>
             </div>
             <div id="myAthletePanelBody"></div>
@@ -459,11 +459,13 @@
                 const results = await Promise.all(
                     platformSheets.map(p => loadSheetAthletes(config.spreadsheetId, p.gid, '', configuredSchool))
                 );
-                for (const athletes of results) {
-                    for (const a of athletes) {
+                for (let i = 0; i < results.length; i++) {
+                    for (const a of results[i]) {
                         const key = a.name.toLowerCase();
                         if (seenNames.has(key)) continue;
                         seenNames.add(key);
+                        a.platformGid  = platformSheets[i].gid;
+                        a.platformName = platformSheets[i].name;
                         if (!grouped[a.wc]) grouped[a.wc] = [];
                         grouped[a.wc].push(a);
                     }
@@ -825,6 +827,11 @@
                 if (found) { myAthlete = found; myWC = wc; break; }
             }
             if (!myAthlete) return;
+
+            // Make name badge a link to the athlete's platform
+            if (myAthlete.platformGid) {
+                document.getElementById('myAthletePanelName').href = `platform.html?gid=${myAthlete.platformGid}`;
+            }
 
             const group = allGrouped[myWC].filter(a => a.designation === myAthlete.designation).sort((a, b) => b.total - a.total);
             const rank = group.findIndex(a => a.name.toLowerCase().includes(athleteName)) + 1;

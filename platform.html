@@ -405,7 +405,7 @@
         <div id="myAthletePanel" style="display:none; background: rgba(249,115,22,0.12); border: 2px solid rgba(249,115,22,0.5); border-radius: 14px; padding: 14px 20px; margin-bottom: 14px;">
             <div style="display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
                 <div style="display:flex; flex-direction:column; gap:6px;">
-                    <span id="myAthletePanelName" style="background:rgba(249,115,22,0.9);color:white;font-size:1rem;font-weight:700;padding:5px 12px;border-radius:10px;white-space:nowrap;align-self:flex-start;"></span>
+                    <a id="myAthletePanelName" href="#" style="background:rgba(249,115,22,0.9);color:white;font-size:1rem;font-weight:700;padding:5px 12px;border-radius:10px;white-space:nowrap;align-self:flex-start;text-decoration:none;cursor:pointer;"></a>
                     <a id="myAthletePanelPlatform" href="#" style="display:none; background:rgba(96,165,250,0.15); border:1px solid rgba(96,165,250,0.35); color:#93c5fd; font-size:0.75rem; font-weight:700; padding:3px 10px; border-radius:6px; white-space:nowrap; text-decoration:none; cursor:pointer; align-self:flex-start;"></a>
                 </div>
                 <span id="myAthletePanelStatus" style="padding:5px 16px; border-radius:10px; font-weight:700; font-size:0.95rem; color:white;"></span>
@@ -679,12 +679,15 @@
             // Show My Athlete panel immediately from config (before platform is selected)
             if (_cfg.athleteName) {
                 const storedPlatform = (() => { try { return JSON.parse(localStorage.getItem('myAthletePlatform') || 'null'); } catch(e) { return null; } })();
-                document.getElementById('myAthletePanelName').innerHTML = `<i class="fas fa-person-running me-1"></i>${_cfg.athleteName}`;
+                const nameEl = document.getElementById('myAthletePanelName');
+                nameEl.innerHTML = `<i class="fas fa-person-running me-1"></i>${_cfg.athleteName}`;
                 const platformBadge = document.getElementById('myAthletePanelPlatform');
                 if (storedPlatform && storedPlatform.name) {
+                    const platformHref = storedPlatform.gid ? `platform.html?gid=${storedPlatform.gid}` : '#';
                     platformBadge.textContent = storedPlatform.name;
-                    platformBadge.href = storedPlatform.gid ? `platform.html?gid=${storedPlatform.gid}` : '#';
+                    platformBadge.href = platformHref;
                     platformBadge.style.display = '';
+                    nameEl.href = platformHref;
                 }
                 document.getElementById('myAthletePanelStatus').style.background = '';
                 document.getElementById('myAthletePanel').style.display = 'block';
@@ -1340,7 +1343,8 @@
                     panelLabel = 'DONE'; panelColor = '#f97316';
                 }
 
-                document.getElementById('myAthletePanelName').innerHTML = `<i class="fas fa-person-running me-1"></i>${displayName}`;
+                const nameEl2 = document.getElementById('myAthletePanelName');
+                nameEl2.innerHTML = `<i class="fas fa-person-running me-1"></i>${displayName}`;
                 const statusEl = document.getElementById('myAthletePanelStatus');
                 statusEl.textContent = panelLabel;
                 statusEl.style.background = panelColor;
@@ -1357,9 +1361,11 @@
                 const athletePlatformGid  = (myAthleteData && currentPlatformGid) ? currentPlatformGid : (storedPlatform ? storedPlatform.gid : '');
                 const platformBadge2 = document.getElementById('myAthletePanelPlatform');
                 if (athletePlatformName) {
+                    const pHref = athletePlatformGid ? `platform.html?gid=${athletePlatformGid}` : '#';
                     platformBadge2.textContent = athletePlatformName;
-                    platformBadge2.href = athletePlatformGid ? `platform.html?gid=${athletePlatformGid}` : '#';
+                    platformBadge2.href = pHref;
                     platformBadge2.style.display = '';
+                    nameEl2.href = pHref;
                 } else platformBadge2.style.display = 'none';
 
                 if (myAthleteData) {
