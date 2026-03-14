@@ -1335,18 +1335,27 @@
                 }
 
                 document.getElementById('myAthletePanelName').textContent = displayName;
-                const platformBadge = document.getElementById('myAthletePanelPlatform');
-                if (platformName) {
-                    platformBadge.textContent = platformName;
-                    platformBadge.href = currentPlatformGid ? `platform.html?gid=${currentPlatformGid}` : '#';
-                    platformBadge.style.display = '';
-                } else platformBadge.style.display = 'none';
                 const statusEl = document.getElementById('myAthletePanelStatus');
                 statusEl.textContent = panelLabel;
                 statusEl.style.background = panelColor;
 
                 // Render lift attempts for my athlete
                 const myAthleteData = athletes.find(a => a.name.toLowerCase().includes(announcementName));
+                if (myAthleteData && platformName && currentPlatformGid) {
+                    // Persist which platform the athlete is actually on
+                    localStorage.setItem('myAthletePlatform', JSON.stringify({ name: platformName, gid: currentPlatformGid }));
+                }
+                // Always show the stored platform for my athlete (even when viewing another platform)
+                const storedPlatform = (() => { try { return JSON.parse(localStorage.getItem('myAthletePlatform') || 'null'); } catch(e) { return null; } })();
+                const athletePlatformName = (myAthleteData && platformName) ? platformName : (storedPlatform ? storedPlatform.name : '');
+                const athletePlatformGid  = (myAthleteData && currentPlatformGid) ? currentPlatformGid : (storedPlatform ? storedPlatform.gid : '');
+                const platformBadge2 = document.getElementById('myAthletePanelPlatform');
+                if (athletePlatformName) {
+                    platformBadge2.textContent = athletePlatformName;
+                    platformBadge2.href = athletePlatformGid ? `platform.html?gid=${athletePlatformGid}` : '#';
+                    platformBadge2.style.display = '';
+                } else platformBadge2.style.display = 'none';
+
                 if (myAthleteData) {
                     const wc = myAthleteData.weightClass;
                     document.getElementById('myAthletePanelLifts').innerHTML = `
