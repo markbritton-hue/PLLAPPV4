@@ -280,22 +280,31 @@
             if (!window.speechSynthesis) return;
             if (window.speechSynthesis.paused) window.speechSynthesis.resume();
             if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
-            // Speak any announcements that built up before the tap
+
+            // iOS requires a non-empty audible utterance spoken directly inside
+            // the user-gesture handler to unlock the audio engine.
             const items = pendingAnnouncements;
             pendingAnnouncements = [];
-            if (items.length > 0) {
-                showAnnouncementToast(items[0].text);
-                items.forEach(function(item) {
-                    const u = new SpeechSynthesisUtterance(item.text);
-                    u.rate = 0.9; u.pitch = 1.0; u.volume = 1.0;
-                    window.speechSynthesis.speak(u);
-                });
-            } else {
-                const primer = new SpeechSynthesisUtterance('');
-                primer.volume = 0;
-                window.speechSynthesis.speak(primer);
-            }
+            const firstText = items.length > 0 ? items[0].text : 'Voice announcements enabled';
+            const primer = new SpeechSynthesisUtterance(firstText);
+            primer.rate = 0.9; primer.pitch = 1.0; primer.volume = 1.0;
+            window.speechSynthesis.speak(primer);
+            if (items.length > 0) showAnnouncementToast(firstText);
+
+            // Queue any additional pending items after the primer
+            items.slice(1).forEach(function(item) {
+                const u = new SpeechSynthesisUtterance(item.text);
+                u.rate = 0.9; u.pitch = 1.0; u.volume = 1.0;
+                window.speechSynthesis.speak(u);
+            });
         }
+
+        // iOS suspends speech synthesis after ~30s of silence — keep it alive
+        setInterval(function() {
+            if (speechPrimed && window.speechSynthesis && !window.speechSynthesis.speaking) {
+                window.speechSynthesis.resume();
+            }
+        }, 10000);
 
         function speakQueue(items) {
             // items = [{ text, key, prevStatus }]
