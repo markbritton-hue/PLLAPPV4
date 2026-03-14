@@ -139,6 +139,9 @@
                 <button onclick="refreshData()" style="background:rgba(96,165,250,0.2);border:1px solid #60a5fa;color:#60a5fa;padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer;font-size:0.9rem;">
                     <i class="fas fa-sync-alt me-2"></i>Refresh
                 </button>
+                <button id="autoRefreshBtn" onclick="toggleAutoRefresh()" style="background:rgba(96,165,250,0.2);border:1px solid #60a5fa;color:#60a5fa;padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer;font-size:0.9rem;">
+                    <i class="fas fa-sync-alt me-2"></i>Auto-Refresh: OFF
+                </button>
             </div>
         </div>
 
@@ -749,7 +752,39 @@
         renderAttempts();
     }
 
-    window.addEventListener('DOMContentLoaded', () => { initStateRecordsStorage(); refreshData(); });
+    let autoRefreshInterval = null;
+
+    function toggleAutoRefresh() {
+        const btn = document.getElementById('autoRefreshBtn');
+        if (autoRefreshInterval) {
+            clearInterval(autoRefreshInterval);
+            autoRefreshInterval = null;
+            btn.innerHTML = '<i class="fas fa-sync-alt me-2"></i>Auto-Refresh: OFF';
+            btn.style.background = 'rgba(96,165,250,0.2)';
+            btn.style.borderColor = '#60a5fa';
+            btn.style.color = '#60a5fa';
+            localStorage.setItem('stateRecordsAutoRefresh', 'off');
+        } else {
+            const cfg = JSON.parse(localStorage.getItem('trplConfig') || '{}');
+            const intervalMs = (cfg.autoRefreshSeconds || 20) * 1000;
+            autoRefreshInterval = setInterval(refreshData, intervalMs);
+            btn.innerHTML = '<i class="fas fa-sync-alt fa-spin me-2"></i>Auto-Refresh: ON';
+            btn.style.background = 'rgba(16,185,129,0.2)';
+            btn.style.borderColor = '#10b981';
+            btn.style.color = '#10b981';
+            localStorage.setItem('stateRecordsAutoRefresh', 'on');
+            refreshData();
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        initStateRecordsStorage();
+        if (localStorage.getItem('stateRecordsAutoRefresh') === 'on') {
+            toggleAutoRefresh();
+        } else {
+            refreshData();
+        }
+    });
     </script>
 </body>
 </html>
