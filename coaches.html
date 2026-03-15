@@ -897,17 +897,19 @@
                             </div>
                         </div>
                         <div class="athlete-details" id="${detailId}">
-                            <div style="margin-bottom:10px;">
-                                <div style="font-size:0.65rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;"><i class="fas fa-compress-arrows-alt me-1"></i>Squat</div>
-                                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:3px;">${renderAttempt(athlete.squat1,'sq',athlete.weightClass)}${renderAttempt(athlete.squat2,'sq',athlete.weightClass)}${renderAttempt(athlete.squat3,'sq',athlete.weightClass)}</div>
-                            </div>
-                            <div style="margin-bottom:10px;">
-                                <div style="font-size:0.65rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;"><i class="fas fa-hands me-1"></i>Bench Press</div>
-                                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:3px;">${renderAttempt(athlete.bench1,'bp',athlete.weightClass)}${renderAttempt(athlete.bench2,'bp',athlete.weightClass)}${renderAttempt(athlete.bench3,'bp',athlete.weightClass)}</div>
-                            </div>
-                            <div style="margin-bottom:10px;">
-                                <div style="font-size:0.65rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;"><i class="fas fa-weight-hanging me-1"></i>Deadlift</div>
-                                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:3px;">${renderAttempt(athlete.dead1,'dl',athlete.weightClass)}${renderAttempt(athlete.dead2,'dl',athlete.weightClass)}${renderAttempt(athlete.dead3,'dl',athlete.weightClass)}</div>
+                            <div style="display:flex; gap:6px; margin-bottom:8px;">
+                                <div style="flex:1; min-width:0;">
+                                    <div style="font-size:0.65rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;"><i class="fas fa-compress-arrows-alt me-1"></i>Squat</div>
+                                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:3px;">${renderAttempt(athlete.squat1,'sq',athlete.weightClass)}${renderAttempt(athlete.squat2,'sq',athlete.weightClass)}${renderAttempt(athlete.squat3,'sq',athlete.weightClass)}</div>
+                                </div>
+                                <div style="flex:1; min-width:0;">
+                                    <div style="font-size:0.65rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;"><i class="fas fa-hands me-1"></i>Bench</div>
+                                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:3px;">${renderAttempt(athlete.bench1,'bp',athlete.weightClass)}${renderAttempt(athlete.bench2,'bp',athlete.weightClass)}${renderAttempt(athlete.bench3,'bp',athlete.weightClass)}</div>
+                                </div>
+                                <div style="flex:1; min-width:0;">
+                                    <div style="font-size:0.65rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;"><i class="fas fa-weight-hanging me-1"></i>Deadlift</div>
+                                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:3px;">${renderAttempt(athlete.dead1,'dl',athlete.weightClass)}${renderAttempt(athlete.dead2,'dl',athlete.weightClass)}${renderAttempt(athlete.dead3,'dl',athlete.weightClass)}</div>
+                                </div>
                             </div>
                             ${athlete.total ? `<div class="total-box"><div class="total-label">TOTAL</div><div class="total-value">${athlete.total} lbs</div></div>` : ''}
                         </div>
