@@ -77,6 +77,13 @@
         .no-records-msg { text-align: center; padding: 60px 20px; color: rgba(255,255,255,0.5); }
         .no-records-msg i { font-size: 3rem; margin-bottom: 16px; display: block; color: #f59e0b; }
 
+        .desig-badge {
+            display: inline-block; padding: 2px 9px; border-radius: 20px;
+            font-size: 0.72rem; font-weight: 700; white-space: nowrap; vertical-align: middle;
+        }
+        .desig-badge.varsity { background: #8b5cf6; color: white; }
+        .desig-badge.jv      { background: #10b981; color: white; }
+
         .gender-toggle { display: flex; gap: 8px; justify-content: center; margin-bottom: 20px; }
         .gender-btn {
             padding: 8px 24px; border-radius: 20px;
@@ -542,7 +549,7 @@
                 });
                 card.innerHTML = '<div class="d-flex align-items-start justify-content-between flex-wrap gap-2">' +
                     '<div><div class="athlete-name">' + athlete.name + '</div>' +
-                    '<div class="athlete-meta">' + athlete.school + ' &bull; ' + (athlete.designation === 'JV' ? 'JV' : 'Varsity') + ' ' + athlete.weightClass + ' lbs</div></div>' +
+                    '<div class="athlete-meta" style="margin-top:4px;"><span class="desig-badge ' + (athlete.designation === 'JV' ? 'jv' : 'varsity') + '">' + (athlete.designation === 'JV' ? 'JV' : 'Varsity') + '</span><span style="margin-left:6px;">' + athlete.school + ' &bull; ' + athlete.weightClass + ' lbs</span></div></div>' +
                     '<div class="d-flex align-items-center gap-2">' +
                     '<a href="platform.html?gid=' + athlete.platformGid + '" style="background:rgba(6,182,212,0.15);border:1px solid #06b6d4;color:#06b6d4;padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:700;white-space:nowrap;text-decoration:none;">' + athlete.platformName + '</a>' +
                     positionBadge(athlete.platformPosition) +
@@ -609,7 +616,10 @@
                 <div class="d-flex align-items-start justify-content-between flex-wrap gap-2">
                     <div>
                         <div class="athlete-name">${athlete.name}</div>
-                        <div class="athlete-meta">${athlete.school} &bull; ${athlete.designation === 'JV' ? 'JV' : 'Varsity'} ${athlete.weightClass} lbs</div>
+                        <div class="athlete-meta" style="margin-top:4px;">
+                            <span class="desig-badge ${athlete.designation === 'JV' ? 'jv' : 'varsity'}">${athlete.designation === 'JV' ? 'JV' : 'Varsity'}</span>
+                            <span style="margin-left:6px;">${athlete.school} &bull; ${athlete.weightClass} lbs</span>
+                        </div>
                     </div>
                     <div class="d-flex align-items-center gap-2">
                         <a href="platform.html?gid=${athlete.platformGid}" style="background:rgba(6,182,212,0.15);border:1px solid #06b6d4;color:#06b6d4;padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:700;white-space:nowrap;text-decoration:none;">${athlete.platformName}</a>
