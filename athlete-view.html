@@ -653,7 +653,7 @@
 
         function renderAttempt(attempt, attemptNum, liftKey, wc) {
             if (!attempt) {
-                return `<div class="lift-box" style="opacity: 0.3;"><div class="lift-name">Att ${attemptNum}</div><div class="lift-value" style="color:rgba(255,255,255,0.4);">-</div></div>`;
+                return `<div class="lift-box" style="opacity: 0.3;"><div class="lift-name">${attemptNum}</div><div class="lift-value" style="color:rgba(255,255,255,0.4);">-</div></div>`;
             }
             const isFailed = attempt.toLowerCase().includes('x');
             const isGood   = attempt.toLowerCase().includes('g');
@@ -670,7 +670,7 @@
                 bg = '#000000'; border = 'rgba(96,165,250,0.2)'; textColor = 'white';
             }
             return `<div class="lift-box" style="background:${bg}; border-color:${border};">
-                <div class="lift-name" style="color:rgba(255,255,255,0.7);">Att ${attemptNum}</div>
+                <div class="lift-name" style="color:rgba(255,255,255,0.7);">${attemptNum}</div>
                 <div class="lift-value" style="color:${textColor};">${value}${isFailed ? '<i class="fas fa-times ms-1" style="font-size:0.7rem;"></i>' : ''}${isGood ? '<i class="fas fa-check ms-1" style="color:#10b981;font-size:0.7rem;"></i>' : ''}${isRecord ? '<i class="fas fa-star ms-1" style="color:#ef4444;font-size:0.7rem;" title="State record attempt"></i>' : ''}</div>
             </div>`;
         }
