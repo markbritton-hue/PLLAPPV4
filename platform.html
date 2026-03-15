@@ -1370,19 +1370,42 @@
 
                 if (myAthleteData) {
                     const wc = myAthleteData.weightClass;
+                    const lbPerLb = myAthleteData.bodyWeight > 0 && myAthleteData.total > 0
+                        ? (myAthleteData.total / myAthleteData.bodyWeight).toFixed(2) : '—';
                     document.getElementById('myAthletePanelLifts').innerHTML = `
-                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
-                            <div>
-                                <div style="color:rgba(255,255,255,0.6); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px;"><i class="fas fa-compress-arrows-alt me-1"></i>Squat</div>
-                                <div class="row g-1">${renderAttempt(myAthleteData.squat1,'1','sq',wc,platformStateRecords,true)}${renderAttempt(myAthleteData.squat2,'2','sq',wc,platformStateRecords,true)}${renderAttempt(myAthleteData.squat3,'3','sq',wc,platformStateRecords,true)}</div>
+                        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap;">
+                            <span class="designation-badge ${myAthleteData.designation === 'JV' ? 'jv' : 'varsity'}">${myAthleteData.designation === 'JV' ? 'JV' : 'Varsity'}</span>
+                            <span class="athlete-school">${myAthleteData.school || ''}</span>
+                        </div>
+                        <div class="row g-2" style="margin-bottom:10px;">
+                            <div class="col-4"><div class="stat-box"><div class="stat-label">Wt Class</div><div class="stat-value">${wc || 'N/A'} <small>lbs</small></div></div></div>
+                            <div class="col-4"><div class="stat-box"><div class="stat-label">Body Wt</div><div class="stat-value">${myAthleteData.bodyWeight} <small>lbs</small></div></div></div>
+                            <div class="col-4"><div class="stat-box"><div class="stat-label">lb/lb</div><div class="stat-value" style="color:#a78bfa;">${lbPerLb}</div></div></div>
+                        </div>
+                        <div class="lifts-section">
+                            <h6 style="color:rgba(255,255,255,0.8); font-size:0.7rem; margin-bottom:4px;"><i class="fas fa-compress-arrows-alt me-1"></i>Squat</h6>
+                            <div class="row g-1 mb-2">
+                                ${renderAttempt(myAthleteData.squat1,'1','sq',wc,platformStateRecords)}
+                                ${renderAttempt(myAthleteData.squat2,'2','sq',wc,platformStateRecords)}
+                                ${renderAttempt(myAthleteData.squat3,'3','sq',wc,platformStateRecords)}
                             </div>
-                            <div>
-                                <div style="color:rgba(255,255,255,0.6); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px;"><i class="fas fa-hands me-1"></i>Bench</div>
-                                <div class="row g-1">${renderAttempt(myAthleteData.bench1,'1','bp',wc,platformStateRecords,true)}${renderAttempt(myAthleteData.bench2,'2','bp',wc,platformStateRecords,true)}${renderAttempt(myAthleteData.bench3,'3','bp',wc,platformStateRecords,true)}</div>
+                            <h6 style="color:rgba(255,255,255,0.8); font-size:0.7rem; margin-bottom:4px;"><i class="fas fa-hands me-1"></i>Bench Press</h6>
+                            <div class="row g-1 mb-2">
+                                ${renderAttempt(myAthleteData.bench1,'1','bp',wc,platformStateRecords)}
+                                ${renderAttempt(myAthleteData.bench2,'2','bp',wc,platformStateRecords)}
+                                ${renderAttempt(myAthleteData.bench3,'3','bp',wc,platformStateRecords)}
                             </div>
-                            <div>
-                                <div style="color:rgba(255,255,255,0.6); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px;"><i class="fas fa-weight-hanging me-1"></i>Deadlift</div>
-                                <div class="row g-1">${renderAttempt(myAthleteData.dead1,'1','dl',wc,platformStateRecords,true)}${renderAttempt(myAthleteData.dead2,'2','dl',wc,platformStateRecords,true)}${renderAttempt(myAthleteData.dead3,'3','dl',wc,platformStateRecords,true)}</div>
+                            <h6 style="color:rgba(255,255,255,0.8); font-size:0.7rem; margin-bottom:4px;"><i class="fas fa-weight-hanging me-1"></i>Deadlift</h6>
+                            <div class="row g-1">
+                                ${renderAttempt(myAthleteData.dead1,'1','dl',wc,platformStateRecords)}
+                                ${renderAttempt(myAthleteData.dead2,'2','dl',wc,platformStateRecords)}
+                                ${renderAttempt(myAthleteData.dead3,'3','dl',wc,platformStateRecords)}
+                            </div>
+                        </div>
+                        <div style="text-align:center; margin-top:10px;">
+                            <div class="total-box">
+                                <div class="total-label">TOTAL</div>
+                                <div class="total-value">${myAthleteData.total} lbs</div>
                             </div>
                         </div>`;
                 }
