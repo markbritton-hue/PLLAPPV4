@@ -874,6 +874,23 @@
                 document.getElementById('athleteCards').scrollIntoView({ behavior: 'smooth' });
             };
 
+            // If viewing a different weight class, show simplified panel
+            const selectedWC = document.getElementById('wcSelect').value;
+            if (selectedWC && selectedWC !== myWC) {
+                document.getElementById('myAthletePanelStatus').textContent = '';
+                document.getElementById('myAthletePanelStatus').style.background = '';
+                const subLine = document.getElementById('myAthletePanelSubLine');
+                subLine.innerHTML = ''; subLine.style.display = 'none';
+                const posEl = document.getElementById('myAthletePanelPosition');
+                posEl.innerHTML = ''; posEl.style.display = 'none';
+                document.getElementById('myAthletePanelBody').innerHTML =
+                    `<button onclick="document.getElementById('wcSelect').value='${myWC}'; renderWeightClass(); document.getElementById('athleteCards').scrollIntoView({behavior:'smooth'});"
+                        style="display:inline-flex; align-items:center; gap:8px; background:rgba(96,165,250,0.15); border:1px solid rgba(96,165,250,0.4); color:#93c5fd; font-size:0.85rem; font-weight:700; padding:7px 16px; border-radius:8px; cursor:pointer; margin-top:4px;">
+                        <i class="fas fa-person-running"></i> Go to ${cfg.athleteName}'s weight class (${myWC} lbs)
+                    </button>`;
+                return;
+            }
+
             const group = allGrouped[myWC].filter(a => a.designation === myAthlete.designation).sort((a, b) => b.total - a.total);
             const rank = group.findIndex(a => a.name.toLowerCase().includes(athleteName)) + 1;
             const medals = ['🥇', '🥈', '🥉'];
