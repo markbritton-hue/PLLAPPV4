@@ -589,7 +589,11 @@
             if (allSchoolAthletes.length > 0) {
                 renderAllAthletes(allSchoolAthletes);
 
-                // Restore expanded state by athlete name
+                // Restore expanded state — merge in-memory set with localStorage (survives page refresh)
+                try {
+                    const stored = JSON.parse(localStorage.getItem('coachesExpandedAthletes') || '[]');
+                    stored.forEach(n => expandedNames.add(n));
+                } catch(e) {}
                 if (expandedNames.size > 0) {
                     container.querySelectorAll('.athlete-details').forEach(el => {
                         const nameEl = el.previousElementSibling?.querySelector('.athlete-name');
@@ -926,6 +930,14 @@
             el.classList.toggle('open');
             const arrow = document.getElementById('arrow-' + id);
             if (arrow) arrow.style.transform = el.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+            // Persist expanded names to localStorage
+            const container = document.getElementById('displayContainer');
+            const expanded = new Set();
+            container.querySelectorAll('.athlete-details.open').forEach(d => {
+                const nameEl = d.previousElementSibling?.querySelector('.athlete-name');
+                if (nameEl) expanded.add(nameEl.textContent.trim().split('\n')[0].trim());
+            });
+            localStorage.setItem('coachesExpandedAthletes', JSON.stringify([...expanded]));
         }
         function updateCacheBadge(cacheHit, cacheAge) { /* handled by checkHeartbeat */ }
 
