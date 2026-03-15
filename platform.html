@@ -476,6 +476,7 @@
         let removeCardTimer = null;
         let platformGender = 'M'; // default Men's
         let platformStateRecords = null;
+        let platformJvStateRecords = null;
         let platformLastAnnouncedStatus = null;
         let platformSpeechPrimed = false;
         let platformPendingAnnouncement = null; // { text, rollbackStatus }
@@ -549,8 +550,19 @@
             catch (e) { return platformGender === 'M' ? BUILTIN_M_RECORDS : BUILTIN_W_RECORDS; }
         }
 
+        function loadJvStateRecords() {
+            const raw = localStorage.getItem(`trplStateRecords2_JV_${platformGender}`);
+            try { return raw ? JSON.parse(raw) : (platformGender === 'M' ? BUILTIN_JV_M_RECORDS : BUILTIN_JV_W_RECORDS); }
+            catch (e) { return platformGender === 'M' ? BUILTIN_JV_M_RECORDS : BUILTIN_JV_W_RECORDS; }
+        }
+
         function refreshStateRecords() {
             platformStateRecords = loadStateRecords();
+            platformJvStateRecords = loadJvStateRecords();
+        }
+
+        function getAthleteRecords(designation) {
+            return designation === 'JV' ? platformJvStateRecords : platformStateRecords;
         }
 
         function isStateRecordAttempt(weight, liftKey, weightClass, records) {
@@ -1202,7 +1214,7 @@
                         const liftWeight = lastVal ? parseFloat(lastVal.replace(/[xgXG]/g, '')) : 0;
                         if (lastVal && lastVal.toLowerCase().includes('g')) {
                             // Check if it broke a state record
-                            const isRecord = isStateRecordAttempt(liftWeight, liftKey, lastAthlete.weightClass, platformStateRecords);
+                            const isRecord = isStateRecordAttempt(liftWeight, liftKey, lastAthlete.weightClass, getAthleteRecords(lastAthlete.designation));
                             if (isRecord) {
                                 showStateRecordBanner(lastAthlete.name, liftName, liftWeight);
                                 justFinishedResult = 'record';
@@ -1374,6 +1386,7 @@
                     platformBadge2.style.display = 'none';
 
                     const wc = myAthleteData.weightClass;
+                    const myAthleteRec = getAthleteRecords(myAthleteData.designation);
                     const lbPerLb = myAthleteData.bodyWeight > 0 && myAthleteData.total > 0
                         ? (myAthleteData.total / myAthleteData.bodyWeight).toFixed(2) : '—';
                     document.getElementById('myAthletePanelLifts').innerHTML = `
@@ -1389,21 +1402,21 @@
                         <div class="lifts-section">
                             <h6 style="color:rgba(255,255,255,0.8); font-size:0.7rem; margin-bottom:4px;"><i class="fas fa-compress-arrows-alt me-1"></i>Squat</h6>
                             <div class="row g-1 mb-2">
-                                ${renderAttempt(myAthleteData.squat1,'1','sq',wc,platformStateRecords)}
-                                ${renderAttempt(myAthleteData.squat2,'2','sq',wc,platformStateRecords)}
-                                ${renderAttempt(myAthleteData.squat3,'3','sq',wc,platformStateRecords)}
+                                ${renderAttempt(myAthleteData.squat1,'1','sq',wc,myAthleteRec)}
+                                ${renderAttempt(myAthleteData.squat2,'2','sq',wc,myAthleteRec)}
+                                ${renderAttempt(myAthleteData.squat3,'3','sq',wc,myAthleteRec)}
                             </div>
                             <h6 style="color:rgba(255,255,255,0.8); font-size:0.7rem; margin-bottom:4px;"><i class="fas fa-hands me-1"></i>Bench Press</h6>
                             <div class="row g-1 mb-2">
-                                ${renderAttempt(myAthleteData.bench1,'1','bp',wc,platformStateRecords)}
-                                ${renderAttempt(myAthleteData.bench2,'2','bp',wc,platformStateRecords)}
-                                ${renderAttempt(myAthleteData.bench3,'3','bp',wc,platformStateRecords)}
+                                ${renderAttempt(myAthleteData.bench1,'1','bp',wc,myAthleteRec)}
+                                ${renderAttempt(myAthleteData.bench2,'2','bp',wc,myAthleteRec)}
+                                ${renderAttempt(myAthleteData.bench3,'3','bp',wc,myAthleteRec)}
                             </div>
                             <h6 style="color:rgba(255,255,255,0.8); font-size:0.7rem; margin-bottom:4px;"><i class="fas fa-weight-hanging me-1"></i>Deadlift</h6>
                             <div class="row g-1">
-                                ${renderAttempt(myAthleteData.dead1,'1','dl',wc,platformStateRecords)}
-                                ${renderAttempt(myAthleteData.dead2,'2','dl',wc,platformStateRecords)}
-                                ${renderAttempt(myAthleteData.dead3,'3','dl',wc,platformStateRecords)}
+                                ${renderAttempt(myAthleteData.dead1,'1','dl',wc,myAthleteRec)}
+                                ${renderAttempt(myAthleteData.dead2,'2','dl',wc,myAthleteRec)}
+                                ${renderAttempt(myAthleteData.dead3,'3','dl',wc,myAthleteRec)}
                             </div>
                         </div>
                         <div style="text-align:center; margin-top:10px;">
@@ -1464,6 +1477,7 @@
         }
 
         function buildAthleteCard(athlete, statusLabel, statusColor, positionNum, cardBgColor, cardBorderColor, wcRank, resultHtml = '', isMyAthlete = false, platformName = '') {
+            const _rec = getAthleteRecords(athlete.designation);
             return `
                     <div class="athlete-card" style="background: ${cardBgColor}; border-color: ${cardBorderColor}; ${isMyAthlete ? 'border-left-color: #f97316;' : ''}">
                         ${resultHtml}
@@ -1510,27 +1524,27 @@
                                 <i class="fas fa-compress-arrows-alt me-1"></i>Squat
                             </h6>
                             <div class="row g-1 mb-2">
-                                ${renderAttempt(athlete.squat1, '1', 'sq', athlete.weightClass, platformStateRecords)}
-                                ${renderAttempt(athlete.squat2, '2', 'sq', athlete.weightClass, platformStateRecords)}
-                                ${renderAttempt(athlete.squat3, '3', 'sq', athlete.weightClass, platformStateRecords)}
+                                ${renderAttempt(athlete.squat1, '1', 'sq', athlete.weightClass, _rec)}
+                                ${renderAttempt(athlete.squat2, '2', 'sq', athlete.weightClass, _rec)}
+                                ${renderAttempt(athlete.squat3, '3', 'sq', athlete.weightClass, _rec)}
                             </div>
 
                             <h6 style="color: rgba(255,255,255,0.8); font-size: 0.7rem; margin-bottom: 4px;">
                                 <i class="fas fa-hands me-1"></i>Bench Press
                             </h6>
                             <div class="row g-1 mb-2">
-                                ${renderAttempt(athlete.bench1, '1', 'bp', athlete.weightClass, platformStateRecords)}
-                                ${renderAttempt(athlete.bench2, '2', 'bp', athlete.weightClass, platformStateRecords)}
-                                ${renderAttempt(athlete.bench3, '3', 'bp', athlete.weightClass, platformStateRecords)}
+                                ${renderAttempt(athlete.bench1, '1', 'bp', athlete.weightClass, _rec)}
+                                ${renderAttempt(athlete.bench2, '2', 'bp', athlete.weightClass, _rec)}
+                                ${renderAttempt(athlete.bench3, '3', 'bp', athlete.weightClass, _rec)}
                             </div>
 
                             <h6 style="color: rgba(255,255,255,0.8); font-size: 0.7rem; margin-bottom: 4px;">
                                 <i class="fas fa-weight-hanging me-1"></i>Deadlift
                             </h6>
                             <div class="row g-1">
-                                ${renderAttempt(athlete.dead1, '1', 'dl', athlete.weightClass, platformStateRecords)}
-                                ${renderAttempt(athlete.dead2, '2', 'dl', athlete.weightClass, platformStateRecords)}
-                                ${renderAttempt(athlete.dead3, '3', 'dl', athlete.weightClass, platformStateRecords)}
+                                ${renderAttempt(athlete.dead1, '1', 'dl', athlete.weightClass, _rec)}
+                                ${renderAttempt(athlete.dead2, '2', 'dl', athlete.weightClass, _rec)}
+                                ${renderAttempt(athlete.dead3, '3', 'dl', athlete.weightClass, _rec)}
                             </div>
                         </div>
 

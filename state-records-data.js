@@ -161,6 +161,168 @@ const BUILTIN_W_RECORDS = {
     }
 };
 
+const BUILTIN_JV_M_RECORDS = {
+    "114": {
+        sq:    { weight: 285, name: "Dion'dre Blake",      school: "Kalkaska" },
+        bp:    { weight: 185, name: "Dion'dre Blake",      school: "Kalkaska" },
+        dl:    { weight: 360, name: "Zeke Britton",         school: "Three Rivers" },
+        total: { weight: 760, name: "Preston Fisher",       school: "Petoskey" }
+    },
+    "123": {
+        sq:    { weight: 305, name: "Issac DeYoung",        school: "Central Lake" },
+        bp:    { weight: 235, name: "Ronnie Camphor",       school: "Lakeside Acad" },
+        dl:    { weight: 410, name: "Ronnie Camphor",       school: "Lakeside Acad" },
+        total: { weight: 905, name: "Ronnie Camphor",       school: "Lakeside Acad" }
+    },
+    "132": {
+        sq:    { weight: 355, name: "Caleb Reinhart",       school: "Montrose" },
+        bp:    { weight: 225, name: "Justin Flowers",       school: "Inland Lakes" },
+        dl:    { weight: 410, name: "Ryan Hollister",       school: "Olivet" },
+        total: { weight: 925, name: "Ryan Hollister",       school: "Olivet" }
+    },
+    "145": {
+        sq:    { weight: 365, name: "Carson Kortas",        school: "Almont" },
+        bp:    { weight: 255, name: "George Schlaff",       school: "Mancelona" },
+        dl:    { weight: 445, name: "Pedro Bessoni",        school: "St. Clair" },
+        total: { weight: 1000, name: "Dakota Morgan",       school: "Millington" }
+    },
+    "155": {
+        sq:    { weight: 455, name: "Caleb Reinhart",       school: "Montrose" },
+        bp:    { weight: 255, name: "Jacob Ackerman",       school: "Linden" },
+        dl:    { weight: 475, name: "Shane Nutt",           school: "Ionia" },
+        total: { weight: 1100, name: "Caleb Reinhart",      school: "Montrose" }
+    },
+    "165": {
+        sq:    { weight: 430, name: "Owen Mills",           school: "Frankfort" },
+        bp:    { weight: 290, name: "Chris Seguin",         school: "Brighton" },
+        dl:    { weight: 500, name: "Gabriel Groppi",       school: "Cros-Lex" },
+        total: { weight: 1130, name: "Chris Seguin",        school: "Brighton" }
+    },
+    "181": {
+        sq:    { weight: 470, name: "Francis Morgan",       school: "Flint Hamady" },
+        bp:    { weight: 315, name: "Kolten Kloe",          school: "Tri-County" },
+        dl:    { weight: 555, name: "Niccolino Groppi",     school: "Cros-Lex" },
+        total: { weight: 1230, name: "Matt Weisberg",       school: "ECA Whitmore" }
+    },
+    "194": {
+        sq:    { weight: 470, name: "Nick Groppi",          school: "Croswell-Lexington" },
+        bp:    { weight: 330, name: "Chris Standifer",      school: "Troy Athens" },
+        dl:    { weight: 600, name: "Nick Groppi",          school: "Croswell-Lexington" },
+        total: { weight: 1310, name: "Nick Groppi",         school: "Croswell-Lexington" }
+    },
+    "207": {
+        sq:    { weight: 500, name: "Nick Huckabay",        school: "Montrose" },
+        bp:    { weight: 335, name: "Quentin Faynor",       school: "Maple Valley" },
+        dl:    { weight: 565, name: "Ryan McDonald",        school: "Brandon" },
+        total: { weight: 1300, name: "Quentin Faynor",      school: "Maple Valley" }
+    },
+    "220": {
+        sq:    { weight: 525, name: "Ryan Pejakovich",      school: "Climax-Scotts" },
+        bp:    { weight: 320, name: "Ryan Pejakovich",      school: "Climax-Scotts" },
+        dl:    { weight: 600, name: "Tomarion Steward",     school: "Mona Shores" },
+        total: { weight: 1400, name: "Reese Worden",        school: "Standish-Sterling" }
+    },
+    "242": {
+        sq:    { weight: 520, name: "Ian Anderson",         school: "Wayland Union" },
+        bp:    { weight: 365, name: "Brandon Adair",        school: "Port Huron Northern" },
+        dl:    { weight: 590, name: "David Deman",          school: "Troy Athens" },
+        total: { weight: 1390, name: "David Deman",         school: "Troy Athens" }
+    },
+    "275": {
+        sq:    { weight: 525, name: "Zane Sanchez",         school: "Lapeer" },
+        bp:    { weight: 320, name: "Zane Sanchez",         school: "Lapeer" },
+        dl:    { weight: 560, name: "Jordan Lewis",         school: "Lake Orion" },
+        total: { weight: 1350, name: "Zane Sanchez",        school: "Lapeer" }
+    },
+    "SHW": {
+        sq:    { weight: 530, name: "Evan Smith",           school: "Brandon" },
+        bp:    { weight: 355, name: "Garrett Upright",      school: "Marshall" },
+        dl:    { weight: 575, name: "Anthony Clark",        school: "WOLL" },
+        total: { weight: 1360, name: "Anthony Clark",       school: "WOLL" }
+    }
+};
+
+const BUILTIN_JV_W_RECORDS = {
+    "105": {
+        sq:    { weight: 205, name: "Keira Miller",         school: "Cros-Lex" },
+        bp:    { weight: 115, name: "Ashley Cordray",       school: "Whitehall" },
+        dl:    { weight: 275, name: "Emily Jacot",          school: "Kearsley" },
+        total: { weight: 575, name: "Ashley Cordray",       school: "Whitehall" }
+    },
+    "114": {
+        sq:    { weight: 250, name: "Abby Franklin",        school: "Alcona" },
+        bp:    { weight: 130, name: "Abby Franklin",        school: "Alcona" },
+        dl:    { weight: 270, name: "Abby Franklin",        school: "Alcona" },
+        total: { weight: 650, name: "Abby Franklin",        school: "Alcona" }
+    },
+    "123": {
+        sq:    { weight: 230, name: "Jillian Walters",      school: "Henry Ford II" },
+        bp:    { weight: 135, name: "Grace Choponis",       school: "Central Montcalm" },
+        dl:    { weight: 305, name: "Cadence Butts",        school: "Adrian" },
+        total: { weight: 660, name: "Grace Choponis",       school: "Central Montcalm" }
+    },
+    "132": {
+        sq:    { weight: 255, name: "Layla Bolzman",        school: "Unionville Sebewaing" },
+        bp:    { weight: 150, name: "Kayley Lambert",       school: "Port Huron" },
+        dl:    { weight: 310, name: "Layla Bolzman",        school: "Unionville Sebewaing" },
+        total: { weight: 695, name: "Layla Bolzman",        school: "Unionville Sebewaing" }
+    },
+    "140": {
+        sq:    { weight: 260, name: "Ashleigh Simon",       school: "Grass Lake" },
+        bp:    { weight: 150, name: "Cadence Butts",        school: "Adrian" },
+        dl:    { weight: 355, name: "Madison Diamond",      school: "Montague" },
+        total: { weight: 730, name: "Cadence Butts",        school: "Adrian" }
+    },
+    "148": {
+        sq:    { weight: 300, name: "Sarah Adams",          school: "Stoney Creek" },
+        bp:    { weight: 150, name: "Sarah Adams",          school: "Stoney Creek" },
+        dl:    { weight: 355, name: "Cadence Butts",        school: "Adrian" },
+        total: { weight: 785, name: "Sarah Adams",          school: "Stoney Creek" }
+    },
+    "155": {
+        sq:    { weight: 270, name: "Madilyn Goodwin",      school: "Memphis" },
+        bp:    { weight: 145, name: "Madilyn Goodwin",      school: "Memphis" },
+        dl:    { weight: 345, name: "Simone Conley",        school: "Lakeview-SCS" },
+        total: { weight: 715, name: "Simone Conley",        school: "Lakeview-SCS" }
+    },
+    "165": {
+        sq:    { weight: 275, name: "Joselyn Mergener",     school: "Grand Haven" },
+        bp:    { weight: 175, name: "Olivia Schafer",       school: "Grand Haven" },
+        dl:    { weight: 320, name: "Mya Hengstebeck",      school: "Troy Athens" },
+        total: { weight: 740, name: "Claire Dunneback",     school: "Troy Athens" }
+    },
+    "181": {
+        sq:    { weight: 310, name: "Alexis Scott",         school: "Cros-Lex" },
+        bp:    { weight: 155, name: "Reya Johnson",         school: "Troy Athens" },
+        dl:    { weight: 350, name: "Lilli Armstrong",      school: "East Jordan" },
+        total: { weight: 790, name: "Reya Johnson",         school: "Troy Athens" }
+    },
+    "198": {
+        sq:    { weight: 315, name: "Klair Edenburn",       school: "Millington" },
+        bp:    { weight: 200, name: "Alyssa Barney",        school: "Merritt Academy" },
+        dl:    { weight: 350, name: "Alyssa Barney",        school: "Merritt Academy" },
+        total: { weight: 850, name: "Alyssa Barney",        school: "Merritt Academy" }
+    },
+    "220": {
+        sq:    { weight: 365, name: "Brayley West",         school: "Lake Fenton" },
+        bp:    { weight: 165, name: "Brayley West",         school: "Lake Fenton" },
+        dl:    { weight: 385, name: "Brayley West",         school: "Lake Fenton" },
+        total: { weight: 915, name: "Brayley West",         school: "Lake Fenton" }
+    },
+    "242": {
+        sq:    { weight: 310, name: "Gracie Snead",         school: "Morenci" },
+        bp:    { weight: 165, name: "Rayne Cook",           school: "Dexter" },
+        dl:    { weight: 380, name: "Gracie Snead",         school: "Morenci" },
+        total: { weight: 830, name: "Gracie Snead",         school: "Morenci" }
+    },
+    "SHW": {
+        sq:    { weight: 335, name: "JoAnna Stockton",      school: "Flushing" },
+        bp:    { weight: 195, name: "Dayle McKinley",       school: "Port Huron" },
+        dl:    { weight: 385, name: "JoAnna Stockton",      school: "Flushing" },
+        total: { weight: 895, name: "JoAnna Stockton",      school: "Flushing" }
+    }
+};
+
 // Returns true if the given weight beats the state record for the lift/weight class
 function isStateRecordAttempt(weight, liftKey, weightClass, records) {
     if (!records || !weightClass || !liftKey || !weight) return false;
@@ -176,5 +338,11 @@ function initStateRecordsStorage() {
     }
     if (!localStorage.getItem('trplStateRecords2_W')) {
         localStorage.setItem('trplStateRecords2_W', JSON.stringify(BUILTIN_W_RECORDS));
+    }
+    if (!localStorage.getItem('trplStateRecords2_JV_M')) {
+        localStorage.setItem('trplStateRecords2_JV_M', JSON.stringify(BUILTIN_JV_M_RECORDS));
+    }
+    if (!localStorage.getItem('trplStateRecords2_JV_W')) {
+        localStorage.setItem('trplStateRecords2_JV_W', JSON.stringify(BUILTIN_JV_W_RECORDS));
     }
 }

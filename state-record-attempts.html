@@ -218,6 +218,15 @@
                          : JSON.parse(JSON.stringify(BUILTIN_W_RECORDS));
     }
 
+    function loadJvRecords(g) {
+        try {
+            const stored = localStorage.getItem('trplStateRecords2_JV_' + g);
+            if (stored) return JSON.parse(stored);
+        } catch(e) {}
+        return g === 'M' ? JSON.parse(JSON.stringify(BUILTIN_JV_M_RECORDS))
+                         : JSON.parse(JSON.stringify(BUILTIN_JV_W_RECORDS));
+    }
+
     function setGender(g) {
         currentGender = g;
         document.getElementById('btnMen').className   = 'gender-btn' + (g === 'M' ? ' active-men' : '');
@@ -485,11 +494,12 @@
         const records = loadRecords(currentGender);
         const seen = new Set();
         const results = [];
+        const jvRecords = loadJvRecords(currentGender);
         athletes.forEach(function(a) {
             if (seen.has(a.name.toLowerCase())) return;
             seen.add(a.name.toLowerCase());
-            if (a.designation !== 'V') return;
-            const hits = getBeatenFailed(a, records);
+            const athleteRecs = a.designation === 'JV' ? jvRecords : records;
+            const hits = getBeatenFailed(a, athleteRecs);
             if (hits.length > 0) results.push({ athlete: a, hits: hits });
         });
 
@@ -530,7 +540,7 @@
                 });
                 card.innerHTML = '<div class="d-flex align-items-start justify-content-between flex-wrap gap-2">' +
                     '<div><div class="athlete-name">' + athlete.name + '</div>' +
-                    '<div class="athlete-meta">' + athlete.school + ' &bull; Varsity ' + athlete.weightClass + ' lbs</div></div>' +
+                    '<div class="athlete-meta">' + athlete.school + ' &bull; ' + (athlete.designation === 'JV' ? 'JV' : 'Varsity') + ' ' + athlete.weightClass + ' lbs</div></div>' +
                     '<div class="d-flex align-items-center gap-2">' +
                     '<a href="platform.html?gid=' + athlete.platformGid + '" style="background:rgba(6,182,212,0.15);border:1px solid #06b6d4;color:#06b6d4;padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:700;white-space:nowrap;text-decoration:none;">' + athlete.platformName + '</a>' +
                     positionBadge(athlete.platformPosition) +
@@ -561,13 +571,14 @@
             return;
         }
 
+        const jvRecords = loadJvRecords(currentGender);
         const seen = new Set();
         const recordAttempts = [];
         athletes.forEach(a => {
             if (seen.has(a.name.toLowerCase())) return;
             seen.add(a.name.toLowerCase());
-            if (a.designation !== 'V') return; // Only Varsity for now
-            const hits = getRecordAttempts(a, records);
+            const athleteRecs = a.designation === 'JV' ? jvRecords : records;
+            const hits = getRecordAttempts(a, athleteRecs);
             if (hits.length > 0) recordAttempts.push({ athlete: a, hits });
         });
 
@@ -596,7 +607,7 @@
                 <div class="d-flex align-items-start justify-content-between flex-wrap gap-2">
                     <div>
                         <div class="athlete-name">${athlete.name}</div>
-                        <div class="athlete-meta">${athlete.school} &bull; Varsity ${athlete.weightClass} lbs</div>
+                        <div class="athlete-meta">${athlete.school} &bull; ${athlete.designation === 'JV' ? 'JV' : 'Varsity'} ${athlete.weightClass} lbs</div>
                     </div>
                     <div class="d-flex align-items-center gap-2">
                         <a href="platform.html?gid=${athlete.platformGid}" style="background:rgba(6,182,212,0.15);border:1px solid #06b6d4;color:#06b6d4;padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:700;white-space:nowrap;text-decoration:none;">${athlete.platformName}</a>

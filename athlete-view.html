@@ -338,12 +338,23 @@
         let autoRefreshInterval = null;
         let athleteViewGender = 'M';
         let athleteViewRecords = null;
+        let athleteViewJvRecords = null;
 
         function getAthleteViewRecords() {
             initStateRecordsStorage();
             const raw = localStorage.getItem(`trplStateRecords2_${athleteViewGender}`);
             try { return raw ? JSON.parse(raw) : (athleteViewGender === 'M' ? BUILTIN_M_RECORDS : BUILTIN_W_RECORDS); }
             catch (e) { return athleteViewGender === 'M' ? BUILTIN_M_RECORDS : BUILTIN_W_RECORDS; }
+        }
+
+        function getAthleteViewJvRecords() {
+            const raw = localStorage.getItem(`trplStateRecords2_JV_${athleteViewGender}`);
+            try { return raw ? JSON.parse(raw) : (athleteViewGender === 'M' ? BUILTIN_JV_M_RECORDS : BUILTIN_JV_W_RECORDS); }
+            catch (e) { return athleteViewGender === 'M' ? BUILTIN_JV_M_RECORDS : BUILTIN_JV_W_RECORDS; }
+        }
+
+        function getAVAthleteRecords(designation) {
+            return designation === 'JV' ? athleteViewJvRecords : athleteViewRecords;
         }
 
         function toggleStateRecords() {
@@ -460,12 +471,14 @@
                             const t = m[1].toLowerCase();
                             athleteViewGender = t.includes('women') || t.includes('female') || t.includes('girls') ? 'W' : 'M';
                         }
-                        athleteViewRecords = getAthleteViewRecords();
+                        athleteViewRecords   = getAthleteViewRecords();
+                        athleteViewJvRecords = getAthleteViewJvRecords();
                         renderWeightClass();
                     })
-                    .catch(() => { athleteViewRecords = getAthleteViewRecords(); });
+                    .catch(() => { athleteViewRecords = getAthleteViewRecords(); athleteViewJvRecords = getAthleteViewJvRecords(); });
             }
-            athleteViewRecords = getAthleteViewRecords();
+            athleteViewRecords   = getAthleteViewRecords();
+            athleteViewJvRecords = getAthleteViewJvRecords();
 
             if (sheets.length === 0) {
                 statusDiv.innerHTML = '<div class="status-msg">No sheets found in configuration.</div>';
@@ -661,7 +674,7 @@
             return athletes;
         }
 
-        function renderAttempt(attempt, attemptNum, liftKey, wc) {
+        function renderAttempt(attempt, attemptNum, liftKey, wc, designation) {
             if (!attempt) {
                 return `<div class="lift-box" style="opacity: 0.3;"><div class="lift-name">${attemptNum}</div><div class="lift-value" style="color:rgba(255,255,255,0.4);">-</div></div>`;
             }
@@ -669,7 +682,8 @@
             const isGood   = attempt.toLowerCase().includes('g');
             const value    = attempt.replace(/[xgXG]/g, '');
             const numWeight = parseFloat(value) || 0;
-            const rec = athleteViewRecords?.[String(wc)];
+            const _avRec = getAVAthleteRecords(designation);
+            const rec = _avRec?.[String(wc)];
             const isRecord = rec && liftKey && rec[liftKey] && numWeight > rec[liftKey].weight;
             let bg, border, textColor;
             if (isFailed) {
@@ -777,27 +791,27 @@
                             <div class="event-section" style="${squatBg}">
                                 <div class="event-header"><i class="fas fa-compress-arrows-alt me-1"></i>Squat</div>
                                 <div class="attempts-row">
-                                    ${renderAttempt(athlete.sq1, '1', 'sq', athlete.wc)}
-                                    ${renderAttempt(athlete.sq2, '2', 'sq', athlete.wc)}
-                                    ${renderAttempt(athlete.sq3, '3', 'sq', athlete.wc)}
+                                    ${renderAttempt(athlete.sq1, '1', 'sq', athlete.wc, athlete.designation)}
+                                    ${renderAttempt(athlete.sq2, '2', 'sq', athlete.wc, athlete.designation)}
+                                    ${renderAttempt(athlete.sq3, '3', 'sq', athlete.wc, athlete.designation)}
                                 </div>
                                 ${diffHtml(athlete.squat, diffSquat)}
                             </div>
                             <div class="event-section" style="${benchBg}">
                                 <div class="event-header"><i class="fas fa-hands me-1"></i>Bench</div>
                                 <div class="attempts-row">
-                                    ${renderAttempt(athlete.bp1, '1', 'bp', athlete.wc)}
-                                    ${renderAttempt(athlete.bp2, '2', 'bp', athlete.wc)}
-                                    ${renderAttempt(athlete.bp3, '3', 'bp', athlete.wc)}
+                                    ${renderAttempt(athlete.bp1, '1', 'bp', athlete.wc, athlete.designation)}
+                                    ${renderAttempt(athlete.bp2, '2', 'bp', athlete.wc, athlete.designation)}
+                                    ${renderAttempt(athlete.bp3, '3', 'bp', athlete.wc, athlete.designation)}
                                 </div>
                                 ${diffHtml(athlete.bench, diffBench)}
                             </div>
                             <div class="event-section" style="${deadBg}">
                                 <div class="event-header"><i class="fas fa-weight-hanging me-1"></i>Deadlift</div>
                                 <div class="attempts-row">
-                                    ${renderAttempt(athlete.dl1, '1', 'dl', athlete.wc)}
-                                    ${renderAttempt(athlete.dl2, '2', 'dl', athlete.wc)}
-                                    ${renderAttempt(athlete.dl3, '3', 'dl', athlete.wc)}
+                                    ${renderAttempt(athlete.dl1, '1', 'dl', athlete.wc, athlete.designation)}
+                                    ${renderAttempt(athlete.dl2, '2', 'dl', athlete.wc, athlete.designation)}
+                                    ${renderAttempt(athlete.dl3, '3', 'dl', athlete.wc, athlete.designation)}
                                 </div>
                                 ${diffHtml(athlete.deadlift, diffDead)}
                             </div>
@@ -993,27 +1007,27 @@
                     <div class="event-section" style="${squatBg}">
                         <div class="event-header"><i class="fas fa-compress-arrows-alt me-1"></i>Squat</div>
                         <div class="attempts-row">
-                            ${renderAttempt(myAthlete.sq1, '1', 'sq', myWC)}
-                            ${renderAttempt(myAthlete.sq2, '2', 'sq', myWC)}
-                            ${renderAttempt(myAthlete.sq3, '3', 'sq', myWC)}
+                            ${renderAttempt(myAthlete.sq1, '1', 'sq', myWC, myAthlete.designation)}
+                            ${renderAttempt(myAthlete.sq2, '2', 'sq', myWC, myAthlete.designation)}
+                            ${renderAttempt(myAthlete.sq3, '3', 'sq', myWC, myAthlete.designation)}
                         </div>
                         ${diffHtml(myAthlete.squat, diffSquat)}
                     </div>
                     <div class="event-section" style="${benchBg}">
                         <div class="event-header"><i class="fas fa-hands me-1"></i>Bench</div>
                         <div class="attempts-row">
-                            ${renderAttempt(myAthlete.bp1, '1', 'bp', myWC)}
-                            ${renderAttempt(myAthlete.bp2, '2', 'bp', myWC)}
-                            ${renderAttempt(myAthlete.bp3, '3', 'bp', myWC)}
+                            ${renderAttempt(myAthlete.bp1, '1', 'bp', myWC, myAthlete.designation)}
+                            ${renderAttempt(myAthlete.bp2, '2', 'bp', myWC, myAthlete.designation)}
+                            ${renderAttempt(myAthlete.bp3, '3', 'bp', myWC, myAthlete.designation)}
                         </div>
                         ${diffHtml(myAthlete.bench, diffBench)}
                     </div>
                     <div class="event-section" style="${deadBg}">
                         <div class="event-header"><i class="fas fa-weight-hanging me-1"></i>Deadlift</div>
                         <div class="attempts-row">
-                            ${renderAttempt(myAthlete.dl1, '1', 'dl', myWC)}
-                            ${renderAttempt(myAthlete.dl2, '2', 'dl', myWC)}
-                            ${renderAttempt(myAthlete.dl3, '3', 'dl', myWC)}
+                            ${renderAttempt(myAthlete.dl1, '1', 'dl', myWC, myAthlete.designation)}
+                            ${renderAttempt(myAthlete.dl2, '2', 'dl', myWC, myAthlete.designation)}
+                            ${renderAttempt(myAthlete.dl3, '3', 'dl', myWC, myAthlete.designation)}
                         </div>
                         ${diffHtml(myAthlete.deadlift, diffDead)}
                     </div>

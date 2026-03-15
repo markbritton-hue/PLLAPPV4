@@ -246,6 +246,7 @@
         let schoolName = '';
         let coachGender = 'M';
         let coachStateRecords = {};
+        let coachJvStateRecords = {};
         let announcedStatuses = {}; // { athleteNameLower: lastStatus }
         let speechPrimed = false;
         let sessionPrimed = false; // true only after user taps voice btn this session (iOS requires gesture)
@@ -365,7 +366,8 @@
                 if (!failed && !good) continue;
                 if (good) {
                     const num = parseFloat(val.replace(/[xgXG]/gi, '').trim());
-                    const isRecord = isStateRecordAttempt(num, liftKey, athlete.weightClass, coachStateRecords);
+                    const _coachRec = athlete.designation === 'JV' ? coachJvStateRecords : coachStateRecords;
+                    const isRecord = isStateRecordAttempt(num, liftKey, athlete.weightClass, _coachRec);
                     return isRecord ? 'record' : 'good';
                 }
                 return 'failed';
@@ -497,6 +499,7 @@
                 // Init state records and detect gender from sheet title
                 initStateRecordsStorage();
                 coachStateRecords = JSON.parse(localStorage.getItem('trplStateRecords2_M') || '{}');
+                coachJvStateRecords = JSON.parse(localStorage.getItem('trplStateRecords2_JV_M') || '{}');
                 fetch(`https://pllv4.streamwaveprod.com/cache/meta_${config.spreadsheetId}.html`)
                     .then(r => r.text()).then(html => {
                         const m = html.match(/<title>([^<]+)<\/title>/);
@@ -504,8 +507,8 @@
                             const t = m[1].toLowerCase();
                             coachGender = (t.includes('women') || t.includes('girl') || t.includes('female')) ? 'W' : 'M';
                         }
-                        const key = `trplStateRecords2_${coachGender}`;
-                        coachStateRecords = JSON.parse(localStorage.getItem(key) || '{}');
+                        coachStateRecords    = JSON.parse(localStorage.getItem(`trplStateRecords2_${coachGender}`) || '{}');
+                        coachJvStateRecords  = JSON.parse(localStorage.getItem(`trplStateRecords2_JV_${coachGender}`) || '{}');
                     }).catch(() => {});
 
                 const platforms = config.sheets.filter(s => s.name.toLowerCase().startsWith('platform'));
@@ -829,7 +832,7 @@
             });
         }
 
-        function renderAttempt(val, liftKey, weightClass) {
+        function renderAttempt(val, liftKey, weightClass, designation) {
             if (!val) return `<div class="attempt-cell" style="background:rgba(255,255,255,0.05); color:rgba(255,255,255,0.3);">—</div>`;
             const failed = val.toLowerCase().includes('x');
             const good = val.toLowerCase().includes('g');
@@ -838,7 +841,8 @@
             const border = failed ? '#dc2626' : good ? '#10b981' : 'rgba(96,165,250,0.2)';
             const color = failed ? 'white' : good ? '#10b981' : 'white';
             const icon = failed ? ' ✗' : good ? ' ✓' : '';
-            const isRecord = !failed && liftKey && weightClass && isStateRecordAttempt(parseFloat(num), liftKey, weightClass, coachStateRecords);
+            const _rec = designation === 'JV' ? coachJvStateRecords : coachStateRecords;
+            const isRecord = !failed && liftKey && weightClass && isStateRecordAttempt(parseFloat(num), liftKey, weightClass, _rec);
             const star = isRecord ? `<i class="fas fa-star" style="color:#ef4444; font-size:0.7rem; margin-left:2px;" title="State record attempt"></i>` : '';
             return `<div class="attempt-cell" style="background:${bg}; border:1px solid ${border}; color:${color};">${num}${icon}${star}</div>`;
         }
@@ -869,7 +873,8 @@
                         attemptWeight = `${weight} lbs`;
                         const colLiftKey = athlete.currentColumn.startsWith('squat') ? 'sq'
                             : athlete.currentColumn.startsWith('bench') ? 'bp' : 'dl';
-                        isRecordAttempt = !!(athlete.weightClass && isStateRecordAttempt(parseFloat(weight), colLiftKey, athlete.weightClass, coachStateRecords));
+                        const _cRec = athlete.designation === 'JV' ? coachJvStateRecords : coachStateRecords;
+                        isRecordAttempt = !!(athlete.weightClass && isStateRecordAttempt(parseFloat(weight), colLiftKey, athlete.weightClass, _cRec));
                     }
                 }
 
@@ -904,15 +909,15 @@
                             <div style="display:flex; gap:14px; margin-bottom:8px;">
                                 <div style="flex:1; min-width:0;">
                                     <div style="font-size:0.65rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;"><i class="fas fa-compress-arrows-alt me-1"></i>Squat</div>
-                                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:3px;">${renderAttempt(athlete.squat1,'sq',athlete.weightClass)}${renderAttempt(athlete.squat2,'sq',athlete.weightClass)}${renderAttempt(athlete.squat3,'sq',athlete.weightClass)}</div>
+                                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:3px;">${renderAttempt(athlete.squat1,'sq',athlete.weightClass,athlete.designation)}${renderAttempt(athlete.squat2,'sq',athlete.weightClass,athlete.designation)}${renderAttempt(athlete.squat3,'sq',athlete.weightClass,athlete.designation)}</div>
                                 </div>
                                 <div style="flex:1; min-width:0;">
                                     <div style="font-size:0.65rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;"><i class="fas fa-hands me-1"></i>Bench</div>
-                                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:3px;">${renderAttempt(athlete.bench1,'bp',athlete.weightClass)}${renderAttempt(athlete.bench2,'bp',athlete.weightClass)}${renderAttempt(athlete.bench3,'bp',athlete.weightClass)}</div>
+                                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:3px;">${renderAttempt(athlete.bench1,'bp',athlete.weightClass,athlete.designation)}${renderAttempt(athlete.bench2,'bp',athlete.weightClass,athlete.designation)}${renderAttempt(athlete.bench3,'bp',athlete.weightClass,athlete.designation)}</div>
                                 </div>
                                 <div style="flex:1; min-width:0;">
                                     <div style="font-size:0.65rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;"><i class="fas fa-weight-hanging me-1"></i>Deadlift</div>
-                                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:3px;">${renderAttempt(athlete.dead1,'dl',athlete.weightClass)}${renderAttempt(athlete.dead2,'dl',athlete.weightClass)}${renderAttempt(athlete.dead3,'dl',athlete.weightClass)}</div>
+                                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:3px;">${renderAttempt(athlete.dead1,'dl',athlete.weightClass,athlete.designation)}${renderAttempt(athlete.dead2,'dl',athlete.weightClass,athlete.designation)}${renderAttempt(athlete.dead3,'dl',athlete.weightClass,athlete.designation)}</div>
                                 </div>
                             </div>
                             ${athlete.total ? `<div class="total-box"><div class="total-label">TOTAL</div><div class="total-value">${athlete.total} lbs</div></div>` : ''}
