@@ -179,11 +179,13 @@
                 Current state records from <em>Varsity Mens/Womens State Records 2025</em>.
                 Source: <a href="https://www.mhspla.com/state-records" target="_blank" style="color:#f59e0b;">mhspla.com/state-records</a>
             </p>
-            <div class="gender-toggle mb-3">
-                <button class="gender-btn active-men" id="editorBtnM" onclick="switchEditorGender('M')">Men's</button>
-                <button class="gender-btn" id="editorBtnW" onclick="switchEditorGender('W')">Women's</button>
+            <div class="gender-toggle mb-3" style="flex-wrap:wrap;">
+                <button class="gender-btn active-men" id="editorBtnM"    onclick="switchEditorGender('M')">Men's</button>
+                <button class="gender-btn"             id="editorBtnW"    onclick="switchEditorGender('W')">Women's</button>
+                <button class="gender-btn"             id="editorBtnJVM"  onclick="switchEditorGender('JV_M')">JV Men's</button>
+                <button class="gender-btn"             id="editorBtnJVW"  onclick="switchEditorGender('JV_W')">JV Women's</button>
             </div>
-            <div class="section-label">Varsity Records</div>
+            <div class="section-label" id="editorSectionLabel">Varsity Records</div>
             <div id="editorTable" style="overflow-x:auto;"></div>
             <div class="mt-4">
                 <button onclick="closeEditor()" style="background:rgba(30,41,59,0.8);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);padding:12px 30px;border-radius:8px;font-weight:600;cursor:pointer;width:100%;">
@@ -693,14 +695,20 @@
     // ─── Editor ────────────────────────────────────────────────────────────────
     function switchEditorGender(g) {
         editorGender = g;
-        document.getElementById('editorBtnM').className = 'gender-btn' + (g==='M' ? ' active-men' : '');
-        document.getElementById('editorBtnW').className = 'gender-btn' + (g==='W' ? ' active-women' : '');
+        document.getElementById('editorBtnM').className   = 'gender-btn' + (g==='M'    ? ' active-men'   : '');
+        document.getElementById('editorBtnW').className   = 'gender-btn' + (g==='W'    ? ' active-women' : '');
+        document.getElementById('editorBtnJVM').className = 'gender-btn' + (g==='JV_M' ? ' active-men'   : '');
+        document.getElementById('editorBtnJVW').className = 'gender-btn' + (g==='JV_W' ? ' active-women' : '');
+        const isJV = g === 'JV_M' || g === 'JV_W';
+        document.getElementById('editorSectionLabel').textContent = isJV ? 'JV Records' : 'Varsity Records';
         buildEditorTable(g);
     }
 
     function buildEditorTable(g) {
-        const wcs = g === 'M' ? MEN_WC : WOMEN_WC;
-        const records = loadRecords(g);
+        const isJV = g === 'JV_M' || g === 'JV_W';
+        const baseG = isJV ? (g === 'JV_M' ? 'M' : 'W') : g;
+        const wcs = baseG === 'M' ? MEN_WC : WOMEN_WC;
+        const records = isJV ? loadJvRecords(baseG) : loadRecords(baseG);
         const el = document.getElementById('editorTable');
         el.innerHTML = `
             <table class="records-table w-100">
@@ -734,9 +742,7 @@
 
     function openEditor() {
         editorGender = currentGender;
-        document.getElementById('editorBtnM').className = 'gender-btn' + (editorGender==='M' ? ' active-men' : '');
-        document.getElementById('editorBtnW').className = 'gender-btn' + (editorGender==='W' ? ' active-women' : '');
-        buildEditorTable(editorGender);
+        switchEditorGender(editorGender);
         document.getElementById('editorModal').style.display = 'block';
         document.body.style.overflow = 'hidden';
     }
