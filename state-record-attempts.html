@@ -159,12 +159,8 @@
         </div>
 
         <div class="gender-toggle">
-            <button class="gender-btn active-men" id="btnMen" onclick="setGender('M')">
-                <i class="fas fa-mars me-1"></i>Men's Records
-            </button>
-            <button class="gender-btn" id="btnWomen" onclick="setGender('W')">
-                <i class="fas fa-venus me-1"></i>Women's Records
-            </button>
+            <button class="gender-btn active-men" id="btnMen" onclick="setGender('M')">Men's Records</button>
+            <button class="gender-btn" id="btnWomen" onclick="setGender('W')">Women's Records</button>
         </div>
 
         <div id="mainContent">
@@ -507,6 +503,7 @@
         athletes.forEach(function(a) {
             if (seen.has(a.name.toLowerCase())) return;
             seen.add(a.name.toLowerCase());
+            if (a.gender && a.gender !== currentGender) return;
             const athleteRecs = a.designation === 'JV' ? jvRecords : records;
             const hits = getBeatenFailed(a, athleteRecs);
             if (hits.length > 0) results.push({ athlete: a, hits: hits });
@@ -586,6 +583,7 @@
         athletes.forEach(a => {
             if (seen.has(a.name.toLowerCase())) return;
             seen.add(a.name.toLowerCase());
+            if (a.gender && a.gender !== currentGender) return;
             const athleteRecs = a.designation === 'JV' ? jvRecords : records;
             const hits = getRecordAttempts(a, athleteRecs);
             if (hits.length > 0) recordAttempts.push({ athlete: a, hits });
@@ -689,6 +687,7 @@
                     });
                     return list.map(a => ({
                         ...a,
+                        gender: detectedGender || 'M',
                         platformName: p.name,
                         platformGid: p.gid,
                         platformPosition: sorted.findIndex(s => s.name === a.name) + 1
