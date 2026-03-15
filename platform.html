@@ -949,7 +949,7 @@
 
             // Find header row
             let headerRow = -1;
-            let nameCol = -1, schoolCol = -1, weightClassCol = -1, bodyWeightCol = -1;
+            let nameCol = -1, schoolCol = -1, weightClassCol = -1, bodyWeightCol = -1, designationCol = -1;
             let squat1Col = -1, squat2Col = -1, squat3Col = -1;
             let bench1Col = -1, bench2Col = -1, bench3Col = -1;
             let dead1Col = -1, dead2Col = -1, dead3Col = -1;
@@ -963,6 +963,7 @@
                     if (cell === 'school' && schoolCol === -1) schoolCol = j;
                     if ((cell === 'weight class' || cell === 'wt class' || cell === 'wt. class' || cell === 'class' || cell === 'wc' || cell === 'weight' || (cell.includes('wt') && cell.includes('class'))) && weightClassCol === -1) weightClassCol = j;
                     if ((cell === 'body weight' || cell === 'bw' || cell === 'bodyweight' || cell === 'weight') && bodyWeightCol === -1) bodyWeightCol = j;
+                    if ((cell === 'designation' || cell === 'div' || cell === 'division' || cell === 'desig') && designationCol === -1) designationCol = j;
                     if ((cell === 'squat 1' || cell === 'sq1' || cell === 'squat1' || cell === 'f') && squat1Col === -1) squat1Col = j;
                     if ((cell === 'squat 2' || cell === 'sq2' || cell === 'squat2') && squat2Col === -1) squat2Col = j;
                     if ((cell === 'squat 3' || cell === 'sq3' || cell === 'squat3') && squat3Col === -1) squat3Col = j;
@@ -987,6 +988,7 @@
                 schoolCol,
                 weightClassCol,
                 bodyWeightCol,
+                designationCol,
                 squat: [squat1Col, squat2Col, squat3Col],
                 bench: [bench1Col, bench2Col, bench3Col],
                 deadlift: [dead1Col, dead2Col, dead3Col],
@@ -1055,6 +1057,7 @@
                 schoolCol,
                 weightClassCol,
                 bodyWeightCol,
+                designationCol,
                 squat: [squat1Col, squat2Col, squat3Col],
                 bench: [bench1Col, bench2Col, bench3Col],
                 deadlift: [dead1Col, dead2Col, dead3Col],
@@ -1071,7 +1074,9 @@
 
                 const school = schoolCol !== -1 ? row[schoolCol]?.trim() : '';
                 let weightClassRaw = weightClassCol !== -1 ? row[weightClassCol]?.trim() : '';
-                const designation = weightClassRaw && weightClassRaw.toUpperCase().includes('JV') ? 'JV' : 'V';
+                const rawDesig = designationCol !== -1 ? (row[designationCol]?.trim() || '') : '';
+                const designation = rawDesig.toUpperCase().includes('JV')
+                    || (weightClassRaw && weightClassRaw.toUpperCase().includes('JV')) ? 'JV' : 'V';
                 let weightClass = weightClassRaw;
 
                 // Extract numeric weight class
