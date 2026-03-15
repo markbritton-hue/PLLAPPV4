@@ -700,6 +700,14 @@
                 const select = document.getElementById('platformSelect');
                 select.value = gidParam;
                 if (select.value) loadPlatform();
+            } else {
+                // No URL param — auto-load the athlete's stored platform so the panel fills in
+                const storedAthPlatform = (() => { try { return JSON.parse(localStorage.getItem('myAthletePlatform') || 'null'); } catch(e) { return null; } })();
+                if (storedAthPlatform && storedAthPlatform.gid) {
+                    const select = document.getElementById('platformSelect');
+                    select.value = storedAthPlatform.gid;
+                    if (select.value) loadPlatform();
+                }
             }
             if (localStorage.getItem('platformAutoRefresh') === 'on') {
                 toggleAutoRefresh();
