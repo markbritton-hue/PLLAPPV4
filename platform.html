@@ -700,8 +700,8 @@
                 const select = document.getElementById('platformSelect');
                 select.value = gidParam;
                 if (select.value) loadPlatform();
-            } else {
-                // No URL param — auto-load the athlete's stored platform so the panel fills in
+            } else if (_cfg.athleteName) {
+                // No URL param but My Athlete is configured — auto-load their stored platform
                 const storedAthPlatform = (() => { try { return JSON.parse(localStorage.getItem('myAthletePlatform') || 'null'); } catch(e) { return null; } })();
                 if (storedAthPlatform && storedAthPlatform.gid) {
                     const select = document.getElementById('platformSelect');
