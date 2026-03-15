@@ -297,14 +297,14 @@
 
         <!-- My Athlete Panel -->
         <div id="myAthletePanel" style="display:none; background: rgba(249,115,22,0.12); border: 2px solid rgba(249,115,22,0.5); border-radius: 14px; padding: 14px 20px; margin-bottom: 0;">
-            <div style="display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
-                <div style="display:flex; flex-direction:column; gap:6px;">
-                    <a id="myAthletePanelName" href="#" style="background:rgba(249,115,22,0.9);color:white;font-size:1rem;font-weight:700;padding:5px 12px;border-radius:10px;white-space:nowrap;align-self:flex-start;text-decoration:none;cursor:pointer;"></a>
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:10px;">
+                <div style="display:flex; flex-direction:column; gap:6px; min-width:0; flex:1;">
+                    <a id="myAthletePanelName" href="#" style="background:rgba(249,115,22,0.9);color:white;font-size:1rem;font-weight:700;padding:5px 12px;border-radius:10px;white-space:nowrap;align-self:flex-start;text-decoration:none;cursor:pointer;overflow:hidden;text-overflow:ellipsis;max-width:100%;"></a>
                     <div id="myAthletePanelSubLine" style="display:none; align-items:center; gap:8px; flex-wrap:wrap;"></div>
                 </div>
-                <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-end;">
-                    <span id="myAthletePanelRank" style="display:none; padding:5px 16px; border-radius:10px; font-weight:700; font-size:0.95rem; color:white;"></span>
-                    <span id="myAthletePanelStatus" style="display:none; padding:5px 16px; border-radius:10px; font-weight:700; font-size:0.95rem; color:white;"></span>
+                <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-end; flex-shrink:0;">
+                    <span id="myAthletePanelRank" style="display:none; padding:5px 12px; border-radius:10px; font-weight:700; font-size:0.85rem; color:white; white-space:nowrap;"></span>
+                    <span id="myAthletePanelStatus" style="display:none; padding:5px 12px; border-radius:10px; font-weight:700; font-size:0.85rem; color:white; white-space:nowrap;"></span>
                     <span id="myAthletePanelPosition" style="display:none;"></span>
                 </div>
             </div>
