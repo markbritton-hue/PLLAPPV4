@@ -1335,27 +1335,9 @@
             if (announcementName) {
                 const cfg2 = JSON.parse(localStorage.getItem('trplConfig') || '{}');
                 const displayName = cfg2.athleteName || '';
-                const myQueuePos = liftQueue.findIndex(a => a.name.toLowerCase().includes(announcementName));
-
-                let panelLabel = '';
-                let panelColor = '';
-                if (justFinishedAthlete && justFinishedAthlete.name.toLowerCase().includes(announcementName)) {
-                    panelLabel = 'JUST FINISHED'; panelColor = '#a78bfa';
-                } else if (myQueuePos === 0) {
-                    panelLabel = 'LIFTING'; panelColor = '#ef4444';
-                } else if (myQueuePos === 1) {
-                    panelLabel = 'ON DECK'; panelColor = '#10b981';
-                } else if (myQueuePos > 1) {
-                    panelLabel = `#${myQueuePos + 1}`; panelColor = '#60a5fa';
-                } else {
-                    panelLabel = 'DONE'; panelColor = '#f97316';
-                }
 
                 const nameEl2 = document.getElementById('myAthletePanelName');
                 nameEl2.innerHTML = `<i class="fas fa-person-running me-1"></i>${displayName}`;
-                const statusEl = document.getElementById('myAthletePanelStatus');
-                statusEl.textContent = panelLabel;
-                statusEl.style.background = panelColor;
 
                 // Render lift attempts for my athlete
                 const myAthleteData = athletes.find(a => a.name.toLowerCase().includes(announcementName));
@@ -1377,6 +1359,24 @@
                 } else platformBadge2.style.display = 'none';
 
                 if (myAthleteData) {
+                    // Athlete is on this platform — update status and lifts
+                    const myQueuePos = liftQueue.findIndex(a => a.name.toLowerCase().includes(announcementName));
+                    let panelLabel = '', panelColor = '';
+                    if (justFinishedAthlete && justFinishedAthlete.name.toLowerCase().includes(announcementName)) {
+                        panelLabel = 'JUST FINISHED'; panelColor = '#a78bfa';
+                    } else if (myQueuePos === 0) {
+                        panelLabel = 'LIFTING'; panelColor = '#ef4444';
+                    } else if (myQueuePos === 1) {
+                        panelLabel = 'ON DECK'; panelColor = '#10b981';
+                    } else if (myQueuePos > 1) {
+                        panelLabel = `#${myQueuePos + 1}`; panelColor = '#60a5fa';
+                    } else {
+                        panelLabel = 'DONE'; panelColor = '#f97316';
+                    }
+                    const statusEl = document.getElementById('myAthletePanelStatus');
+                    statusEl.textContent = panelLabel;
+                    statusEl.style.background = panelColor;
+
                     const wc = myAthleteData.weightClass;
                     const lbPerLb = myAthleteData.bodyWeight > 0 && myAthleteData.total > 0
                         ? (myAthleteData.total / myAthleteData.bodyWeight).toFixed(2) : '—';
