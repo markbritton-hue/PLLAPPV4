@@ -303,7 +303,8 @@
                     <div id="myAthletePanelSubLine" style="display:none; align-items:center; gap:8px; flex-wrap:wrap;"></div>
                 </div>
                 <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-end;">
-                    <span id="myAthletePanelStatus" style="padding:5px 16px; border-radius:10px; font-weight:700; font-size:0.95rem; color:white;"></span>
+                    <span id="myAthletePanelRank" style="display:none; padding:5px 16px; border-radius:10px; font-weight:700; font-size:0.95rem; color:white;"></span>
+                    <span id="myAthletePanelStatus" style="display:none; padding:5px 16px; border-radius:10px; font-weight:700; font-size:0.95rem; color:white;"></span>
                     <span id="myAthletePanelPosition" style="display:none;"></span>
                 </div>
             </div>
@@ -515,8 +516,17 @@
 
                 if (prevVal && grouped[prevVal]) {
                     select.value = prevVal;
-                } else if (sortedClasses.length > 0) {
-                    select.value = sortedClasses[0];
+                } else {
+                    // Auto-select my athlete's weight class if configured, else first class
+                    const _cfg = JSON.parse(localStorage.getItem('trplConfig') || '{}');
+                    const _name = (_cfg.athleteName || '').toLowerCase().trim();
+                    let athleteWC = null;
+                    if (_name) {
+                        for (const [wc, aths] of Object.entries(grouped)) {
+                            if (aths.find(a => a.name.toLowerCase().includes(_name))) { athleteWC = wc; break; }
+                        }
+                    }
+                    select.value = athleteWC || sortedClasses[0] || '';
                 }
 
                 renderWeightClass();
@@ -877,8 +887,8 @@
             // If viewing a different weight class, show simplified panel
             const selectedWC = document.getElementById('wcSelect').value;
             if (selectedWC && selectedWC !== myWC) {
-                document.getElementById('myAthletePanelStatus').textContent = '';
-                document.getElementById('myAthletePanelStatus').style.background = '';
+                document.getElementById('myAthletePanelRank').style.display = 'none';
+                document.getElementById('myAthletePanelStatus').style.display = 'none';
                 const subLine = document.getElementById('myAthletePanelSubLine');
                 subLine.innerHTML = ''; subLine.style.display = 'none';
                 const posEl = document.getElementById('myAthletePanelPosition');
@@ -896,9 +906,13 @@
             const medals = ['🥇', '🥈', '🥉'];
             const medal = medals[rank - 1] || '';
 
+            const rankEl = document.getElementById('myAthletePanelRank');
+            rankEl.textContent = `${medal} Rank #${rank}`;
+            rankEl.style.background = myAthlete.designation === 'JV' ? '#10b981' : '#8b5cf6';
+            rankEl.style.display = 'inline-block';
+
             const statusEl = document.getElementById('myAthletePanelStatus');
-            statusEl.textContent = `${medal} Rank #${rank}`;
-            statusEl.style.background = myAthlete.designation === 'JV' ? '#10b981' : '#8b5cf6';
+            statusEl.style.display = 'none';
 
             const leaderSquat = Math.max(...group.map(a => a.squat));
             const leaderBench = Math.max(...group.map(a => a.bench));
