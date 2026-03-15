@@ -1339,27 +1339,19 @@
                 const nameEl2 = document.getElementById('myAthletePanelName');
                 nameEl2.innerHTML = `<i class="fas fa-person-running me-1"></i>${displayName}`;
 
-                // Render lift attempts for my athlete
+                // Find athlete in current platform's data
                 const myAthleteData = athletes.find(a => a.name.toLowerCase().includes(announcementName));
                 if (myAthleteData && platformName && currentPlatformGid) {
-                    // Persist which platform the athlete is actually on
                     localStorage.setItem('myAthletePlatform', JSON.stringify({ name: platformName, gid: currentPlatformGid }));
                 }
-                // Always show the stored platform for my athlete (even when viewing another platform)
                 const storedPlatform = (() => { try { return JSON.parse(localStorage.getItem('myAthletePlatform') || 'null'); } catch(e) { return null; } })();
+                const athletePlatformGid = (myAthleteData && currentPlatformGid) ? currentPlatformGid : (storedPlatform ? storedPlatform.gid : '');
                 const athletePlatformName = (myAthleteData && platformName) ? platformName : (storedPlatform ? storedPlatform.name : '');
-                const athletePlatformGid  = (myAthleteData && currentPlatformGid) ? currentPlatformGid : (storedPlatform ? storedPlatform.gid : '');
-                const platformBadge2 = document.getElementById('myAthletePanelPlatform');
-                if (athletePlatformName) {
-                    const pHref = athletePlatformGid ? `platform.html?gid=${athletePlatformGid}` : '#';
-                    platformBadge2.textContent = athletePlatformName;
-                    platformBadge2.href = pHref;
-                    platformBadge2.style.display = '';
-                    nameEl2.href = pHref;
-                } else platformBadge2.style.display = 'none';
+                const pHref = athletePlatformGid ? `platform.html?gid=${athletePlatformGid}` : '#';
+                nameEl2.href = pHref;
 
                 if (myAthleteData) {
-                    // Athlete is on this platform — update status and lifts
+                    // On athlete's platform — show full info
                     const myQueuePos = liftQueue.findIndex(a => a.name.toLowerCase().includes(announcementName));
                     let panelLabel = '', panelColor = '';
                     if (justFinishedAthlete && justFinishedAthlete.name.toLowerCase().includes(announcementName)) {
@@ -1376,6 +1368,10 @@
                     const statusEl = document.getElementById('myAthletePanelStatus');
                     statusEl.textContent = panelLabel;
                     statusEl.style.background = panelColor;
+                    statusEl.style.display = '';
+
+                    const platformBadge2 = document.getElementById('myAthletePanelPlatform');
+                    platformBadge2.style.display = 'none';
 
                     const wc = myAthleteData.weightClass;
                     const lbPerLb = myAthleteData.bodyWeight > 0 && myAthleteData.total > 0
@@ -1416,6 +1412,16 @@
                                 <div class="total-value">${myAthleteData.total} lbs</div>
                             </div>
                         </div>`;
+                } else {
+                    // Not on athlete's platform — show only name + go-to-platform button
+                    const statusEl = document.getElementById('myAthletePanelStatus');
+                    statusEl.textContent = '';
+                    statusEl.style.display = 'none';
+                    const platformBadge2 = document.getElementById('myAthletePanelPlatform');
+                    platformBadge2.style.display = 'none';
+                    document.getElementById('myAthletePanelLifts').innerHTML = athletePlatformName
+                        ? `<a href="${pHref}" style="display:inline-flex; align-items:center; gap:8px; background:rgba(96,165,250,0.15); border:1px solid rgba(96,165,250,0.4); color:#93c5fd; font-size:0.85rem; font-weight:700; padding:7px 16px; border-radius:8px; text-decoration:none; margin-top:4px;"><i class="fas fa-layer-group me-1"></i>Go to ${athletePlatformName}</a>`
+                        : '';
                 }
 
                 document.getElementById('myAthletePanel').style.display = 'block';
