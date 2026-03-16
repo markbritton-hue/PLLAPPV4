@@ -1336,7 +1336,7 @@
             }
 
             // Announce lifting / on deck for configured athlete
-            if (announcementsOn && announcementName && platformLastAnnouncedStatus !== 'done') {
+            if ((announcementsOn || soundAlertsOn) && announcementName && platformLastAnnouncedStatus !== 'done') {
                 const pending = sortedAthletes.filter(a => hasPendingInColumn(a, currentColumn));
                 const idx = pending.findIndex(a => a.name.toLowerCase().trim() === announcementName);
                 let newStatus = idx === 0 ? 'lifting' : idx === 1 ? 'on-deck' : null;
