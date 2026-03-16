@@ -495,16 +495,18 @@
         }
 
         function triggerLiftingAlert() {
-            // Vibrate: short-short-long pattern
-            if (navigator.vibrate) navigator.vibrate([150, 80, 150, 80, 350]);
+            // Vibrate: rapid pattern x5
+            if (navigator.vibrate) navigator.vibrate([150, 80, 150, 80, 150, 80, 150, 80, 400]);
 
-            // Beep: three ascending tones
+            // Beep: five ascending tones
             if (!liftingAudioCtx) return;
             const ctx = liftingAudioCtx;
             const tones = [
                 { freq: 880,  start: 0,    dur: 0.28 },
                 { freq: 880,  start: 0.38, dur: 0.28 },
-                { freq: 1175, start: 0.76, dur: 0.5  }
+                { freq: 1000, start: 0.76, dur: 0.28 },
+                { freq: 1000, start: 1.14, dur: 0.28 },
+                { freq: 1175, start: 1.52, dur: 0.5  }
             ];
             tones.forEach(({ freq, start, dur }) => {
                 const osc = ctx.createOscillator();
@@ -523,15 +525,17 @@
         }
 
         function triggerOnDeckAlert() {
-            // Single short vibration
-            if (navigator.vibrate) navigator.vibrate([120, 60, 120]);
+            // Vibrate: three pulses
+            if (navigator.vibrate) navigator.vibrate([120, 60, 120, 60, 120, 60, 250]);
 
-            // Two gentle tones
+            // Beep: four gentle tones
             if (!liftingAudioCtx) return;
             const ctx = liftingAudioCtx;
             const tones = [
                 { freq: 660, start: 0,    dur: 0.28 },
-                { freq: 740, start: 0.38, dur: 0.42 }
+                { freq: 660, start: 0.38, dur: 0.28 },
+                { freq: 740, start: 0.76, dur: 0.28 },
+                { freq: 740, start: 1.14, dur: 0.42 }
             ];
             tones.forEach(({ freq, start, dur }) => {
                 const osc = ctx.createOscillator();
