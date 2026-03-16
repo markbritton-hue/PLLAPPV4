@@ -114,6 +114,59 @@ The stored config includes:
 
 ---
 
+## Cache Server Architecture
+
+All live data requests are routed through a server-side caching proxy hosted at `https://pllv4.streamwaveprod.com/cache/` rather than hitting Google Sheets directly. This reduces load on Google and speeds up data delivery for all connected clients.
+
+### How It Works
+
+The cache layer is a PHP proxy (`proxy.php`) that intercepts requests, serves cached responses when fresh, and only fetches from Google when the cache is stale.
+
+**Cache types and TTLs:**
+
+| Type | TTL | Used For |
+|------|-----|----------|
+| Sheet CSV | 20 seconds | Live athlete/results data |
+| Sheet metadata (HTML) | 5 minutes | Discovering sheet names and GIDs |
+
+**Cache files** are stored server-side in the temp directory using MD5-hashed filenames:
+- `/tmp/pllapp_sheet_{md5(id_gid)}.csv`
+- `/tmp/pllapp_meta_{md5(id)}.html`
+
+**Request flow:**
+
+```
+Frontend → proxy.php → [cache fresh?] → return CSV  (X-Cache: HIT)
+                     → [cache stale]  → fetch Google Sheets → cache → return CSV  (X-Cache: MISS)
+                     → [fetch failed] → serve stale cache  (X-Cache: STALE)
+```
+
+### Frontend Endpoints
+
+| Endpoint | Purpose |
+|----------|---------|
+| `cache/sheet_{id}_{gid}.csv` | Live sheet data |
+| `cache/meta_{id}.html` | Sheet tab discovery |
+| `cache/heartbeat.json` | Server health check |
+| `cache/stats.json` | Cache status / offline detection |
+
+The frontend reads `X-Cache` and `X-Cache-Age` response headers to display cache status in the UI.
+
+### Meet Registration API
+
+A Python Flask API (`api.py`) runs on `127.0.0.1:5000` and handles meet registration:
+
+- `POST /api/register` — password-protected; registers a new meet, stores metadata in `/var/www/html/events.json`, updates `/etc/pllapp/urls.conf`, and triggers a background script (`fetch_meta.sh`) to pre-warm the cache
+- `GET /api/events` — returns all registered meets as JSON
+
+### Deployment
+
+- Hosted on **IONOS**, deployed automatically via GitHub Actions (`.github/workflows/deploy.yml`)
+- Registered sheet URLs: `/etc/pllapp/urls.conf`
+- Meet metadata: `/var/www/html/events.json`
+
+---
+
 ## Tips for Meet Day
 
 - **Coaches View** on your phone is the most useful page during the meet — turn on auto-refresh and keep it open
