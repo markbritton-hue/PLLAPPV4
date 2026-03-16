@@ -721,7 +721,7 @@
         window.addEventListener('DOMContentLoaded', function() {
             // Show voice icon button if announcements are enabled
             const _cfg = JSON.parse(localStorage.getItem('trplConfig') || '{}');
-            if (_cfg.announcementsEnabled) {
+            if (_cfg.announcementsEnabled || _cfg.soundNotificationsEnabled) {
                 document.getElementById('voiceBtn').style.display = 'flex';
                 const savedVoice = localStorage.getItem('platformVoicePrimed');
                 if (savedVoice === 'on') {
@@ -1202,13 +1202,14 @@
 
             // Get configured school name + athlete announcements
             const configStr = localStorage.getItem('trplConfig');
-            let configuredSchool = '', announcementName = '', announcementsOn = false;
+            let configuredSchool = '', announcementName = '', announcementsOn = false, soundAlertsOn = false;
             if (configStr) {
                 try {
                     const config = JSON.parse(configStr);
                     configuredSchool = config.schoolName || '';
                     announcementName = (config.athleteName || '').toLowerCase().trim();
                     announcementsOn = !!config.announcementsEnabled;
+                    soundAlertsOn = !!config.soundNotificationsEnabled;
                 } catch (e) {
                     console.error('Error parsing config:', e);
                 }
@@ -1308,7 +1309,7 @@
                     const text = newStatus === 'lifting'
                         ? `${displayName} is now lifting!`
                         : `${displayName} is on deck! Get ready!`;
-                    if (newStatus === 'lifting') triggerLiftingAlert();
+                    if (newStatus === 'lifting' && soundAlertsOn) triggerLiftingAlert();
                     speakAnnouncement(text, prevStatusLift);
                 }
             }

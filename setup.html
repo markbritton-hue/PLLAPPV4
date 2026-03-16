@@ -538,13 +538,23 @@
                             <input type="text" id="athleteName" placeholder="e.g. John Smith" value="">
                             <p class="help-text">Used to highlight your athlete and enable voice announcements.</p>
                         </div>
-                        <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(15,23,42,0.5); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 12px 16px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(15,23,42,0.5); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 12px 16px; margin-bottom: 8px;">
                             <div>
-                                <div style="color: white; font-weight: 700; font-size: 0.95rem;">Announcements</div>
+                                <div style="color: white; font-weight: 700; font-size: 0.95rem;"><i class="fas fa-volume-high me-2" style="color:#ec4899;"></i>Voice Announcements</div>
                                 <div style="color: rgba(255,255,255,0.55); font-size: 0.82rem; margin-top: 2px;">Read aloud when your athlete is on deck, lifting, or just finished</div>
                             </div>
                             <label class="toggle-switch">
                                 <input type="checkbox" id="announcementsEnabled">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(15,23,42,0.5); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 12px 16px;">
+                            <div>
+                                <div style="color: white; font-weight: 700; font-size: 0.95rem;"><i class="fas fa-bell me-2" style="color:#f59e0b;"></i>Sound &amp; Vibration Alerts</div>
+                                <div style="color: rgba(255,255,255,0.55); font-size: 0.82rem; margin-top: 2px;">Beep and vibrate when your athlete steps up to lift</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="soundNotificationsEnabled">
                                 <span class="toggle-slider"></span>
                             </label>
                         </div>
@@ -940,6 +950,7 @@
             const schoolName = document.getElementById('schoolName').value.trim();
             const athleteName = document.getElementById('athleteName').value.trim();
             const announcementsEnabled = document.getElementById('announcementsEnabled').checked;
+            const soundNotificationsEnabled = document.getElementById('soundNotificationsEnabled').checked;
             const autoRefreshSeconds = parseInt(document.getElementById('autoRefreshSeconds').value) || 20;
             const spreadsheetUrl = document.getElementById('spreadsheetUrl').value.trim();
 
@@ -980,6 +991,7 @@
                 schoolName,
                 athleteName,
                 announcementsEnabled,
+                soundNotificationsEnabled,
                 autoRefreshSeconds,
                 spreadsheetId,
                 spreadsheetUrl,
@@ -1020,6 +1032,7 @@
                 document.getElementById('schoolName').value = config.schoolName || 'Three Rivers';
                 document.getElementById('athleteName').value = config.athleteName || '';
                 document.getElementById('announcementsEnabled').checked = config.announcementsEnabled || false;
+                document.getElementById('soundNotificationsEnabled').checked = config.soundNotificationsEnabled || false;
                 document.getElementById('autoRefreshSeconds').value = config.autoRefreshSeconds || 20;
                 document.getElementById('spreadsheetUrl').value = config.spreadsheetUrl || '';
 
