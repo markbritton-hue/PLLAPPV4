@@ -386,7 +386,7 @@
             <button id="refreshToggle" onclick="toggleAutoRefresh()" class="btn-home" style="background: rgba(96, 165, 250, 0.8); border: none; cursor: pointer; white-space: nowrap; flex-shrink: 0;">
                 <i class="fas fa-sync-alt me-2"></i>Auto-Refresh: OFF
             </button>
-            <button id="voiceBtn" onclick="tapToEnableVoice()" style="display:none; background:rgba(236,72,153,0.15); border:1px solid rgba(236,72,153,0.4); border-radius:8px; color:white; cursor:pointer; padding:8px 12px; flex-shrink:0;" title="Enable voice announcements">
+            <button id="voiceBtn" onclick="tapToEnableVoice()" style="display:none; background:rgba(236,72,153,0.15); border:1px solid rgba(236,72,153,0.4); border-radius:8px; color:white; cursor:pointer; padding:8px 12px; flex-shrink:0;" title="Enable alerts">
                 <i id="voiceBtnIcon" class="fas fa-volume-xmark" style="color:#ec4899; font-size:1.1rem;"></i>
             </button>
         </div>
@@ -554,10 +554,10 @@
             const btn = document.getElementById('voiceBtn');
             if (active) {
                 if (icon) { icon.className = 'fas fa-volume-high'; icon.style.color = '#10b981'; }
-                if (btn) { btn.style.background = 'rgba(16,185,129,0.15)'; btn.style.borderColor = 'rgba(16,185,129,0.4)'; btn.title = 'Voice announcements active'; }
+                if (btn) { btn.style.background = 'rgba(16,185,129,0.15)'; btn.style.borderColor = 'rgba(16,185,129,0.4)'; btn.title = 'Alerts active'; }
             } else {
                 if (icon) { icon.className = 'fas fa-volume-xmark'; icon.style.color = '#ec4899'; }
-                if (btn) { btn.style.background = 'rgba(236,72,153,0.15)'; btn.style.borderColor = 'rgba(236,72,153,0.4)'; btn.title = 'Enable voice announcements'; }
+                if (btn) { btn.style.background = 'rgba(236,72,153,0.15)'; btn.style.borderColor = 'rgba(236,72,153,0.4)'; btn.title = 'Enable alerts'; }
             }
         }
 
@@ -733,7 +733,14 @@
                 btn.innerHTML = `<i class="fas fa-sync-alt fa-spin me-2"></i>Auto-Refresh: ON`;
                 btn.style.background = 'rgba(16, 185, 129, 0.8)';
                 localStorage.setItem('platformAutoRefresh', 'on');
-                // Prime speech synthesis inside user gesture so timer-based announcements work
+                // Unlock audio (voice + sound) inside user gesture
+                if (cfg.announcementsEnabled || cfg.soundNotificationsEnabled) {
+                    if (!platformSpeechPrimed) {
+                        platformSpeechPrimed = true;
+                        localStorage.setItem('platformVoicePrimed', 'on');
+                        setVoiceActive(true);
+                    }
+                }
                 if (window.speechSynthesis && cfg.announcementsEnabled) {
                     const primer = new SpeechSynthesisUtterance('');
                     primer.volume = 0;
