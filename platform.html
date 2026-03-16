@@ -1303,14 +1303,21 @@
                 const idx = pending.findIndex(a => a.name.toLowerCase().trim() === announcementName);
                 let newStatus = idx === 0 ? 'lifting' : idx === 1 ? 'on-deck' : null;
                 if (newStatus && newStatus !== platformLastAnnouncedStatus) {
-                    const prevStatusLift = platformLastAnnouncedStatus;
-                    platformLastAnnouncedStatus = newStatus;
-                    const displayName = pending[idx].name;
-                    const text = newStatus === 'lifting'
-                        ? `${displayName} is now lifting!`
-                        : `${displayName} is on deck! Get ready!`;
-                    if (newStatus === 'lifting' && soundAlertsOn) triggerLiftingAlert();
-                    speakAnnouncement(text, prevStatusLift);
+                    // If the just-finished popup is still showing, hold off on the
+                    // lifting announcement/sound — leave status unchanged so it
+                    // retriggers automatically when the card clears and renderAthletes runs again.
+                    if (newStatus === 'lifting' && justFinishedAthlete) {
+                        // do nothing — wait for card removal
+                    } else {
+                        const prevStatusLift = platformLastAnnouncedStatus;
+                        platformLastAnnouncedStatus = newStatus;
+                        const displayName = pending[idx].name;
+                        const text = newStatus === 'lifting'
+                            ? `${displayName} is now lifting!`
+                            : `${displayName} is on deck! Get ready!`;
+                        if (newStatus === 'lifting' && soundAlertsOn) triggerLiftingAlert();
+                        speakAnnouncement(text, prevStatusLift);
+                    }
                 }
             }
 
