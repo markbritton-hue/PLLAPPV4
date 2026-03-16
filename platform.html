@@ -502,9 +502,9 @@
             if (!liftingAudioCtx) return;
             const ctx = liftingAudioCtx;
             const tones = [
-                { freq: 880,  start: 0,    dur: 0.12 },
-                { freq: 880,  start: 0.18, dur: 0.12 },
-                { freq: 1175, start: 0.36, dur: 0.22 }
+                { freq: 880,  start: 0,    dur: 0.28 },
+                { freq: 880,  start: 0.38, dur: 0.28 },
+                { freq: 1175, start: 0.76, dur: 0.5  }
             ];
             tones.forEach(({ freq, start, dur }) => {
                 const osc = ctx.createOscillator();
@@ -530,8 +530,8 @@
             if (!liftingAudioCtx) return;
             const ctx = liftingAudioCtx;
             const tones = [
-                { freq: 660, start: 0,    dur: 0.12 },
-                { freq: 740, start: 0.18, dur: 0.18 }
+                { freq: 660, start: 0,    dur: 0.28 },
+                { freq: 740, start: 0.38, dur: 0.42 }
             ];
             tones.forEach(({ freq, start, dur }) => {
                 const osc = ctx.createOscillator();
