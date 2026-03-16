@@ -569,6 +569,7 @@
 
         function tapToEnableVoice() {
             initAudioCtx();
+            const _cfg2 = JSON.parse(localStorage.getItem('trplConfig') || '{}');
             if (platformSpeechPrimed) {
                 // Toggle off
                 platformSpeechPrimed = false;
@@ -581,7 +582,8 @@
             platformSpeechPrimed = true;
             localStorage.setItem('platformVoicePrimed', 'on');
             setVoiceActive(true);
-            if (!window.speechSynthesis) return;
+            // Only prime/replay speech when voice announcements are enabled
+            if (!_cfg2.announcementsEnabled || !window.speechSynthesis) return;
             if (window.speechSynthesis.paused) window.speechSynthesis.resume();
             if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
             // Speak any announcement that built up before the tap
@@ -1315,7 +1317,7 @@
                             justFinishedResult = 'failed';
                         }
 
-                        // Announce if this is the configured athlete
+                        // Announce if this is the configured athlete and voice is on
                         if (announcementsOn && announcementName && lastAthlete.name.toLowerCase().trim() === announcementName) {
                             const displayName = lastAthlete.name;
                             let text;
@@ -1357,7 +1359,7 @@
                             if (newStatus === 'lifting') triggerLiftingAlert();
                             else if (newStatus === 'on-deck') triggerOnDeckAlert();
                         }
-                        speakAnnouncement(text, prevStatusLift);
+                        if (announcementsOn) speakAnnouncement(text, prevStatusLift);
                     }
                 }
             }
