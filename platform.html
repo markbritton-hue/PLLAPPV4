@@ -432,7 +432,6 @@
 
         return `<div class="card-lifting">
             <div style="display:block;width:100%;text-align:center;background:#ef4444;border-radius:8px;padding:6px 0;font-size:0.85rem;font-weight:900;letter-spacing:3px;color:white;margin-bottom:10px;">L I F T I N G</div>
-            ${athlete.school ? `<div style="text-align:center;margin-bottom:10px;"><span style="background:${schoolBg};border:1px solid ${schoolBorder};padding:2px 10px;border-radius:6px;font-size:0.72rem;font-weight:700;color:rgba(255,255,255,0.75);">${athlete.school}</span></div>` : ''}
 
             <div style="display:flex;align-items:flex-start;gap:10px;">
                 <div style="flex:1;min-width:0;">
@@ -442,11 +441,12 @@
                     </div>` : ''}
 
                     <div style="font-size:1.5rem;font-weight:900;color:white;margin-bottom:4px;line-height:1.1;">${athlete.name}</div>
-                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
                         <span class="designation-badge ${athlete.designation === 'JV' ? 'jv' : 'varsity'}">${athlete.designation === 'JV' ? 'JV' : 'Varsity'}</span>
                         ${athlete.weightClass ? `<span style="color:rgba(255,255,255,0.5);font-size:0.78rem;font-weight:600;">${athlete.weightClass} lb class</span>` : ''}
                         ${athlete.bodyWeight ? `<span style="color:rgba(255,255,255,0.4);font-size:0.78rem;">BW ${athlete.bodyWeight} lbs</span>` : ''}
                     </div>
+                    ${athlete.school ? `<span style="background:${schoolBg};border:1px solid ${schoolBorder};padding:2px 10px;border-radius:6px;font-size:0.72rem;font-weight:700;color:rgba(255,255,255,0.75);">${athlete.school}</span>` : ''}
                 </div>
                 <div style="flex-shrink:0;display:flex;align-items:flex-start;">
                     <img src="${currentCol.startsWith('bench') ? 'bench500-trans.gif' : currentCol.startsWith('dead') ? 'deadlift500-trans.gif' : 'backsquat500-trans.gif'}" alt="lift" style="height:130px;width:auto;object-fit:contain;display:block;">
@@ -478,7 +478,6 @@
 
         return `<div class="card-on-deck" style="${mySchoolOverride}">
             <div style="display:block;width:100%;text-align:center;background:#10b981;border-radius:8px;padding:6px 0;font-size:0.85rem;font-weight:900;letter-spacing:3px;color:white;margin-bottom:10px;">O N &nbsp; D E C K</div>
-            ${athlete.school ? `<div style="text-align:center;margin-bottom:8px;"><span style="background:${schoolBg};border:1px solid ${schoolBorder};padding:2px 10px;border-radius:6px;font-size:0.72rem;font-weight:700;color:rgba(255,255,255,0.75);">${athlete.school}</span></div>` : ''}
 
             <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
                 <div style="flex:1;min-width:0;">
@@ -487,10 +486,11 @@
                         <span style="font-size:0.85rem;font-weight:800;color:${lift.color};text-transform:uppercase;">${lift.name}</span>
                     </div>` : ''}
                     <div style="font-size:1.2rem;font-weight:800;color:white;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${athlete.name}</div>
-                    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:4px;">
+                    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:4px;margin-bottom:4px;">
                         <span class="designation-badge ${athlete.designation === 'JV' ? 'jv' : 'varsity'}">${athlete.designation === 'JV' ? 'JV' : 'Varsity'}</span>
                         ${athlete.weightClass ? `<span style="color:rgba(255,255,255,0.45);font-size:0.72rem;font-weight:600;">${athlete.weightClass} lb class</span>` : ''}
                     </div>
+                    ${athlete.school ? `<span style="background:${schoolBg};border:1px solid ${schoolBorder};padding:2px 10px;border-radius:6px;font-size:0.72rem;font-weight:700;color:rgba(255,255,255,0.75);">${athlete.school}</span>` : ''}
                 </div>
                 <div style="text-align:right;flex-shrink:0;">
                     <div style="font-size:0.6rem;font-weight:700;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.8px;">Attempt</div>
