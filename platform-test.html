@@ -256,6 +256,7 @@
     let removeCardTimer = null;
     let platformStateRecords = null;
     let platformJvStateRecords = null;
+    let myAthletePanelOpen = false;
 
     // ── Lift metadata ──────────────────────────────────────────────────────────
     function getLiftInfo(col) {
@@ -546,6 +547,55 @@
         }, 5000);
     }
 
+    // ── My Athlete Panel builder ───────────────────────────────────────────────
+    function buildMyAthletePanelHTML(athlete, statusLabel, statusColor, displayName) {
+        const chip = v => attemptChip(v) || '<span style="color:rgba(255,255,255,0.2);">—</span>';
+        const detailsDisplay = myAthletePanelOpen ? 'block' : 'none';
+        const chevronRot = myAthletePanelOpen ? 'rotate(180deg)' : '';
+        return `
+            <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;gap:8px;" onclick="toggleMyAthletePanel()">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0;">
+                    <span style="background:rgba(249,115,22,0.9);color:white;font-size:1rem;font-weight:700;padding:5px 12px;border-radius:10px;white-space:nowrap;"><i class="fas fa-person-running me-1"></i>${displayName}</span>
+                    <span style="background:${statusColor};color:white;padding:3px 12px;border-radius:20px;font-size:0.72rem;font-weight:800;letter-spacing:0.8px;white-space:nowrap;">${statusLabel}</span>
+                </div>
+                <i id="myAthletePanelArrow" class="fas fa-chevron-down" style="color:rgba(255,255,255,0.4);font-size:0.8rem;flex-shrink:0;transition:transform 0.2s;transform:${chevronRot};"></i>
+            </div>
+            <div id="myAthletePanelDetails" style="display:${detailsDisplay};margin-top:10px;padding:10px 12px;border-radius:8px;background:rgba(15,23,42,0.7);border:1px solid rgba(249,115,22,0.2);">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+                    <span class="designation-badge ${athlete.designation === 'JV' ? 'jv' : 'varsity'}">${athlete.designation === 'JV' ? 'JV' : 'Varsity'}</span>
+                    ${athlete.school ? `<span style="color:rgba(255,255,255,0.7);font-size:0.82rem;font-weight:600;">${athlete.school}</span>` : ''}
+                    ${athlete.weightClass ? `<span style="color:rgba(255,255,255,0.5);font-size:0.78rem;">${athlete.weightClass} lb class</span>` : ''}
+                    ${athlete.bodyWeight ? `<span style="color:rgba(255,255,255,0.4);font-size:0.78rem;">BW ${athlete.bodyWeight} lbs</span>` : ''}
+                </div>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span style="display:inline-flex;align-items:center;gap:5px;color:#60a5fa;font-size:0.85rem;font-weight:700;width:78px;flex-shrink:0;"><i class="fas fa-person-falling"></i>Squat</span>
+                        <div style="display:flex;gap:5px;">${chip(athlete.squat1)}${chip(athlete.squat2)}${chip(athlete.squat3)}</div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span style="display:inline-flex;align-items:center;gap:5px;color:#a78bfa;font-size:0.85rem;font-weight:700;width:78px;flex-shrink:0;"><i class="fas fa-dumbbell"></i>Bench</span>
+                        <div style="display:flex;gap:5px;">${chip(athlete.bench1)}${chip(athlete.bench2)}${chip(athlete.bench3)}</div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span style="display:inline-flex;align-items:center;gap:5px;color:#10b981;font-size:0.85rem;font-weight:700;width:78px;flex-shrink:0;"><i class="fas fa-weight-hanging"></i>Deadlift</span>
+                        <div style="display:flex;gap:5px;">${chip(athlete.dead1)}${chip(athlete.dead2)}${chip(athlete.dead3)}</div>
+                    </div>
+                </div>
+                ${athlete.total ? `<div style="margin-top:10px;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.25);border-radius:8px;padding:6px 12px;display:inline-flex;align-items:center;gap:8px;">
+                    <span style="font-size:0.65rem;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.8px;">Total</span>
+                    <span style="font-size:1rem;font-weight:800;color:white;">${athlete.total} lbs</span>
+                </div>` : ''}
+            </div>`;
+    }
+
+    function toggleMyAthletePanel() {
+        myAthletePanelOpen = !myAthletePanelOpen;
+        const details = document.getElementById('myAthletePanelDetails');
+        const arrow = document.getElementById('myAthletePanelArrow');
+        if (details) details.style.display = myAthletePanelOpen ? 'block' : 'none';
+        if (arrow) arrow.style.transform = myAthletePanelOpen ? 'rotate(180deg)' : '';
+    }
+
     // ── Render ─────────────────────────────────────────────────────────────────
     function renderAthletes(athletes) {
         const container = document.getElementById('athleteContainer');
@@ -633,38 +683,8 @@
                 } else {
                     statusLabel = 'DONE'; statusColor = '#f97316';
                 }
-                const myRec = getAthleteRecords ? getAthleteRecords(myAthleteData.designation) : null;
                 myAthletePanel.style.display = 'block';
-                myAthletePanel.innerHTML = `
-                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
-                        <span style="background:rgba(249,115,22,0.9);color:white;font-size:1rem;font-weight:700;padding:5px 12px;border-radius:10px;white-space:nowrap;"><i class="fas fa-person-running me-1"></i>${displayAthleteNameCfg}</span>
-                        <span style="background:${statusColor};color:white;padding:4px 14px;border-radius:10px;font-size:0.85rem;font-weight:800;letter-spacing:0.5px;">${statusLabel}</span>
-                    </div>
-                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
-                        <span class="designation-badge ${myAthleteData.designation === 'JV' ? 'jv' : 'varsity'}">${myAthleteData.designation === 'JV' ? 'JV' : 'Varsity'}</span>
-                        ${myAthleteData.school ? `<span style="color:rgba(255,255,255,0.7);font-size:0.82rem;font-weight:600;">${myAthleteData.school}</span>` : ''}
-                        ${myAthleteData.weightClass ? `<span style="color:rgba(255,255,255,0.5);font-size:0.78rem;">${myAthleteData.weightClass} lb class</span>` : ''}
-                        ${myAthleteData.bodyWeight ? `<span style="color:rgba(255,255,255,0.4);font-size:0.78rem;">BW ${myAthleteData.bodyWeight} lbs</span>` : ''}
-                    </div>
-                    <div style="display:flex;flex-direction:column;gap:8px;">
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <span style="display:inline-flex;align-items:center;gap:5px;color:#60a5fa;font-size:0.85rem;font-weight:700;width:78px;flex-shrink:0;"><i class="fas fa-person-falling"></i>Squat</span>
-                            <div style="display:flex;gap:5px;">${attemptChip(myAthleteData.squat1)||'<span style="color:rgba(255,255,255,0.2);">—</span>'}${attemptChip(myAthleteData.squat2)||'<span style="color:rgba(255,255,255,0.2);">—</span>'}${attemptChip(myAthleteData.squat3)||'<span style="color:rgba(255,255,255,0.2);">—</span>'}</div>
-                        </div>
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <span style="display:inline-flex;align-items:center;gap:5px;color:#a78bfa;font-size:0.85rem;font-weight:700;width:78px;flex-shrink:0;"><i class="fas fa-dumbbell"></i>Bench</span>
-                            <div style="display:flex;gap:5px;">${attemptChip(myAthleteData.bench1)||'<span style="color:rgba(255,255,255,0.2);">—</span>'}${attemptChip(myAthleteData.bench2)||'<span style="color:rgba(255,255,255,0.2);">—</span>'}${attemptChip(myAthleteData.bench3)||'<span style="color:rgba(255,255,255,0.2);">—</span>'}</div>
-                        </div>
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <span style="display:inline-flex;align-items:center;gap:5px;color:#10b981;font-size:0.85rem;font-weight:700;width:78px;flex-shrink:0;"><i class="fas fa-weight-hanging"></i>Deadlift</span>
-                            <div style="display:flex;gap:5px;">${attemptChip(myAthleteData.dead1)||'<span style="color:rgba(255,255,255,0.2);">—</span>'}${attemptChip(myAthleteData.dead2)||'<span style="color:rgba(255,255,255,0.2);">—</span>'}${attemptChip(myAthleteData.dead3)||'<span style="color:rgba(255,255,255,0.2);">—</span>'}</div>
-                        </div>
-                    </div>
-                    ${myAthleteData.total ? `<div style="margin-top:10px;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.25);border-radius:8px;padding:6px 12px;display:inline-flex;align-items:center;gap:8px;">
-                        <span style="font-size:0.65rem;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.8px;">Total</span>
-                        <span style="font-size:1rem;font-weight:800;color:white;">${myAthleteData.total} lbs</span>
-                    </div>` : ''}
-                `;
+                myAthletePanel.innerHTML = buildMyAthletePanelHTML(myAthleteData, statusLabel, statusColor, displayAthleteNameCfg);
             } else {
                 myAthletePanel.style.display = 'none';
             }
@@ -1020,36 +1040,7 @@
 
                 const panel = document.getElementById('myAthletePanel');
                 panel.style.display = 'block';
-                panel.innerHTML = `
-                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
-                        <span style="background:rgba(249,115,22,0.9);color:white;font-size:1rem;font-weight:700;padding:5px 12px;border-radius:10px;white-space:nowrap;"><i class="fas fa-person-running me-1"></i>${displayAthleteNameCfg}</span>
-                        <span style="background:${statusColor};color:white;padding:4px 14px;border-radius:10px;font-size:0.85rem;font-weight:800;letter-spacing:0.5px;">${statusLabel}</span>
-                    </div>
-                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
-                        <span class="designation-badge ${myAthleteData.designation === 'JV' ? 'jv' : 'varsity'}">${myAthleteData.designation === 'JV' ? 'JV' : 'Varsity'}</span>
-                        ${myAthleteData.school ? `<span style="color:rgba(255,255,255,0.7);font-size:0.82rem;font-weight:600;">${myAthleteData.school}</span>` : ''}
-                        ${myAthleteData.weightClass ? `<span style="color:rgba(255,255,255,0.5);font-size:0.78rem;">${myAthleteData.weightClass} lb class</span>` : ''}
-                        ${myAthleteData.bodyWeight ? `<span style="color:rgba(255,255,255,0.4);font-size:0.78rem;">BW ${myAthleteData.bodyWeight} lbs</span>` : ''}
-                    </div>
-                    <div style="display:flex;flex-direction:column;gap:8px;">
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <span style="display:inline-flex;align-items:center;gap:5px;color:#60a5fa;font-size:0.85rem;font-weight:700;width:78px;flex-shrink:0;"><i class="fas fa-person-falling"></i>Squat</span>
-                            <div style="display:flex;gap:5px;">${attemptChip(myAthleteData.squat1)||'<span style="color:rgba(255,255,255,0.2);">—</span>'}${attemptChip(myAthleteData.squat2)||'<span style="color:rgba(255,255,255,0.2);">—</span>'}${attemptChip(myAthleteData.squat3)||'<span style="color:rgba(255,255,255,0.2);">—</span>'}</div>
-                        </div>
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <span style="display:inline-flex;align-items:center;gap:5px;color:#a78bfa;font-size:0.85rem;font-weight:700;width:78px;flex-shrink:0;"><i class="fas fa-dumbbell"></i>Bench</span>
-                            <div style="display:flex;gap:5px;">${attemptChip(myAthleteData.bench1)||'<span style="color:rgba(255,255,255,0.2);">—</span>'}${attemptChip(myAthleteData.bench2)||'<span style="color:rgba(255,255,255,0.2);">—</span>'}${attemptChip(myAthleteData.bench3)||'<span style="color:rgba(255,255,255,0.2);">—</span>'}</div>
-                        </div>
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <span style="display:inline-flex;align-items:center;gap:5px;color:#10b981;font-size:0.85rem;font-weight:700;width:78px;flex-shrink:0;"><i class="fas fa-weight-hanging"></i>Deadlift</span>
-                            <div style="display:flex;gap:5px;">${attemptChip(myAthleteData.dead1)||'<span style="color:rgba(255,255,255,0.2);">—</span>'}${attemptChip(myAthleteData.dead2)||'<span style="color:rgba(255,255,255,0.2);">—</span>'}${attemptChip(myAthleteData.dead3)||'<span style="color:rgba(255,255,255,0.2);">—</span>'}</div>
-                        </div>
-                    </div>
-                    ${myAthleteData.total ? `<div style="margin-top:10px;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.25);border-radius:8px;padding:6px 12px;display:inline-flex;align-items:center;gap:8px;">
-                        <span style="font-size:0.65rem;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.8px;">Total</span>
-                        <span style="font-size:1rem;font-weight:800;color:white;">${myAthleteData.total} lbs</span>
-                    </div>` : ''}
-                `;
+                panel.innerHTML = buildMyAthletePanelHTML(myAthleteData, statusLabel, statusColor, displayAthleteNameCfg);
                 return; // stop after first platform where athlete is found
             } catch(e) { continue; }
         }
