@@ -742,6 +742,20 @@
         }
 
         container.innerHTML = html;
+
+        // Update dropdown option to show current weight class(es)
+        updatePlatformDropdownLabel(pending);
+    }
+
+    function updatePlatformDropdownLabel(pending) {
+        const sel = document.getElementById('platformSelect');
+        const opt = sel.options[sel.selectedIndex];
+        if (!opt || !opt.value) return;
+        // Collect unique weight classes from athletes with pending attempts
+        const wcs = [...new Set(pending.map(a => a.weightClass).filter(Boolean))];
+        const baseName = opt.dataset.baseName || opt.text;
+        opt.dataset.baseName = baseName;
+        opt.text = wcs.length ? `${baseName}  ·  ${wcs.join(', ')} lb` : baseName;
     }
 
     // ── Data loading (shared with platform.html) ───────────────────────────────
@@ -799,6 +813,9 @@
 
     function loadPlatform() {
         const sel = document.getElementById('platformSelect');
+        // Reset label to base name when switching platforms
+        const opt = sel.options[sel.selectedIndex];
+        if (opt && opt.dataset.baseName) { opt.text = opt.dataset.baseName; delete opt.dataset.baseName; }
         currentPlatformGid = sel.value;
         if (!currentPlatformGid) {
             document.getElementById('athleteContainer').innerHTML = '';
