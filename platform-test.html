@@ -750,12 +750,9 @@
     function updatePlatformDropdownLabel(pending) {
         const sel = document.getElementById('platformSelect');
         const opt = sel.options[sel.selectedIndex];
-        if (!opt || !opt.value) return;
-        // Collect unique weight classes from athletes with pending attempts
+        if (!opt || !opt.value || !opt.dataset.baseName) return;
         const wcs = [...new Set(pending.map(a => a.weightClass).filter(Boolean))];
-        const baseName = opt.dataset.baseName || opt.text;
-        opt.dataset.baseName = baseName;
-        opt.text = wcs.length ? `${baseName}  ·  ${wcs.join(', ')} lb` : baseName;
+        opt.text = wcs.length ? `${opt.dataset.baseName}  ·  ${wcs.join(', ')} lb` : opt.dataset.baseName;
     }
 
     // ── Data loading (shared with platform.html) ───────────────────────────────
@@ -795,6 +792,7 @@
             platforms.forEach(p => {
                 const o = document.createElement('option');
                 o.value = p.gid;
+                o.dataset.baseName = p.name;
                 o.textContent = p.name;
                 sel.appendChild(o);
             });
@@ -808,14 +806,29 @@
                         platformGender = t.includes('women') || t.includes('female') || t.includes('girls') ? 'W' : 'M';
                     }
                 }).catch(() => {});
+
+            // Preload weight classes for each platform option
+            platforms.forEach(p => {
+                const url = `https://pllv4.streamwaveprod.com/cache/sheet_${config.spreadsheetId}_${p.gid}.csv`;
+                fetch(url).then(r => r.ok ? r.text() : null).then(csv => {
+                    if (!csv) return;
+                    const athletes = parseAthletes(parseCSV(csv));
+                    const col = getCurrentAttemptColumn(athletes);
+                    const wcs = [...new Set(
+                        athletes.filter(a => hasPendingInColumn(a, col)).map(a => a.weightClass).filter(Boolean)
+                    )];
+                    if (!wcs.length) return;
+                    const opt = Array.from(sel.options).find(o => o.value === p.gid);
+                    if (opt) opt.textContent = `${p.name}  ·  ${wcs.join(', ')} lb`;
+                }).catch(() => {});
+            });
         } catch(e) {}
     }
 
     function loadPlatform() {
         const sel = document.getElementById('platformSelect');
-        // Reset label to base name when switching platforms
-        const opt = sel.options[sel.selectedIndex];
-        if (opt && opt.dataset.baseName) { opt.text = opt.dataset.baseName; delete opt.dataset.baseName; }
+        // Reset other options back to base name (in case they had wc appended by renderAthletes)
+        Array.from(sel.options).forEach(o => { if (o.dataset.baseName) o.text = o.dataset.baseName; });
         currentPlatformGid = sel.value;
         if (!currentPlatformGid) {
             document.getElementById('athleteContainer').innerHTML = '';
