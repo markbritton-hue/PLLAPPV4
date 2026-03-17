@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerLift Live | Platform View</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        .btn-home {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(96, 165, 250, 0.2);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: inline-block;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-home:hover {
+            background: rgba(30, 41, 59, 1);
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .page-header h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #06b6d4;
+            margin-bottom: 4px;
+        }
+
+        .page-header p {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .control-section {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(96, 165, 250, 0.2);
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .control-section h3 {
+            color: #60a5fa;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .form-select {
+            background: rgba(15, 23, 42, 0.6);
+            color: white;
+            border: 2px solid rgba(96, 165, 250, 0.3);
+            padding: 8px;
+            font-size: 1.1rem;
+        }
+
+        .form-select:focus {
+            background: rgba(15, 23, 42, 0.8);
+            color: white;
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+        }
+
+        .form-select option {
+            background: #1e293b;
+            color: white;
+        }
+
+        .athlete-card {
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid rgba(96, 165, 250, 0.2);
+            border-radius: 10px;
+            padding: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+            border-left: 4px solid #60a5fa;
+            height: 100%;
+        }
+
+        .athlete-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+            border-left-color: #a78bfa;
+        }
+
+        .athlete-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .athlete-school {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 700;
+        }
+
+        .designation-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .designation-badge.varsity {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        .designation-badge.jv {
+            background: #10b981;
+            color: white;
+        }
+
+        .stat-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(96, 165, 250, 0.2);
+            padding: 3px 4px;
+            border-radius: 8px;
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .stat-label {
+            font-size: 0.62rem;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #60a5fa;
+            margin-top: 2px;
+        }
+
+        .lifts-section {
+            margin-top: 3px;
+            padding-top: 3px;
+            border-top: 1px solid rgba(96, 165, 250, 0.2);
+        }
+
+        .lift-box {
+            text-align: center;
+            padding: 3px 4px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(96, 165, 250, 0.2);
+            border-radius: 6px;
+        }
+
+        .lift-name {
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .lift-value {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #60a5fa;
+            margin-top: 1px;
+        }
+
+        .total-box {
+            margin-top: 4px;
+            background: rgba(139, 92, 246, 0.18);
+            border: 1px solid rgba(139, 92, 246, 0.5);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .total-label {
+            font-size: 0.6rem;
+            opacity: 0.7;
+            font-weight: 600;
+        }
+
+        .total-value {
+            font-size: 0.85rem;
+            font-weight: 800;
+            margin-top: 0;
+        }
+
+        .status-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .status-message.info {
+            background: rgba(96, 165, 250, 0.2);
+            border: 1px solid #60a5fa;
+            color: #60a5fa;
+        }
+
+        .status-message.success {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid #10b981;
+            color: #10b981;
+        }
+
+        .status-message.error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+        }
+        @keyframes recordPop {
+            0%   { transform: scale(0.3) rotate(-6deg); opacity: 0; }
+            50%  { transform: scale(1.08) rotate(2deg); opacity: 1; }
+            70%  { transform: scale(0.96) rotate(-1deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        @keyframes recordFadeOut {
+            0%   { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(1.1); }
+        }
+        #stateRecordBanner {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: rgba(0,0,0,0.65);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            pointer-events: none;
+        }
+        #stateRecordBanner.show {
+            display: flex;
+        }
+        #stateRecordBanner .banner-inner {
+            text-align: center;
+            animation: recordPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        #stateRecordBanner .banner-star {
+            font-size: 4rem;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 0 20px #ef4444);
+        }
+        #stateRecordBanner .banner-text {
+            font-size: clamp(2.5rem, 10vw, 5.5rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, #ef4444, #f59e0b, #ef4444);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            line-height: 1;
+            filter: drop-shadow(0 4px 20px rgba(239,68,68,0.6));
+        }
+        #stateRecordBanner .banner-sub {
+            font-size: clamp(1rem, 4vw, 1.8rem);
+            font-weight: 700;
+            color: white;
+            margin-top: 12px;
+            opacity: 0.9;
+        }
+
+        .card-fade-out {
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            opacity: 0 !important;
+            transform: scale(0.95);
+            pointer-events: none;
+        }
+        #failedAttemptBanner {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 99998;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            pointer-events: none;
+        }
+        #failedAttemptBanner.show {
+            display: flex;
+        }
+        #failedAttemptBanner .banner-inner {
+            text-align: center;
+            animation: recordPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        #failedAttemptBanner .fa-icon {
+            font-size: 3.5rem;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 0 16px #ef4444);
+        }
+        #failedAttemptBanner .fa-text {
+            font-size: clamp(2.5rem, 9vw, 5rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, #ef4444, #f97316);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            line-height: 1;
+            filter: drop-shadow(0 4px 16px rgba(239,68,68,0.6));
+        }
+        #failedAttemptBanner .fa-sub {
+            font-size: clamp(1rem, 4vw, 1.6rem);
+            font-weight: 700;
+            color: white;
+            margin-top: 10px;
+            opacity: 0.85;
+        }
+        #goodLiftBanner {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 99998;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            pointer-events: none;
+        }
+        #goodLiftBanner.show {
+            display: flex;
+        }
+        #goodLiftBanner .banner-inner {
+            text-align: center;
+            animation: recordPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        #goodLiftBanner .gl-icon {
+            font-size: 3.5rem;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 0 16px #10b981);
+        }
+        #goodLiftBanner .gl-text {
+            font-size: clamp(2.5rem, 9vw, 5rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, #10b981, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            line-height: 1;
+            filter: drop-shadow(0 4px 16px rgba(16,185,129,0.6));
+        }
+        #goodLiftBanner .gl-sub {
+            font-size: clamp(1rem, 4vw, 1.6rem);
+            font-weight: 700;
+            color: white;
+            margin-top: 10px;
+            opacity: 0.85;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation Buttons -->
+        <div class="mb-4" style="display: flex; gap: 8px; align-items: center; flex-wrap: nowrap; overflow-x: auto;">
+            <a href="index.html" class="btn-home" style="white-space: nowrap; flex-shrink: 0;">
+                <i class="fas fa-home me-2"></i>Home
+            </a>
+            <button id="refreshToggle" onclick="toggleAutoRefresh()" class="btn-home" style="background: rgba(96, 165, 250, 0.8); border: none; cursor: pointer; white-space: nowrap; flex-shrink: 0;">
+                <i class="fas fa-sync-alt me-2"></i>Auto-Refresh: OFF
+            </button>
+            <button id="voiceBtn" onclick="tapToEnableVoice()" style="display:none; background:rgba(236,72,153,0.15); border:1px solid rgba(236,72,153,0.4); border-radius:8px; color:white; cursor:pointer; padding:8px 12px; flex-shrink:0;" title="Enable alerts">
+                <i id="voiceBtnIcon" class="fas fa-volume-xmark" style="color:#ec4899; font-size:1.1rem;"></i>
+            </button>
+        </div>
+
+
+        <!-- Platform Selection -->
+        <div class="control-section">
+            <h3><i class="fas fa-filter me-2"></i>Select Platform</h3>
+            <select id="platformSelect" class="form-select" onchange="loadPlatform()">
+                <option value="">-- Choose a platform --</option>
+            </select>
+        </div>
+
+
+        <!-- My Athlete Panel -->
+        <div id="myAthletePanel" style="display:none; background: rgba(249,115,22,0.12); border: 2px solid rgba(249,115,22,0.5); border-radius: 14px; padding: 14px 20px; margin-bottom: 14px;">
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+                <div style="display:flex; flex-direction:column; gap:6px;">
+                    <a id="myAthletePanelName" href="#" style="background:rgba(249,115,22,0.9);color:white;font-size:1rem;font-weight:700;padding:5px 12px;border-radius:10px;white-space:nowrap;align-self:flex-start;text-decoration:none;cursor:pointer;"></a>
+                    <a id="myAthletePanelPlatform" href="#" style="display:none; background:rgba(96,165,250,0.15); border:1px solid rgba(96,165,250,0.35); color:#93c5fd; font-size:0.75rem; font-weight:700; padding:3px 10px; border-radius:6px; white-space:nowrap; text-decoration:none; cursor:pointer; align-self:flex-start;"></a>
+                </div>
+                <span id="myAthletePanelStatus" style="padding:5px 16px; border-radius:10px; font-weight:700; font-size:0.95rem; color:white;"></span>
+            </div>
+            <div id="myAthletePanelLifts"></div>
+        </div>
+
+        <!-- Separator -->
+        <div style="display:flex; align-items:center; gap:10px; margin: 4px 0 14px;">
+            <div style="flex:1; border-top:3px solid rgba(255,255,255,0.8);"></div>
+            <span style="color:white; font-size:0.8rem; font-weight:800; letter-spacing:1px; text-transform:uppercase; white-space:nowrap; opacity:0.8;">On Platform</span>
+            <div style="flex:1; border-top:3px solid rgba(255,255,255,0.8);"></div>
+        </div>
+
+        <!-- Status Message -->
+        <!-- Athletes Container -->
+        <div id="athletesContainer"></div>
+
+        <div id="statusMessage" style="display: none;"></div>
+
+        <!-- Donation Card -->
+        <div style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(96, 165, 250, 0.4); border-radius: 15px; padding: 25px 30px; text-align: center; margin-top: 40px; box-shadow: 0 8px 20px rgba(0,0,0,0.5);">
+            <h3 style="color: #60a5fa; font-weight: 700; margin-bottom: 8px;"><i class="fas fa-heart me-2" style="color: #ec4899;"></i>Support PowerLift Live</h3>
+            <p style="color: rgba(255,255,255,0.7); margin-bottom: 16px;">Donations help cover hosting and keep live results running.</p>
+            <a href="https://venmo.com/u/Mark-Britton-18" target="_blank" rel="noopener noreferrer"
+               style="display: inline-flex; align-items: center; gap: 12px; background: #008CFF; color: white; text-decoration: none; padding: 14px 30px; border-radius: 10px; font-size: 1.1rem; font-weight: 700; box-shadow: 0 4px 15px rgba(0,140,255,0.4);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 111 111" fill="white"><path d="M90.5 8.5c3.9 6.4 5.7 13 5.7 21.4 0 26.7-22.8 61.4-41.3 85.8H15.7L1 10.9l38-3.6 7.9 63.7C55.1 55.4 64 30.1 64 16.1c0-8.1-1.4-13.6-3.6-18.1L90.5 8.5z"/></svg>
+                Donate via Venmo
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Good Lift Banner Overlay -->
+    <div id="goodLiftBanner">
+        <div class="banner-inner">
+            <div class="gl-icon">✅</div>
+            <div class="gl-text">Good Lift!</div>
+            <div class="gl-sub" id="goodLiftBannerSub"></div>
+        </div>
+    </div>
+
+    <!-- Failed Attempt Banner Overlay -->
+    <div id="failedAttemptBanner">
+        <div class="banner-inner">
+            <div class="fa-icon">❌</div>
+            <div class="fa-text">Failed Attempt!</div>
+            <div class="fa-sub" id="failedAttemptBannerSub"></div>
+        </div>
+    </div>
+
+    <!-- State Record Banner Overlay -->
+    <div id="stateRecordBanner">
+        <div class="banner-inner">
+            <div class="banner-star">⭐</div>
+            <div class="banner-text">New State Record!</div>
+            <div class="banner-sub" id="stateRecordBannerSub"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <script src="state-records-data.js"></script>
+    <script>
+        let autoRefreshInterval = null;
+        let currentPlatformGid = null;
+        let lastLiftingName = null;
+        let lastLiftingColumn = null;
+        let justFinishedAthlete = null;
+        let lastJustFinishedName = null;
+        let justFinishedResult = null; // 'good' | 'failed' | 'record'
+        let removeCardTimer = null;
+        let platformGender = 'M'; // default Men's
+        let platformStateRecords = null;
+        let platformJvStateRecords = null;
+        let platformLastAnnouncedStatus = null;
+        let platformSpeechPrimed = false;
+        let platformPendingAnnouncement = null; // { text, rollbackStatus }
+        let liftingAudioCtx = null;
+
+        function initAudioCtx() {
+            if (!liftingAudioCtx) {
+                try { liftingAudioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+            } else if (liftingAudioCtx.state === 'suspended') {
+                liftingAudioCtx.resume();
+            }
+        }
+
+        function triggerLiftingAlert() {
+            // Vibrate: rapid pattern x5
+            if (navigator.vibrate) navigator.vibrate([150, 80, 150, 80, 150, 80, 150, 80, 400]);
+
+            // Beep: five ascending tones
+            if (!liftingAudioCtx) return;
+            const ctx = liftingAudioCtx;
+            const tones = [
+                { freq: 880,  start: 0,    dur: 0.28 },
+                { freq: 880,  start: 0.38, dur: 0.28 },
+                { freq: 1000, start: 0.76, dur: 0.28 },
+                { freq: 1000, start: 1.14, dur: 0.28 },
+                { freq: 1175, start: 1.52, dur: 0.5  }
+            ];
+            tones.forEach(({ freq, start, dur }) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'sine';
+                osc.frequency.value = freq;
+                const t = ctx.currentTime + start;
+                gain.gain.setValueAtTime(0, t);
+                gain.gain.linearRampToValueAtTime(0.5, t + 0.01);
+                gain.gain.linearRampToValueAtTime(0, t + dur);
+                osc.start(t);
+                osc.stop(t + dur + 0.05);
+            });
+        }
+
+        function triggerOnDeckAlert() {
+            // Vibrate: three pulses
+            if (navigator.vibrate) navigator.vibrate([120, 60, 120, 60, 120, 60, 250]);
+
+            // Beep: four gentle tones
+            if (!liftingAudioCtx) return;
+            const ctx = liftingAudioCtx;
+            const tones = [
+                { freq: 660, start: 0,    dur: 0.28 },
+                { freq: 660, start: 0.38, dur: 0.28 },
+                { freq: 740, start: 0.76, dur: 0.28 },
+                { freq: 740, start: 1.14, dur: 0.42 }
+            ];
+            tones.forEach(({ freq, start, dur }) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'sine';
+                osc.frequency.value = freq;
+                const t = ctx.currentTime + start;
+                gain.gain.setValueAtTime(0, t);
+                gain.gain.linearRampToValueAtTime(0.35, t + 0.01);
+                gain.gain.linearRampToValueAtTime(0, t + dur);
+                osc.start(t);
+                osc.stop(t + dur + 0.05);
+            });
+        }
+
+        function setVoiceActive(active) {
+            const icon = document.getElementById('voiceBtnIcon');
+            const btn = document.getElementById('voiceBtn');
+            if (active) {
+                if (icon) { icon.className = 'fas fa-volume-high'; icon.style.color = '#10b981'; }
+                if (btn) { btn.style.background = 'rgba(16,185,129,0.15)'; btn.style.borderColor = 'rgba(16,185,129,0.4)'; btn.title = 'Alerts active'; }
+            } else {
+                if (icon) { icon.className = 'fas fa-volume-xmark'; icon.style.color = '#ec4899'; }
+                if (btn) { btn.style.background = 'rgba(236,72,153,0.15)'; btn.style.borderColor = 'rgba(236,72,153,0.4)'; btn.title = 'Enable alerts'; }
+            }
+        }
+
+        function hidePrimeBanner() { setVoiceActive(true); }
+
+        function tapToEnableVoice() {
+            initAudioCtx();
+            const _cfg2 = JSON.parse(localStorage.getItem('trplConfig') || '{}');
+            if (platformSpeechPrimed) {
+                // Toggle off
+                platformSpeechPrimed = false;
+                localStorage.setItem('platformVoicePrimed', 'off');
+                setVoiceActive(false);
+                if (window.speechSynthesis) window.speechSynthesis.cancel();
+                return;
+            }
+            // Toggle on
+            platformSpeechPrimed = true;
+            localStorage.setItem('platformVoicePrimed', 'on');
+            setVoiceActive(true);
+            // Only prime/replay speech when voice announcements are enabled
+            if (!_cfg2.announcementsEnabled || !window.speechSynthesis) return;
+            if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+            if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
+            // Speak any announcement that built up before the tap
+            if (platformPendingAnnouncement) {
+                const { text } = platformPendingAnnouncement;
+                platformPendingAnnouncement = null;
+                const u = new SpeechSynthesisUtterance(text);
+                u.rate = 0.9; u.pitch = 1.0; u.volume = 1.0;
+                window.speechSynthesis.speak(u);
+            } else {
+                const primer = new SpeechSynthesisUtterance('');
+                primer.volume = 0;
+                window.speechSynthesis.speak(primer);
+            }
+        }
+
+        function speakAnnouncement(text, rollbackStatus) {
+            if (!window.speechSynthesis) return;
+            // Save as pending so tap-to-enable can replay it
+            platformPendingAnnouncement = { text, rollbackStatus };
+            if (!platformSpeechPrimed) return; // wait for user tap
+            platformPendingAnnouncement = null;
+            if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.rate = 0.9; u.pitch = 1.0; u.volume = 1.0;
+            u.onstart = function() { if (platformSpeechPrimed) setVoiceActive(true); };
+            u.onerror = function(e) {
+                console.log('[Speech] blocked/error:', e.error, '— will retry next refresh');
+                platformLastAnnouncedStatus = rollbackStatus !== undefined ? rollbackStatus : null;
+            };
+            window.speechSynthesis.speak(u);
+        }
+
+        function loadStateRecords() {
+            initStateRecordsStorage(); // ensure built-ins are seeded
+            const raw = localStorage.getItem(`trplStateRecords2_${platformGender}`);
+            try { return raw ? JSON.parse(raw) : (platformGender === 'M' ? BUILTIN_M_RECORDS : BUILTIN_W_RECORDS); }
+            catch (e) { return platformGender === 'M' ? BUILTIN_M_RECORDS : BUILTIN_W_RECORDS; }
+        }
+
+        function loadJvStateRecords() {
+            const raw = localStorage.getItem(`trplStateRecords2_JV_${platformGender}`);
+            try { return raw ? JSON.parse(raw) : (platformGender === 'M' ? BUILTIN_JV_M_RECORDS : BUILTIN_JV_W_RECORDS); }
+            catch (e) { return platformGender === 'M' ? BUILTIN_JV_M_RECORDS : BUILTIN_JV_W_RECORDS; }
+        }
+
+        function refreshStateRecords() {
+            platformStateRecords = loadStateRecords();
+            platformJvStateRecords = loadJvStateRecords();
+        }
+
+        function getAthleteRecords(designation) {
+            return designation === 'JV' ? platformJvStateRecords : platformStateRecords;
+        }
+
+        function isStateRecordAttempt(weight, liftKey, weightClass, records) {
+            if (!records || !weightClass || !liftKey || !weight) return false;
+            const rec = records[String(weightClass)];
+            if (!rec || !rec[liftKey]) return false;
+            return weight > rec[liftKey].weight;
+        }
+
+        let stateRecordBannerTimer = null;
+
+        function showStateRecordBanner(athleteName, liftName, weight) {
+            const banner = document.getElementById('stateRecordBanner');
+            const sub = document.getElementById('stateRecordBannerSub');
+            sub.textContent = `${athleteName} — ${liftName} ${weight} lbs`;
+            banner.classList.add('show');
+            if (stateRecordBannerTimer) clearTimeout(stateRecordBannerTimer);
+            stateRecordBannerTimer = setTimeout(() => {
+                banner.style.animation = 'recordFadeOut 0.5s ease forwards';
+                setTimeout(() => {
+                    banner.classList.remove('show');
+                    banner.style.animation = '';
+                }, 500);
+            }, 3500);
+        }
+
+        let goodLiftBannerTimer = null;
+
+        function showGoodLiftBanner(athleteName, liftName, weight) {
+            const banner = document.getElementById('goodLiftBanner');
+            const sub = document.getElementById('goodLiftBannerSub');
+            sub.textContent = `${athleteName} — ${liftName} ${weight} lbs`;
+            banner.classList.add('show');
+            if (goodLiftBannerTimer) clearTimeout(goodLiftBannerTimer);
+            goodLiftBannerTimer = setTimeout(() => {
+                banner.style.animation = 'recordFadeOut 0.5s ease forwards';
+                setTimeout(() => {
+                    banner.classList.remove('show');
+                    banner.style.animation = '';
+                }, 500);
+            }, 2500);
+        }
+
+        let failedAttemptBannerTimer = null;
+
+        function showFailedAttemptBanner(athleteName, liftName, weight) {
+            const banner = document.getElementById('failedAttemptBanner');
+            const sub = document.getElementById('failedAttemptBannerSub');
+            sub.textContent = `${athleteName} — ${liftName} ${weight} lbs`;
+            banner.classList.add('show');
+            if (failedAttemptBannerTimer) clearTimeout(failedAttemptBannerTimer);
+            failedAttemptBannerTimer = setTimeout(() => {
+                banner.style.animation = 'recordFadeOut 0.5s ease forwards';
+                setTimeout(() => {
+                    banner.classList.remove('show');
+                    banner.style.animation = '';
+                }, 500);
+            }, 2500);
+        }
+
+        function fireConfetti() {
+            const duration = 2500;
+            const end = Date.now() + duration;
+            const colors = ['#a78bfa', '#60a5fa', '#f59e0b', '#10b981', '#ec4899'];
+            (function frame() {
+                confetti({
+                    particleCount: 6,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: colors
+                });
+                confetti({
+                    particleCount: 6,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: colors
+                });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            })();
+        }
+
+        function toggleAutoRefresh() {
+            initAudioCtx();
+            const btn = document.getElementById('refreshToggle');
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+                btn.innerHTML = '<i class="fas fa-sync-alt me-2"></i>Auto-Refresh: OFF';
+                btn.style.background = 'rgba(96, 165, 250, 0.8)';
+                localStorage.setItem('platformAutoRefresh', 'off');
+            } else {
+                const cfg = JSON.parse(localStorage.getItem('trplConfig') || '{}');
+                const intervalMs = (cfg.autoRefreshSeconds || 20) * 1000;
+                autoRefreshInterval = setInterval(function() {
+                    loadPlatformData();
+                }, intervalMs);
+                btn.innerHTML = `<i class="fas fa-sync-alt fa-spin me-2"></i>Auto-Refresh: ON`;
+                btn.style.background = 'rgba(16, 185, 129, 0.8)';
+                localStorage.setItem('platformAutoRefresh', 'on');
+                // Unlock audio (voice + sound) inside user gesture
+                if (cfg.announcementsEnabled || cfg.soundNotificationsEnabled) {
+                    if (!platformSpeechPrimed) {
+                        platformSpeechPrimed = true;
+                        localStorage.setItem('platformVoicePrimed', 'on');
+                        setVoiceActive(true);
+                    }
+                }
+                if (window.speechSynthesis && cfg.announcementsEnabled) {
+                    const primer = new SpeechSynthesisUtterance('');
+                    primer.volume = 0;
+                    primer.onstart = function() { if (platformSpeechPrimed) setVoiceActive(true); };
+                    window.speechSynthesis.speak(primer);
+                }
+                loadPlatformData();
+            }
+        }
+
+        // Load platforms on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            // Show voice icon button if announcements are enabled
+            const _cfg = JSON.parse(localStorage.getItem('trplConfig') || '{}');
+            if (_cfg.announcementsEnabled || _cfg.soundNotificationsEnabled) {
+                document.getElementById('voiceBtn').style.display = 'flex';
+                const savedVoice = localStorage.getItem('platformVoicePrimed');
+                if (savedVoice === 'on') {
+                    platformSpeechPrimed = true;
+                    setVoiceActive(true);
+                } else {
+                    setVoiceActive(false);
+                }
+            }
+            // Show My Athlete panel immediately from config (before platform is selected)
+            if (_cfg.athleteName) {
+                const storedPlatform = (() => { try { return JSON.parse(localStorage.getItem('myAthletePlatform') || 'null'); } catch(e) { return null; } })();
+                const nameEl = document.getElementById('myAthletePanelName');
+                nameEl.innerHTML = `<i class="fas fa-person-running me-1"></i>${_cfg.athleteName}`;
+                const platformBadge = document.getElementById('myAthletePanelPlatform');
+                if (storedPlatform && storedPlatform.name) {
+                    const platformHref = storedPlatform.gid ? `platform.html?gid=${storedPlatform.gid}` : '#';
+                    platformBadge.textContent = storedPlatform.name;
+                    platformBadge.href = platformHref;
+                    platformBadge.style.display = '';
+                    nameEl.href = platformHref;
+                }
+                document.getElementById('myAthletePanelStatus').style.background = '';
+                document.getElementById('myAthletePanel').style.display = 'block';
+            }
+
+            loadPlatformsList();
+            // Auto-select platform from URL param e.g. platform.html?gid=12345
+            const gidParam = new URLSearchParams(window.location.search).get('gid');
+            if (gidParam) {
+                const select = document.getElementById('platformSelect');
+                select.value = gidParam;
+                if (select.value) loadPlatform();
+            } else if (_cfg.athleteName) {
+                // No URL param but My Athlete is configured — auto-load their stored platform
+                const storedAthPlatform = (() => { try { return JSON.parse(localStorage.getItem('myAthletePlatform') || 'null'); } catch(e) { return null; } })();
+                if (storedAthPlatform && storedAthPlatform.gid) {
+                    const select = document.getElementById('platformSelect');
+                    select.value = storedAthPlatform.gid;
+                    if (select.value) loadPlatform();
+                }
+            }
+            if (localStorage.getItem('platformAutoRefresh') === 'on') {
+                toggleAutoRefresh();
+            }
+        });
+
+        // Load available platforms from configuration
+        function loadPlatformsList() {
+            const configStr = localStorage.getItem('trplConfig');
+            if (!configStr) {
+                showStatus('No configuration found. Please go to Setup first.', 'error');
+                return;
+            }
+
+            try {
+                const config = JSON.parse(configStr);
+                const platformSelect = document.getElementById('platformSelect');
+
+                // Filter sheets that start with "Platform"
+                const platforms = config.sheets.filter(s => s.name.toLowerCase().startsWith('platform'));
+
+                if (platforms.length === 0) {
+                    showStatus('No platform sheets found in configuration.', 'error');
+                    return;
+                }
+
+                // Clear existing options and re-add placeholder before populating
+                platformSelect.innerHTML = '<option value="">-- Choose a platform --</option>';
+
+                // Add platforms to dropdown
+                platforms.forEach(platform => {
+                    const option = document.createElement('option');
+                    option.value = platform.gid;
+                    option.textContent = platform.name;
+                    platformSelect.appendChild(option);
+                });
+
+                // Detect gender from spreadsheet title for state record lookup
+                // Load M records immediately as default; re-render after gender confirmed
+                refreshStateRecords();
+                fetch(`https://pllv4.streamwaveprod.com/cache/meta_${config.spreadsheetId}.html`)
+                    .then(r => r.text())
+                    .then(html => {
+                        const m = html.match(/<title>([^<]+)<\/title>/);
+                        if (m) {
+                            const t = m[1].toLowerCase();
+                            platformGender = t.includes('women') || t.includes('female') || t.includes('girls') ? 'W' : 'M';
+                        }
+                        refreshStateRecords();
+                        // Re-render if a platform is already showing
+                        if (currentPlatformGid) renderAthletes(window._lastAthletes || []);
+                    })
+                    .catch(() => { refreshStateRecords(); });
+
+                // Load weight classes for all platforms in background
+                loadAllPlatformWeightClasses(config.spreadsheetId, platforms);
+
+            } catch (error) {
+                console.error('Error loading platforms:', error);
+                showStatus('Error loading configuration: ' + error.message, 'error');
+            }
+        }
+
+        // Fetch all platforms in parallel and update dropdown with weight classes
+        async function loadAllPlatformWeightClasses(spreadsheetId, platforms) {
+            const results = await Promise.all(platforms.map(async platform => {
+                try {
+                    const csvUrl = `https://pllv4.streamwaveprod.com/cache/sheet_${spreadsheetId}_${platform.gid}.csv`;
+                    const response = await fetch(csvUrl);
+                    if (!response.ok) return { gid: platform.gid, weightClasses: [] };
+                    const csvData = parseCSV(await response.text());
+
+                    // Find weight class column
+                    let weightClassCol = -1, headerRow = -1;
+                    for (let i = 0; i < Math.min(15, csvData.length); i++) {
+                        for (let j = 0; j < csvData[i].length; j++) {
+                            const cell = csvData[i][j].toLowerCase().trim();
+                            if (cell === 'weight class' || cell === 'wt class' || cell === 'wt. class' ||
+                                cell === 'class' || cell === 'wc' || cell === 'weight' ||
+                                (cell.includes('wt') && cell.includes('class'))) {
+                                weightClassCol = j;
+                                headerRow = i;
+                                break;
+                            }
+                        }
+                        if (weightClassCol !== -1) break;
+                    }
+                    if (weightClassCol === -1) return { gid: platform.gid, weightClasses: [] };
+
+                    // Two-row header — skip an extra row if row 1 looks like sub-headers
+                    const dataStart = (headerRow === 0 && csvData[1]) ? 2 : headerRow + 1;
+
+                    const wcs = new Set();
+                    for (let i = dataStart; i < csvData.length; i++) {
+                        const raw = csvData[i][weightClassCol]?.trim();
+                        if (!raw) continue;
+                        const num = raw.match(/(\d+)/)?.[1];
+                        if (num) wcs.add(Number(num));
+                    }
+                    return { gid: platform.gid, weightClasses: [...wcs].sort((a, b) => a - b) };
+                } catch {
+                    return { gid: platform.gid, weightClasses: [] };
+                }
+            }));
+
+            // Update dropdown options
+            const platformSelect = document.getElementById('platformSelect');
+            results.forEach(({ gid, weightClasses }) => {
+                const option = [...platformSelect.options].find(o => o.value === String(gid));
+                if (option && weightClasses.length > 0) {
+                    option.textContent = `${option.textContent.split(' —')[0]} — ${weightClasses.join(', ')} lbs`;
+                }
+            });
+        }
+
+        // Load selected platform data
+        async function loadPlatform() {
+            const platformSelect = document.getElementById('platformSelect');
+            const selectedGid = platformSelect.value;
+
+            if (!selectedGid) {
+                document.getElementById('athletesContainer').innerHTML = '';
+                document.getElementById('statusMessage').style.display = 'none';
+                // Stop auto-refresh if no platform selected
+                if (autoRefreshInterval) {
+                    clearInterval(autoRefreshInterval);
+                    autoRefreshInterval = null;
+                }
+                return;
+            }
+
+            // Store current platform for auto-refresh
+            currentPlatformGid = selectedGid;
+
+            const selectedName = platformSelect.options[platformSelect.selectedIndex].text;
+            showStatus(`Loading ${selectedName}...`, 'info');
+
+
+            // Load the actual data
+            await loadPlatformData();
+        }
+
+        // Load platform data (separated for auto-refresh)
+        async function loadPlatformData() {
+            if (!currentPlatformGid) return;
+
+            const platformSelect = document.getElementById('platformSelect');
+            const selectedName = platformSelect.options[platformSelect.selectedIndex].text;
+
+            try {
+                const configStr = localStorage.getItem('trplConfig');
+                const config = JSON.parse(configStr);
+
+                // Fetch the platform data
+                const csvUrl = `https://pllv4.streamwaveprod.com/cache/sheet_${config.spreadsheetId}_${currentPlatformGid}.csv`;
+
+                const response = await fetch(csvUrl);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch platform data: ${response.status}`);
+                }
+
+                updateCacheBadge(response.headers.get('X-Cache') || 'MISS', response.headers.get('X-Cache-Age'));
+                checkHeartbeat();
+
+                const csvText = await response.text();
+                const csvData = parseCSV(csvText);
+                const athletes = parseAthletes(csvData);
+
+                if (athletes.length === 0) {
+                    showStatus('No athletes found on this platform.', 'info');
+                    document.getElementById('athletesContainer').innerHTML = '';
+                    return;
+                }
+
+                console.log(`🔄 Rendering ${athletes.length} athletes with latest data`);
+                window._lastAthletes = athletes;
+                refreshStateRecords();
+                renderAthletes(athletes);
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString();
+                showStatus(`✓ Loaded ${athletes.length} athlete${athletes.length > 1 ? 's' : ''} from ${selectedName} - Last updated: ${timeStr}`, 'success');
+
+            } catch (error) {
+                console.error('Error loading platform:', error);
+                showStatus('Error loading platform: ' + error.message, 'error');
+            }
+        }
+
+        // Parse CSV data
+        function parseCSV(csv) {
+            const lines = csv.split('\n');
+            const result = [];
+
+            for (let line of lines) {
+                if (!line.trim()) continue;
+
+                const values = [];
+                let current = '';
+                let inQuotes = false;
+
+                for (let j = 0; j < line.length; j++) {
+                    const char = line[j];
+
+                    if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        values.push(current.trim().replace(/^"|"$/g, ''));
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+                values.push(current.trim().replace(/^"|"$/g, ''));
+                result.push(values);
+            }
+
+            return result;
+        }
+
+        // Parse athletes from CSV
+        function parseAthletes(csvData) {
+            const athletes = [];
+
+            console.log('=== PLATFORM SHEET DEBUG ===');
+            console.log('Total rows:', csvData.length);
+            console.log('First 10 rows:', csvData.slice(0, 10));
+
+            // Find header row
+            let headerRow = -1;
+            let nameCol = -1, schoolCol = -1, weightClassCol = -1, bodyWeightCol = -1, designationCol = -1;
+            let squat1Col = -1, squat2Col = -1, squat3Col = -1;
+            let bench1Col = -1, bench2Col = -1, bench3Col = -1;
+            let dead1Col = -1, dead2Col = -1, dead3Col = -1;
+            let totalCol = -1;
+
+            for (let i = 0; i < Math.min(15, csvData.length); i++) {
+                const row = csvData[i];
+                for (let j = 0; j < row.length; j++) {
+                    const cell = row[j].toLowerCase().trim();
+                    if ((cell === 'name' || cell === 'lifter') && nameCol === -1) nameCol = j;
+                    if (cell === 'school' && schoolCol === -1) schoolCol = j;
+                    if ((cell === 'weight class' || cell === 'wt class' || cell === 'wt. class' || cell === 'class' || cell === 'wc' || cell === 'weight' || (cell.includes('wt') && cell.includes('class'))) && weightClassCol === -1) weightClassCol = j;
+                    if ((cell === 'body weight' || cell === 'bw' || cell === 'bodyweight' || cell === 'weight') && bodyWeightCol === -1) bodyWeightCol = j;
+                    if ((cell === 'designation' || cell === 'div' || cell === 'division' || cell === 'desig') && designationCol === -1) designationCol = j;
+                    if ((cell === 'squat 1' || cell === 'sq1' || cell === 'squat1' || cell === 'f') && squat1Col === -1) squat1Col = j;
+                    if ((cell === 'squat 2' || cell === 'sq2' || cell === 'squat2') && squat2Col === -1) squat2Col = j;
+                    if ((cell === 'squat 3' || cell === 'sq3' || cell === 'squat3') && squat3Col === -1) squat3Col = j;
+                    if ((cell === 'bench 1' || cell === 'bp1' || cell === 'bench1') && bench1Col === -1) bench1Col = j;
+                    if ((cell === 'bench 2' || cell === 'bp2' || cell === 'bench2') && bench2Col === -1) bench2Col = j;
+                    if ((cell === 'bench 3' || cell === 'bp3' || cell === 'bench3') && bench3Col === -1) bench3Col = j;
+                    if ((cell === 'deadlift 1' || cell === 'dead 1' || cell === 'dl1' || cell === 'deal lift 1') && dead1Col === -1) dead1Col = j;
+                    if ((cell === 'deadlift 2' || cell === 'dead 2' || cell === 'dl2' || cell === 'dead lift 2') && dead2Col === -1) dead2Col = j;
+                    if ((cell === 'deadlift 3' || cell === 'dead 3' || cell === 'dl3' || cell === 'dead lift 3') && dead3Col === -1) dead3Col = j;
+                    if (cell === 'total' && totalCol === -1) totalCol = j;
+                }
+
+                if (nameCol !== -1 && schoolCol !== -1) {
+                    headerRow = i;
+                    break;
+                }
+            }
+
+            console.log('Column detection results:', {
+                headerRow,
+                nameCol,
+                schoolCol,
+                weightClassCol,
+                bodyWeightCol,
+                designationCol,
+                squat: [squat1Col, squat2Col, squat3Col],
+                bench: [bench1Col, bench2Col, bench3Col],
+                deadlift: [dead1Col, dead2Col, dead3Col],
+                totalCol
+            });
+
+            // Only use position-based if header detection completely failed
+            if (headerRow === -1) {
+                console.log('⚠️ Using position-based parsing - no header row found');
+                headerRow = 7;
+                nameCol = 7;
+                schoolCol = 5;
+                weightClassCol = 3;
+                bodyWeightCol = 6;
+                squat1Col = 8;
+                squat2Col = 9;
+                squat3Col = 10;
+                bench1Col = 12;
+                bench2Col = 13;
+                bench3Col = 14;
+                dead1Col = 16;
+                dead2Col = 17;
+                dead3Col = 18;
+                totalCol = 20;
+            } else {
+                console.log('✅ Using header-based parsing');
+
+                function scanSubHeaderRow(row) {
+                    for (let j = 0; j < row.length; j++) {
+                        const cell = row[j].toLowerCase().trim();
+                        if ((cell === 'squat 1' || cell === 'sq1' || cell === 'sq 1' || cell === 'squat1') && squat1Col === -1) squat1Col = j;
+                        if ((cell === 'squat 2' || cell === 'sq2' || cell === 'sq 2' || cell === 'squat2') && squat2Col === -1) {
+                            squat2Col = j;
+                            if (squat1Col === -1 && j > 0) squat1Col = j - 1;
+                        }
+                        if ((cell === 'squat 3' || cell === 'sq3' || cell === 'sq 3' || cell === 'squat3') && squat3Col === -1) squat3Col = j;
+                        if ((cell === 'bench 1' || cell === 'bp1' || cell === 'bp 1' || cell === 'bench1') && bench1Col === -1) bench1Col = j;
+                        if ((cell === 'bench 2' || cell === 'bp2' || cell === 'bp 2' || cell === 'bench2') && bench2Col === -1) {
+                            bench2Col = j;
+                            if (bench1Col === -1 && j > 0) bench1Col = j - 1;
+                        }
+                        if ((cell === 'bench 3' || cell === 'bp3' || cell === 'bp 3' || cell === 'bench3') && bench3Col === -1) bench3Col = j;
+                        if ((cell === 'dead lift 1' || cell === 'deal lift 1' || cell === 'dl1' || cell === 'dl 1' || cell === 'deadlift 1' || cell === 'dead 1') && dead1Col === -1) dead1Col = j;
+                        if ((cell === 'dead lift 2' || cell === 'dl2' || cell === 'dl 2' || cell === 'deadlift 2' || cell === 'dead 2') && dead2Col === -1) {
+                            dead2Col = j;
+                            if (dead1Col === -1 && j > 0) dead1Col = j - 1;
+                        }
+                        if ((cell === 'dead lift 3' || cell === 'dl3' || cell === 'dl 3' || cell === 'deadlift 3' || cell === 'dead 3') && dead3Col === -1) dead3Col = j;
+                    }
+                }
+
+                // Try row immediately after the header, then one more row down for sheets with extra header rows
+                if (csvData[headerRow + 1]) {
+                    scanSubHeaderRow(csvData[headerRow + 1]);
+                    headerRow = headerRow + 1;
+                }
+                if (squat1Col === -1 && bench1Col === -1 && dead1Col === -1 && csvData[headerRow + 1]) {
+                    scanSubHeaderRow(csvData[headerRow + 1]);
+                    headerRow = headerRow + 1;
+                }
+            }
+
+            console.log('Final columns used:', {
+                headerRow,
+                nameCol,
+                schoolCol,
+                weightClassCol,
+                bodyWeightCol,
+                designationCol,
+                squat: [squat1Col, squat2Col, squat3Col],
+                bench: [bench1Col, bench2Col, bench3Col],
+                deadlift: [dead1Col, dead2Col, dead3Col],
+                totalCol
+            });
+
+            // Parse athlete rows
+            for (let i = headerRow + 1; i < csvData.length; i++) {
+                const row = csvData[i];
+                if (row.length <= nameCol) continue;
+
+                const name = row[nameCol]?.trim();
+                if (!name) continue;
+
+                const school = schoolCol !== -1 ? row[schoolCol]?.trim() : '';
+                let weightClassRaw = weightClassCol !== -1 ? row[weightClassCol]?.trim() : '';
+                const rawDesig = designationCol !== -1 ? (row[designationCol]?.trim() || '') : '';
+                const designation = rawDesig.toUpperCase().includes('JV')
+                    || (weightClassRaw && weightClassRaw.toUpperCase().includes('JV')) ? 'JV' : 'V';
+                let weightClass = weightClassRaw;
+
+                // Extract numeric weight class
+                if (weightClass) {
+                    const match = weightClass.match(/(\d+)/);
+                    if (match) weightClass = match[1];
+                }
+
+                const athlete = {
+                    name: name,
+                    school: school,
+                    designation: designation,
+                    weightClass: weightClass,
+                    bodyWeight: bodyWeightCol !== -1 ? parseFloat(row[bodyWeightCol]) || 0 : 0,
+                    squat1: squat1Col !== -1 ? row[squat1Col]?.trim() : '',
+                    squat2: squat2Col !== -1 ? row[squat2Col]?.trim() : '',
+                    squat3: squat3Col !== -1 ? row[squat3Col]?.trim() : '',
+                    bench1: bench1Col !== -1 ? row[bench1Col]?.trim() : '',
+                    bench2: bench2Col !== -1 ? row[bench2Col]?.trim() : '',
+                    bench3: bench3Col !== -1 ? row[bench3Col]?.trim() : '',
+                    dead1: dead1Col !== -1 ? row[dead1Col]?.trim() : '',
+                    dead2: dead2Col !== -1 ? row[dead2Col]?.trim() : '',
+                    dead3: dead3Col !== -1 ? row[dead3Col]?.trim() : '',
+                    total: totalCol !== -1 ? parseFloat(row[totalCol]) || 0 : 0
+                };
+
+                athletes.push(athlete);
+            }
+
+            console.log('📊 Parsed athletes:', athletes.length);
+            if (athletes.length > 0) {
+                console.log('First athlete:', athletes[0]);
+            }
+
+            return athletes;
+        }
+
+        // Determine which attempt column is currently active
+        function getCurrentAttemptColumn(athletes) {
+            const attemptColumns = [
+                'squat1', 'squat2', 'squat3',
+                'bench1', 'bench2', 'bench3',
+                'dead1', 'dead2', 'dead3'
+            ];
+
+            // Find the first column that has pending attempts (numbers without g/x)
+            for (const col of attemptColumns) {
+                const hasPending = athletes.some(athlete => {
+                    const value = athlete[col];
+                    if (!value) return false;
+                    const lower = value.toLowerCase();
+                    return !lower.includes('g') && !lower.includes('x');
+                });
+
+                if (hasPending) {
+                    return col;
+                }
+            }
+
+            return null; // All attempts complete
+        }
+
+        // Check if athlete has pending attempt in specific column
+        function hasPendingInColumn(athlete, column) {
+            if (!column) return false;
+            const value = athlete[column];
+            if (!value) return false;
+            const lower = value.toLowerCase();
+            return !lower.includes('g') && !lower.includes('x');
+        }
+
+        // Render athletes
+        function renderAthletes(athletes) {
+            const container = document.getElementById('athletesContainer');
+            container.innerHTML = '';
+
+            // Get current platform name
+            const _pSel = document.getElementById('platformSelect');
+            const platformName = _pSel && _pSel.selectedIndex > 0 ? _pSel.options[_pSel.selectedIndex].text : '';
+
+            // Get configured school name + athlete announcements
+            const configStr = localStorage.getItem('trplConfig');
+            let configuredSchool = '', announcementName = '', announcementsOn = false, soundAlertsOn = false;
+            if (configStr) {
+                try {
+                    const config = JSON.parse(configStr);
+                    configuredSchool = config.schoolName || '';
+                    announcementName = (config.athleteName || '').toLowerCase().trim();
+                    announcementsOn = !!config.announcementsEnabled;
+                    soundAlertsOn = !!config.soundNotificationsEnabled;
+                } catch (e) {
+                    console.error('Error parsing config:', e);
+                }
+            }
+
+            // Add original sheet position to each athlete
+            athletes.forEach((athlete, index) => {
+                athlete.sheetOrder = index;
+            });
+
+            // Determine current attempt column
+            const currentColumn = getCurrentAttemptColumn(athletes);
+            console.log('Current attempt column:', currentColumn);
+
+            // Sort: athletes with pending in CURRENT column first, ordered by weight (lightest first)
+            const sortedAthletes = [...athletes].sort((a, b) => {
+                const aPending = hasPendingInColumn(a, currentColumn);
+                const bPending = hasPendingInColumn(b, currentColumn);
+
+                // Pending in current column comes first
+                if (aPending && !bPending) return -1;
+                if (!aPending && bPending) return 1;
+
+                // If both have pending attempts in current column, sort by weight
+                if (aPending && bPending && currentColumn) {
+                    const aWeight = parseFloat(a[currentColumn].replace(/[xgXG]/g, '').trim()) || 0;
+                    const bWeight = parseFloat(b[currentColumn].replace(/[xgXG]/g, '').trim()) || 0;
+                    if (aWeight !== bWeight) {
+                        return aWeight - bWeight; // Lightest first
+                    }
+                }
+
+                // Otherwise maintain sheet order
+                return a.sheetOrder - b.sheetOrder;
+            });
+
+            // Pin just-finished athlete at position 1 until next lift completes
+            const currentLifter = sortedAthletes.find(a => hasPendingInColumn(a, currentColumn));
+            if (lastLiftingName && currentLifter?.name !== lastLiftingName) {
+                const lastAthlete = sortedAthletes.find(a => a.name === lastLiftingName);
+                if (lastAthlete && !hasPendingInColumn(lastAthlete, currentColumn)) {
+                    justFinishedAthlete = lastAthlete;
+                    if (lastAthlete.name !== lastJustFinishedName) {
+                        lastJustFinishedName = lastAthlete.name;
+                        // Only fire on a good lift
+                        const lastVal = lastLiftingColumn ? lastAthlete[lastLiftingColumn] : null;
+                        const colToKey = { squat1:'sq', squat2:'sq', squat3:'sq', bench1:'bp', bench2:'bp', bench3:'bp', dead1:'dl', dead2:'dl', dead3:'dl' };
+                        const colToName = { squat1:'Squat', squat2:'Squat', squat3:'Squat', bench1:'Bench', bench2:'Bench', bench3:'Bench', dead1:'Deadlift', dead2:'Deadlift', dead3:'Deadlift' };
+                        const liftKey = lastLiftingColumn ? colToKey[lastLiftingColumn] : null;
+                        const liftName = lastLiftingColumn ? colToName[lastLiftingColumn] : null;
+                        const liftWeight = lastVal ? parseFloat(lastVal.replace(/[xgXG]/g, '')) : 0;
+                        if (lastVal && lastVal.toLowerCase().includes('g')) {
+                            // Check if it broke a state record
+                            const isRecord = isStateRecordAttempt(liftWeight, liftKey, lastAthlete.weightClass, getAthleteRecords(lastAthlete.designation));
+                            if (isRecord) {
+                                showStateRecordBanner(lastAthlete.name, liftName, liftWeight);
+                                justFinishedResult = 'record';
+                            } else {
+                                showGoodLiftBanner(lastAthlete.name, liftName, liftWeight);
+                                justFinishedResult = 'good';
+                            }
+                            fireConfetti();
+                        } else if (lastVal && lastVal.toLowerCase().includes('x')) {
+                            showFailedAttemptBanner(lastAthlete.name, liftName, liftWeight);
+                            justFinishedResult = 'failed';
+                        }
+
+                        // Announce if this is the configured athlete and voice is on
+                        if (announcementsOn && announcementName && lastAthlete.name.toLowerCase().trim() === announcementName) {
+                            const displayName = lastAthlete.name;
+                            let text;
+                            if (justFinishedResult === 'record') text = `${displayName} has finished with a new state record!`;
+                            else if (justFinishedResult === 'good') text = `${displayName} is done. Good lift!`;
+                            else if (justFinishedResult === 'failed') text = `${displayName} is done. Failed attempt.`;
+                            else text = `${displayName} has finished their lift!`;
+                            const prevStatusDone = platformLastAnnouncedStatus;
+                            platformLastAnnouncedStatus = 'done';
+                            speakAnnouncement(text, prevStatusDone);
+                        }
+                    }
+                }
+            }
+            if (currentLifter) {
+                lastLiftingName = currentLifter.name;
+                lastLiftingColumn = currentColumn;
+            }
+
+            // Announce lifting / on deck for configured athlete
+            if ((announcementsOn || soundAlertsOn) && announcementName && platformLastAnnouncedStatus !== 'done') {
+                const pending = sortedAthletes.filter(a => hasPendingInColumn(a, currentColumn));
+                const idx = pending.findIndex(a => a.name.toLowerCase().trim() === announcementName);
+                let newStatus = idx === 0 ? 'lifting' : idx === 1 ? 'on-deck' : null;
+                if (newStatus && newStatus !== platformLastAnnouncedStatus) {
+                    // If the just-finished popup is still showing, hold off on the
+                    // lifting announcement/sound — leave status unchanged so it
+                    // retriggers automatically when the card clears and renderAthletes runs again.
+                    if (newStatus === 'lifting' && justFinishedAthlete) {
+                        // do nothing — wait for card removal
+                    } else {
+                        const prevStatusLift = platformLastAnnouncedStatus;
+                        platformLastAnnouncedStatus = newStatus;
+                        const displayName = pending[idx].name;
+                        const text = newStatus === 'lifting'
+                            ? `${displayName} is now lifting!`
+                            : `${displayName} is on deck! Get ready!`;
+                        if (soundAlertsOn) {
+                            if (newStatus === 'lifting') triggerLiftingAlert();
+                            else if (newStatus === 'on-deck') triggerOnDeckAlert();
+                        }
+                        if (announcementsOn) speakAnnouncement(text, prevStatusLift);
+                    }
+                }
+            }
+
+            // Compute rank within each weight class by total (descending)
+            const rankMap = {};
+            const byWc = {};
+            athletes.forEach(a => {
+                const wc = a.weightClass || '';
+                if (!byWc[wc]) byWc[wc] = [];
+                byWc[wc].push(a);
+            });
+            Object.values(byWc).forEach(group => {
+                const sorted = [...group].sort((a, b) => (b.total || 0) - (a.total || 0));
+                sorted.forEach((a, i) => { rankMap[a.name] = i + 1; });
+            });
+
+            // Create grid layout
+            const row = document.createElement('div');
+            row.className = 'row g-2';
+
+            // Prepend just-finished card into the same row as LIFTING / ON DECK
+            if (justFinishedAthlete) {
+                const jfCol = document.createElement('div');
+                jfCol.className = 'col-lg-4 col-md-6';
+                jfCol.id = 'justFinishedCard';
+                const jfSchool = justFinishedAthlete.school;
+                const jfIsMySchool = configuredSchool && jfSchool &&
+                    jfSchool.toLowerCase().includes(configuredSchool.toLowerCase());
+                const jfCardBg = jfIsMySchool ? 'rgba(249, 115, 22, 0.18)' : 'rgba(30, 41, 59, 0.9)';
+                const jfCardBorder = jfIsMySchool ? 'rgba(249, 115, 22, 0.7)' : 'rgba(167, 139, 250, 0.5)';
+                jfCol.dataset.athleteName = justFinishedAthlete.name;
+                const jfIsMyAthlete = announcementName && justFinishedAthlete.name.toLowerCase().includes(announcementName);
+                jfCol.innerHTML = buildAthleteCard(justFinishedAthlete, 'JUST FINISHED', '#a78bfa', null, jfCardBg, jfCardBorder, rankMap[justFinishedAthlete.name] || null, buildResultOverlay(justFinishedResult), jfIsMyAthlete, platformName);
+                row.appendChild(jfCol);
+                // Reset 10s removal timer on every render so card always shows a full 10s
+                scheduleCardRemoval();
+            }
+
+            // Exclude just-finished athlete from sorted list — already shown pinned above
+            const displayAthletes = justFinishedAthlete
+                ? sortedAthletes.filter(a => a.name !== justFinishedAthlete.name)
+                : sortedAthletes;
+
+            // Lift queue: athletes with a pending attempt in the current column, in sorted order
+            const liftQueue = sortedAthletes.filter(a => hasPendingInColumn(a, currentColumn));
+
+            displayAthletes.forEach((athlete, index) => {
+                const col = document.createElement('div');
+                col.className = 'col-lg-4 col-md-6';
+                col.dataset.athleteName = athlete.name;
+
+                const isMyAthlete = announcementName && athlete.name.toLowerCase().includes(announcementName);
+
+                let statusLabel = '';
+                let statusColor = '';
+                let positionNum = null;
+
+                const queuePos = liftQueue.findIndex(a => a.name === athlete.name);
+                if (queuePos === 0) {
+                    statusLabel = 'LIFTING';
+                    statusColor = '#ef4444';
+                } else if (queuePos === 1) {
+                    statusLabel = 'ON DECK';
+                    statusColor = '#10b981';
+                } else if (queuePos > 1) {
+                    positionNum = queuePos + 1;
+                }
+
+                // Check if this athlete's school matches configured school
+                const isMySchool = configuredSchool && athlete.school &&
+                    athlete.school.toLowerCase().includes(configuredSchool.toLowerCase());
+                const cardBgColor = isMySchool ? 'rgba(249, 115, 22, 0.18)' : 'rgba(30, 41, 59, 0.9)';
+                const cardBorderColor = isMySchool ? 'rgba(249, 115, 22, 0.7)' : 'rgba(96, 165, 250, 0.2)';
+                const wcRank = rankMap[athlete.name] || null;
+
+                col.innerHTML = buildAthleteCard(athlete, statusLabel, statusColor, positionNum, cardBgColor, cardBorderColor, wcRank, '', isMyAthlete, platformName);
+
+                row.appendChild(col);
+            });
+
+            container.appendChild(row);
+
+            // Update My Athlete panel and header badge
+            if (announcementName) {
+                const cfg2 = JSON.parse(localStorage.getItem('trplConfig') || '{}');
+                const displayName = cfg2.athleteName || '';
+
+                const nameEl2 = document.getElementById('myAthletePanelName');
+                nameEl2.innerHTML = `<i class="fas fa-person-running me-1"></i>${displayName}`;
+
+                // Find athlete in current platform's data
+                const myAthleteData = athletes.find(a => a.name.toLowerCase().includes(announcementName));
+                if (myAthleteData && platformName && currentPlatformGid) {
+                    localStorage.setItem('myAthletePlatform', JSON.stringify({ name: platformName, gid: currentPlatformGid }));
+                }
+                const storedPlatform = (() => { try { return JSON.parse(localStorage.getItem('myAthletePlatform') || 'null'); } catch(e) { return null; } })();
+                const athletePlatformGid = (myAthleteData && currentPlatformGid) ? currentPlatformGid : (storedPlatform ? storedPlatform.gid : '');
+                const athletePlatformName = (myAthleteData && platformName) ? platformName : (storedPlatform ? storedPlatform.name : '');
+                const pHref = athletePlatformGid ? `platform.html?gid=${athletePlatformGid}` : '#';
+                nameEl2.href = pHref;
+
+                if (myAthleteData) {
+                    // On athlete's platform — show full info
+                    const myQueuePos = liftQueue.findIndex(a => a.name.toLowerCase().includes(announcementName));
+                    let panelLabel = '', panelColor = '';
+                    if (justFinishedAthlete && justFinishedAthlete.name.toLowerCase().includes(announcementName)) {
+                        panelLabel = 'JUST FINISHED'; panelColor = '#a78bfa';
+                    } else if (myQueuePos === 0) {
+                        panelLabel = 'LIFTING'; panelColor = '#ef4444';
+                    } else if (myQueuePos === 1) {
+                        panelLabel = 'ON DECK'; panelColor = '#10b981';
+                    } else if (myQueuePos > 1) {
+                        panelLabel = `#${myQueuePos + 1}`; panelColor = '#60a5fa';
+                    } else {
+                        panelLabel = 'DONE'; panelColor = '#f97316';
+                    }
+                    const statusEl = document.getElementById('myAthletePanelStatus');
+                    statusEl.textContent = panelLabel;
+                    statusEl.style.background = panelColor;
+                    statusEl.style.display = '';
+
+                    const platformBadge2 = document.getElementById('myAthletePanelPlatform');
+                    platformBadge2.style.display = 'none';
+
+                    const wc = myAthleteData.weightClass;
+                    const myAthleteRec = getAthleteRecords(myAthleteData.designation);
+                    const lbPerLb = myAthleteData.bodyWeight > 0 && myAthleteData.total > 0
+                        ? (myAthleteData.total / myAthleteData.bodyWeight).toFixed(2) : '—';
+                    document.getElementById('myAthletePanelLifts').innerHTML = `
+                        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap;">
+                            <span class="designation-badge ${myAthleteData.designation === 'JV' ? 'jv' : 'varsity'}">${myAthleteData.designation === 'JV' ? 'JV' : 'Varsity'}</span>
+                            <span class="athlete-school">${myAthleteData.school || ''}</span>
+                        </div>
+                        <div class="row g-2" style="margin-bottom:10px;">
+                            <div class="col-4"><div class="stat-box"><div class="stat-label">Wt Class</div><div class="stat-value">${wc || 'N/A'} <small>lbs</small></div></div></div>
+                            <div class="col-4"><div class="stat-box"><div class="stat-label">Body Wt</div><div class="stat-value">${myAthleteData.bodyWeight} <small>lbs</small></div></div></div>
+                            <div class="col-4"><div class="stat-box"><div class="stat-label">lb/lb</div><div class="stat-value" style="color:#a78bfa;">${lbPerLb}</div></div></div>
+                        </div>
+                        <div class="lifts-section">
+                            <h6 style="color:rgba(255,255,255,0.8); font-size:0.7rem; margin-bottom:4px;"><i class="fas fa-compress-arrows-alt me-1"></i>Squat</h6>
+                            <div class="row g-1 mb-2">
+                                ${renderAttempt(myAthleteData.squat1,'1','sq',wc,myAthleteRec)}
+                                ${renderAttempt(myAthleteData.squat2,'2','sq',wc,myAthleteRec)}
+                                ${renderAttempt(myAthleteData.squat3,'3','sq',wc,myAthleteRec)}
+                            </div>
+                            <h6 style="color:rgba(255,255,255,0.8); font-size:0.7rem; margin-bottom:4px;"><i class="fas fa-hands me-1"></i>Bench Press</h6>
+                            <div class="row g-1 mb-2">
+                                ${renderAttempt(myAthleteData.bench1,'1','bp',wc,myAthleteRec)}
+                                ${renderAttempt(myAthleteData.bench2,'2','bp',wc,myAthleteRec)}
+                                ${renderAttempt(myAthleteData.bench3,'3','bp',wc,myAthleteRec)}
+                            </div>
+                            <h6 style="color:rgba(255,255,255,0.8); font-size:0.7rem; margin-bottom:4px;"><i class="fas fa-weight-hanging me-1"></i>Deadlift</h6>
+                            <div class="row g-1">
+                                ${renderAttempt(myAthleteData.dead1,'1','dl',wc,myAthleteRec)}
+                                ${renderAttempt(myAthleteData.dead2,'2','dl',wc,myAthleteRec)}
+                                ${renderAttempt(myAthleteData.dead3,'3','dl',wc,myAthleteRec)}
+                            </div>
+                        </div>
+                        <div style="text-align:center; margin-top:10px;">
+                            <div class="total-box">
+                                <div class="total-label">TOTAL</div>
+                                <div class="total-value">${myAthleteData.total} lbs</div>
+                            </div>
+                        </div>`;
+                } else {
+                    // Not on athlete's platform — show only name + go-to-platform button
+                    const statusEl = document.getElementById('myAthletePanelStatus');
+                    statusEl.textContent = '';
+                    statusEl.style.display = 'none';
+                    const platformBadge2 = document.getElementById('myAthletePanelPlatform');
+                    platformBadge2.style.display = 'none';
+                    document.getElementById('myAthletePanelLifts').innerHTML = athletePlatformName
+                        ? `<a href="${pHref}" style="display:inline-flex; align-items:center; gap:8px; background:rgba(96,165,250,0.15); border:1px solid rgba(96,165,250,0.4); color:#93c5fd; font-size:0.85rem; font-weight:700; padding:7px 16px; border-radius:8px; text-decoration:none; margin-top:4px;"><i class="fas fa-layer-group me-1"></i>Go to ${athletePlatformName}</a>`
+                        : '';
+                }
+
+                document.getElementById('myAthletePanel').style.display = 'block';
+
+                // Keep header badge in sync
+            }
+        }
+
+        function scrollToMyAthlete() {
+            const cfg = JSON.parse(localStorage.getItem('trplConfig') || '{}');
+            const name = (cfg.athleteName || '').toLowerCase().trim();
+            if (!name) return;
+            const cols = document.querySelectorAll('[data-athlete-name]');
+            for (const col of cols) {
+                if (col.dataset.athleteName.toLowerCase().trim() === name) {
+                    col.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    const card = col.querySelector('.athlete-card');
+                    if (card) {
+                        card.style.transition = 'box-shadow 0.3s';
+                        card.style.boxShadow = '0 0 0 3px #ec4899, 0 0 20px rgba(236,72,153,0.5)';
+                        setTimeout(() => { card.style.boxShadow = ''; }, 1800);
+                    }
+                    return;
+                }
+            }
+        }
+
+        function buildResultOverlay(result) {
+            if (!result) return '';
+            const configs = {
+                good:   { icon: '✅', text: 'Good Lift!',        gradient: 'linear-gradient(135deg, #10b981, #60a5fa)', glow: 'rgba(16,185,129,0.5)' },
+                failed: { icon: '❌', text: 'Failed Attempt!',   gradient: 'linear-gradient(135deg, #ef4444, #f97316)', glow: 'rgba(239,68,68,0.5)' },
+                record: { icon: '⭐', text: 'New State Record!', gradient: 'linear-gradient(135deg, #f59e0b, #fbbf24)', glow: 'rgba(245,158,11,0.5)' },
+            };
+            const c = configs[result];
+            return `<div style="text-align: center; margin-bottom: 14px; padding: 10px 0 6px;">
+                <div style="font-size: 2rem; margin-bottom: 4px;">${c.icon}</div>
+                <div style="font-size: 1.5rem; font-weight: 900; background: ${c.gradient}; -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; text-transform: uppercase; line-height: 1; filter: drop-shadow(0 3px 10px ${c.glow});">${c.text}</div>
+            </div>`;
+        }
+
+        function buildAthleteCard(athlete, statusLabel, statusColor, positionNum, cardBgColor, cardBorderColor, wcRank, resultHtml = '', isMyAthlete = false, platformName = '') {
+            const _rec = getAthleteRecords(athlete.designation);
+            return `
+                    <div class="athlete-card" style="background: ${cardBgColor}; border-color: ${cardBorderColor}; ${isMyAthlete ? 'border-left-color: #f97316;' : ''}">
+                        ${resultHtml}
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                ${isMyAthlete
+                                    ? `<span style="background:rgba(249,115,22,0.9);color:white;font-size:1rem;font-weight:700;padding:5px 12px;border-radius:10px;white-space:nowrap;"><i class="fas fa-person-running me-1"></i>${athlete.name}</span>`
+                                    : `<div class="athlete-name">${athlete.name}</div>`}
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                                ${statusLabel ? `<div style="background: ${statusColor}; color: white; padding: 4px 12px; border-radius: 10px; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.5px;">${statusLabel}</div>` : ''}
+                                ${positionNum ? `<div style="color: #60a5fa; font-size: 1rem; font-weight: 800; white-space: nowrap;">Position ${positionNum}</div>` : ''}
+                                ${wcRank ? `<div style="color: rgba(255,255,255,0.55); font-size: 0.8rem; font-weight: 700; white-space: nowrap;">Ranked #${wcRank}</div>` : ''}
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap:wrap;">
+                            <span class="designation-badge ${athlete.designation === 'JV' ? 'jv' : 'varsity'}">${athlete.designation === 'JV' ? 'JV' : 'Varsity'}</span>
+                            <span class="athlete-school">${athlete.school}</span>
+                        </div>
+
+                        <div class="row g-2">
+                            <div class="col-4">
+                                <div class="stat-box">
+                                    <div class="stat-label">Wt Class</div>
+                                    <div class="stat-value">${athlete.weightClass || 'N/A'} <small>lbs</small></div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-box">
+                                    <div class="stat-label">Body Wt</div>
+                                    <div class="stat-value">${athlete.bodyWeight} <small>lbs</small></div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-box">
+                                    <div class="stat-label">lb/lb</div>
+                                    <div class="stat-value" style="color: #a78bfa;">${athlete.bodyWeight > 0 && athlete.total > 0 ? (athlete.total / athlete.bodyWeight).toFixed(2) : '—'}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lifts-section">
+                            <h6 style="color: rgba(255,255,255,0.8); font-size: 0.7rem; margin-bottom: 4px;">
+                                <i class="fas fa-compress-arrows-alt me-1"></i>Squat
+                            </h6>
+                            <div class="row g-1 mb-2">
+                                ${renderAttempt(athlete.squat1, '1', 'sq', athlete.weightClass, _rec)}
+                                ${renderAttempt(athlete.squat2, '2', 'sq', athlete.weightClass, _rec)}
+                                ${renderAttempt(athlete.squat3, '3', 'sq', athlete.weightClass, _rec)}
+                            </div>
+
+                            <h6 style="color: rgba(255,255,255,0.8); font-size: 0.7rem; margin-bottom: 4px;">
+                                <i class="fas fa-hands me-1"></i>Bench Press
+                            </h6>
+                            <div class="row g-1 mb-2">
+                                ${renderAttempt(athlete.bench1, '1', 'bp', athlete.weightClass, _rec)}
+                                ${renderAttempt(athlete.bench2, '2', 'bp', athlete.weightClass, _rec)}
+                                ${renderAttempt(athlete.bench3, '3', 'bp', athlete.weightClass, _rec)}
+                            </div>
+
+                            <h6 style="color: rgba(255,255,255,0.8); font-size: 0.7rem; margin-bottom: 4px;">
+                                <i class="fas fa-weight-hanging me-1"></i>Deadlift
+                            </h6>
+                            <div class="row g-1">
+                                ${renderAttempt(athlete.dead1, '1', 'dl', athlete.weightClass, _rec)}
+                                ${renderAttempt(athlete.dead2, '2', 'dl', athlete.weightClass, _rec)}
+                                ${renderAttempt(athlete.dead3, '3', 'dl', athlete.weightClass, _rec)}
+                            </div>
+                        </div>
+
+                        <div style="text-align:center;">
+                            <div class="total-box">
+                                <div class="total-label">TOTAL</div>
+                                <div class="total-value">${athlete.total} lbs</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+        }
+
+        // Render single attempt
+        function renderAttempt(attempt, attemptNum, liftKey, weightClass, stateRecords, compact = false) {
+            if (!attempt) {
+                return `
+                    <div class="col-4">
+                        <div class="lift-box" style="opacity: 0.3;">
+                            ${compact ? '' : `<div class="lift-name">Attempt ${attemptNum}</div>`}
+                            <div class="lift-value">-</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            const isFailed = attempt.toLowerCase().includes('x');
+            const isGood = attempt.toLowerCase().includes('g');
+            let value = attempt.replace(/[xgXG]/g, '');
+            const numWeight = parseFloat(value) || 0;
+            const isRecordAttempt = isStateRecordAttempt(numWeight, liftKey, weightClass, stateRecords);
+
+            // Color scheme based on attempt status
+            let bgColor, borderColor, textColor, labelColor;
+
+            if (isFailed) {
+                // Failed attempt - red
+                bgColor = '#ef4444';
+                borderColor = '#dc2626';
+                textColor = 'white';
+                labelColor = 'rgba(255,255,255,0.8)';
+            } else if (isGood) {
+                // Good attempt - green
+                bgColor = 'rgba(16, 185, 129, 0.2)';
+                borderColor = '#10b981';
+                textColor = '#60a5fa';
+                labelColor = 'rgba(255, 255, 255, 0.6)';
+            } else {
+                // Number without marker - black background, white text
+                bgColor = '#000000';
+                borderColor = 'rgba(96, 165, 250, 0.2)';
+                textColor = 'white';
+                labelColor = 'rgba(255,255,255,0.8)';
+            }
+
+            return `
+                <div class="col-4">
+                    <div class="lift-box" style="background: ${bgColor}; border-color: ${borderColor};">
+                        ${compact ? '' : `<div class="lift-name" style="color: ${labelColor};">Attempt ${attemptNum}</div>`}
+                        <div class="lift-value" style="color: ${textColor};">
+                            ${value}${isFailed ? '<i class="fas fa-times ms-1"></i>' : ''}${isGood ? '<i class="fas fa-check ms-1" style="color: #10b981;"></i>' : ''}${isRecordAttempt ? '<i class="fas fa-star ms-1" style="color: #ef4444;" title="State record attempt"></i>' : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function scheduleCardRemoval() {
+            if (removeCardTimer) clearTimeout(removeCardTimer);
+            removeCardTimer = setTimeout(() => {
+                const card = document.getElementById('justFinishedCard');
+                if (card) {
+                    card.classList.add('card-fade-out');
+                    setTimeout(() => card.remove(), 650);
+                }
+                justFinishedAthlete = null;
+                justFinishedResult = null;
+                removeCardTimer = null;
+                // Re-render from cache so the athlete reappears at position 1 immediately
+                if (window._lastAthletes) renderAthletes(window._lastAthletes);
+            }, 5000);
+        }
+
+        function updateCacheBadge(cacheHit, cacheAge) { /* handled by checkHeartbeat */ }
+
+        // Show status message
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.textContent = message;
+            statusDiv.className = `status-message ${type}`;
+            statusDiv.style.display = 'block';
+        }
+
+        async function checkHeartbeat() {
+            try {
+                const r = await fetch('https://pllv4.streamwaveprod.com/cache/heartbeat.json?_=' + Date.now());
+                if (!r.ok) return;
+                const data = await r.json();
+                const ageSecs = Math.floor(Date.now() / 1000) - data.ts;
+                const btn = document.getElementById('refreshToggle');
+                if (!btn) return;
+                if (ageSecs > 30) {
+                    const mins = Math.floor(ageSecs / 60);
+                    const secs = ageSecs % 60;
+                    const ageStr = mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+                    btn.style.background = 'rgba(239,68,68,0.8)';
+                    btn.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i>Data Stale · ${ageStr}`;
+                } else {
+                    // Data is fresh — restore normal button appearance if it was showing stale
+                    if (btn.innerHTML.includes('Data Stale')) {
+                        btn.style.background = 'rgba(96,165,250,0.8)';
+                        const isOn = !!window.autoRefreshInterval;
+                        btn.innerHTML = isOn
+                            ? '<i class="fas fa-sync-alt fa-spin me-2"></i>Auto-Refresh: ON'
+                            : '<i class="fas fa-sync-alt me-2"></i>Auto-Refresh: OFF';
+                    }
+                }
+            } catch(e) { /* network error — ignore */ }
+        }
+    </script>
+</body>
+</html>
