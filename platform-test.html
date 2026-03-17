@@ -706,10 +706,8 @@
                 myAthletePanel.style.display = 'block';
                 myAthletePanel.innerHTML = buildMyAthletePanelHTML(myAthleteData, statusLabel, statusColor, displayAthleteNameCfg, curPlatformName, currentPlatformGid);
                 document.getElementById('onPlatformSeparator').style.display = 'flex';
-            } else {
-                myAthletePanel.style.display = 'none';
-                document.getElementById('onPlatformSeparator').style.display = 'none';
             }
+            // athlete not on this platform — leave panel as-is (preloaded from their platform)
         } else {
             myAthletePanel.style.display = 'none';
             document.getElementById('onPlatformSeparator').style.display = 'none';
