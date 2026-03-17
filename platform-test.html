@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerLift Live | Platform Focus View</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+            color: white;
+        }
+
+        /* ── LIFTING card ─────────────────────────────── */
+        .card-lifting {
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid rgba(239, 68, 68, 0.65);
+            border-left: 6px solid #ef4444;
+            border-radius: 14px;
+            padding: 20px 18px;
+            margin-bottom: 12px;
+            box-shadow: 0 8px 30px rgba(239, 68, 68, 0.2);
+        }
+
+        /* ── ON DECK card ─────────────────────────────── */
+        .card-on-deck {
+            background: rgba(16, 185, 129, 0.08);
+            border: 2px solid rgba(16, 185, 129, 0.55);
+            border-left: 6px solid #10b981;
+            border-radius: 14px;
+            padding: 16px 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.12);
+        }
+
+        /* ── Minimal position row ─────────────────────── */
+        .card-position {
+            background: rgba(30, 41, 59, 0.55);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-left: 3px solid #4b5563;
+            border-radius: 8px;
+            padding: 7px 12px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .status-pill {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.8px;
+            color: white;
+            flex-shrink: 0;
+        }
+        .status-pill.lifting  { background: #ef4444; box-shadow: 0 2px 10px rgba(239,68,68,0.4); }
+        .status-pill.on-deck  { background: #10b981; box-shadow: 0 2px 10px rgba(16,185,129,0.35); }
+
+        .designation-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.68rem;
+            font-weight: 700;
+        }
+        .designation-badge.varsity { background: #8b5cf6; color: white; }
+        .designation-badge.jv      { background: #10b981; color: white; }
+
+        .btn-nav {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(96, 165, 250, 0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-block;
+            transition: all 0.2s;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+        .btn-nav:hover { background: rgba(30,41,59,1); transform: translateY(-2px); color: white; }
+
+        .form-select {
+            background: rgba(15, 23, 42, 0.6);
+            color: white;
+            border: 2px solid rgba(96, 165, 250, 0.3);
+            padding: 8px;
+            font-size: 1rem;
+            border-radius: 8px;
+        }
+        .form-select:focus {
+            background: rgba(15, 23, 42, 0.85);
+            color: white;
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+            outline: none;
+        }
+        .form-select option { background: #1e293b; color: white; }
+
+        .divider-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0 8px;
+        }
+        .divider-label span {
+            color: rgba(255,255,255,0.35);
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        .divider-label::before,
+        .divider-label::after {
+            content: '';
+            flex: 1;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid" style="max-width: 680px; padding: 0 16px;">
+
+    <!-- Nav -->
+    <div style="display:flex; gap:8px; margin-bottom:14px; align-items:center; flex-wrap:nowrap; overflow-x:auto;">
+        <a href="index.html" class="btn-nav"><i class="fas fa-home me-2"></i>Home</a>
+        <a href="platform.html" class="btn-nav"><i class="fas fa-layer-group me-2"></i>Platform View</a>
+        <button id="refreshToggle" onclick="toggleAutoRefresh()" class="btn-nav" style="background:rgba(96,165,250,0.8); border:none;">
+            <i class="fas fa-sync-alt me-2"></i>Auto-Refresh: OFF
+        </button>
+    </div>
+
+    <!-- Title -->
+    <div style="text-align:center; margin-bottom:14px;">
+        <h1 style="font-size:1.25rem; font-weight:900; color:white; margin:0;">
+            <i class="fas fa-crosshairs" style="color:#60a5fa; margin-right:8px;"></i>Platform Focus View
+        </h1>
+    </div>
+
+    <!-- Platform select -->
+    <div style="background:rgba(30,41,59,0.8); border:1px solid rgba(96,165,250,0.2); border-radius:10px; padding:10px 14px; margin-bottom:14px;">
+        <select id="platformSelect" class="form-select w-100" onchange="loadPlatform()">
+            <option value="">— Select Platform —</option>
+        </select>
+    </div>
+
+    <!-- Current event banner -->
+    <div id="eventBanner" style="display:none; text-align:center; margin-bottom:12px; padding:8px 16px; background:rgba(96,165,250,0.08); border:1px solid rgba(96,165,250,0.25); border-radius:10px;"></div>
+
+    <!-- Athlete cards -->
+    <div id="athleteContainer"></div>
+
+    <!-- Cache / status -->
+    <div id="cacheBadge" style="text-align:center; margin-top:8px; font-size:0.68rem; color:rgba(255,255,255,0.3);"></div>
+
+</div>
+
+<script src="state-records-data.js"></script>
+<script>
+    let autoRefreshInterval = null;
+    let currentPlatformGid = null;
+    let platformGender = 'M';
+
+    // ── Lift metadata ──────────────────────────────────────────────────────────
+    function getLiftInfo(col) {
+        if (!col) return null;
+        if (col.startsWith('squat')) return { name: 'Squat',     icon: 'fas fa-person-falling', color: '#60a5fa', attempt: col.replace('squat','') };
+        if (col.startsWith('bench')) return { name: 'Bench',     icon: 'fas fa-dumbbell',        color: '#a78bfa', attempt: col.replace('bench','') };
+        if (col.startsWith('dead'))  return { name: 'Deadlift',  icon: 'fas fa-weight-hanging',  color: '#10b981', attempt: col.replace('dead','')  };
+        return null;
+    }
+
+    function getPrevAttempts(athlete, currentCol) {
+        const map = {
+            squat1:[], squat2:['squat1'], squat3:['squat1','squat2'],
+            bench1:[], bench2:['bench1'], bench3:['bench1','bench2'],
+            dead1:[],  dead2:['dead1'],   dead3:['dead1','dead2']
+        };
+        return (map[currentCol] || []).map(c => athlete[c] || '');
+    }
+
+    function attemptChip(val) {
+        if (!val) return '';
+        const num = val.replace(/[xgXGfF]/g, '').trim();
+        if (!num) return '';
+        const lower = val.toLowerCase();
+        const good   = lower.includes('g');
+        const failed = lower.includes('x');
+        const icon  = good ? '✓' : failed ? '✗' : '·';
+        const color  = good ? '#10b981' : failed ? '#ef4444' : 'rgba(255,255,255,0.45)';
+        const bg     = good ? 'rgba(16,185,129,0.15)' : failed ? 'rgba(239,68,68,0.15)' : 'rgba(255,255,255,0.05)';
+        const border = good ? 'rgba(16,185,129,0.45)' : failed ? 'rgba(239,68,68,0.45)' : 'rgba(255,255,255,0.1)';
+        return `<span style="display:inline-flex;align-items:center;gap:4px;background:${bg};border:1px solid ${border};border-radius:6px;padding:3px 9px;font-size:0.82rem;font-weight:700;color:${color};">${icon} ${num}</span>`;
+    }
+
+    // ── Card builders ──────────────────────────────────────────────────────────
+    function buildLiftingCard(athlete, currentCol, isMySchool) {
+        const lift = getLiftInfo(currentCol);
+        const rawWeight = athlete[currentCol] ? athlete[currentCol].replace(/[xgXGfF]/g,'').trim() : '—';
+        const prevs = getPrevAttempts(athlete, currentCol);
+        const prevHtml = prevs.length
+            ? `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:10px;">
+                   <span style="font-size:0.68rem;color:rgba(255,255,255,0.35);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-right:2px;">Prev</span>
+                   ${prevs.map(attemptChip).join('')}
+               </div>`
+            : '';
+        const schoolBg = isMySchool ? 'rgba(249,115,22,0.15)' : 'rgba(255,255,255,0.05)';
+        const schoolBorder = isMySchool ? 'rgba(249,115,22,0.4)' : 'rgba(255,255,255,0.1)';
+
+        return `<div class="card-lifting">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:6px;">
+                <span class="status-pill lifting">LIFTING</span>
+                ${athlete.school ? `<span style="background:${schoolBg};border:1px solid ${schoolBorder};padding:2px 10px;border-radius:6px;font-size:0.72rem;font-weight:700;color:rgba(255,255,255,0.75);">${athlete.school}</span>` : ''}
+            </div>
+
+            ${lift ? `<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+                <i class="${lift.icon}" style="color:${lift.color};font-size:1.3rem;"></i>
+                <span style="font-size:1rem;font-weight:800;color:${lift.color};text-transform:uppercase;letter-spacing:0.5px;">${lift.name}</span>
+                <span style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);padding:2px 10px;border-radius:20px;font-size:0.72rem;font-weight:700;color:rgba(255,255,255,0.6);">ATT ${lift.attempt}</span>
+            </div>` : ''}
+
+            <div style="font-size:1.5rem;font-weight:900;color:white;margin-bottom:4px;line-height:1.1;">${athlete.name}</div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+                <span class="designation-badge ${athlete.designation === 'JV' ? 'jv' : 'varsity'}">${athlete.designation === 'JV' ? 'JV' : 'Varsity'}</span>
+                ${athlete.weightClass ? `<span style="color:rgba(255,255,255,0.5);font-size:0.78rem;font-weight:600;">${athlete.weightClass} lb class</span>` : ''}
+                ${athlete.bodyWeight ? `<span style="color:rgba(255,255,255,0.4);font-size:0.78rem;">BW ${athlete.bodyWeight} lbs</span>` : ''}
+            </div>
+
+            <div style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:12px 16px;text-align:center;">
+                <div style="font-size:0.65rem;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Current Attempt</div>
+                <div style="font-size:2.8rem;font-weight:900;color:white;line-height:1;">${rawWeight}<span style="font-size:1.2rem;font-weight:600;color:rgba(255,255,255,0.5);margin-left:6px;">lbs</span></div>
+            </div>
+
+            ${prevHtml}
+        </div>`;
+    }
+
+    function buildOnDeckCard(athlete, currentCol, isMySchool) {
+        const lift = getLiftInfo(currentCol);
+        const rawWeight = athlete[currentCol] ? athlete[currentCol].replace(/[xgXGfF]/g,'').trim() : '—';
+        const prevs = getPrevAttempts(athlete, currentCol);
+        const prevHtml = prevs.length
+            ? `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px;">
+                   <span style="font-size:0.68rem;color:rgba(255,255,255,0.35);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-right:2px;">Prev</span>
+                   ${prevs.map(attemptChip).join('')}
+               </div>`
+            : '';
+        const schoolBg = isMySchool ? 'rgba(249,115,22,0.15)' : 'rgba(255,255,255,0.05)';
+        const schoolBorder = isMySchool ? 'rgba(249,115,22,0.4)' : 'rgba(255,255,255,0.1)';
+
+        return `<div class="card-on-deck">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px;">
+                <span class="status-pill on-deck">ON DECK</span>
+                ${athlete.school ? `<span style="background:${schoolBg};border:1px solid ${schoolBorder};padding:2px 10px;border-radius:6px;font-size:0.72rem;font-weight:700;color:rgba(255,255,255,0.75);">${athlete.school}</span>` : ''}
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+                <div style="flex:1;min-width:0;">
+                    ${lift ? `<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+                        <i class="${lift.icon}" style="color:${lift.color};font-size:1rem;"></i>
+                        <span style="font-size:0.85rem;font-weight:800;color:${lift.color};text-transform:uppercase;">${lift.name}</span>
+                        <span style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);padding:1px 8px;border-radius:20px;font-size:0.68rem;font-weight:700;color:rgba(255,255,255,0.5);">ATT ${lift.attempt}</span>
+                    </div>` : ''}
+                    <div style="font-size:1.2rem;font-weight:800;color:white;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${athlete.name}</div>
+                    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:4px;">
+                        <span class="designation-badge ${athlete.designation === 'JV' ? 'jv' : 'varsity'}">${athlete.designation === 'JV' ? 'JV' : 'Varsity'}</span>
+                        ${athlete.weightClass ? `<span style="color:rgba(255,255,255,0.45);font-size:0.72rem;font-weight:600;">${athlete.weightClass} lb class</span>` : ''}
+                    </div>
+                </div>
+                <div style="text-align:right;flex-shrink:0;">
+                    <div style="font-size:0.6rem;font-weight:700;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.8px;">Attempt</div>
+                    <div style="font-size:2rem;font-weight:900;color:#10b981;line-height:1;">${rawWeight}</div>
+                    <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);font-weight:600;">lbs</div>
+                </div>
+            </div>
+
+            ${prevHtml}
+        </div>`;
+    }
+
+    function buildPositionRow(athlete, currentCol, pos) {
+        const lift = getLiftInfo(currentCol);
+        const rawWeight = athlete[currentCol] ? athlete[currentCol].replace(/[xgXGfF]/g,'').trim() : '—';
+        return `<div class="card-position">
+            <span style="background:rgba(96,165,250,0.15);border:1px solid rgba(96,165,250,0.25);color:#93c5fd;font-size:0.75rem;font-weight:800;padding:2px 8px;border-radius:6px;flex-shrink:0;">#${pos}</span>
+            <span style="font-size:0.9rem;font-weight:700;color:white;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${athlete.name}</span>
+            ${lift ? `<span style="display:inline-flex;align-items:center;gap:4px;color:${lift.color};font-size:0.72rem;font-weight:700;flex-shrink:0;">
+                <i class="${lift.icon}" style="font-size:0.7rem;"></i>${lift.name} A${lift.attempt}
+            </span>` : ''}
+            <span style="color:rgba(255,255,255,0.6);font-size:0.85rem;font-weight:700;flex-shrink:0;">${rawWeight} lbs</span>
+        </div>`;
+    }
+
+    // ── Render ─────────────────────────────────────────────────────────────────
+    function renderAthletes(athletes) {
+        const container = document.getElementById('athleteContainer');
+        container.innerHTML = '';
+
+        const configStr = localStorage.getItem('trplConfig');
+        let configuredSchool = '';
+        if (configStr) {
+            try { configuredSchool = (JSON.parse(configStr).schoolName || '').toLowerCase(); } catch(e) {}
+        }
+
+        athletes.forEach((a, i) => { a.sheetOrder = i; });
+
+        const currentCol = getCurrentAttemptColumn(athletes);
+
+        // Update event banner
+        const banner = document.getElementById('eventBanner');
+        const liftInfo = getLiftInfo(currentCol);
+        if (liftInfo) {
+            banner.style.display = 'block';
+            banner.innerHTML = `<i class="${liftInfo.icon}" style="color:${liftInfo.color};margin-right:8px;"></i><span style="font-weight:800;color:${liftInfo.color};">${liftInfo.name.toUpperCase()}</span><span style="color:rgba(255,255,255,0.45);margin:0 8px;">·</span><span style="font-weight:700;color:rgba(255,255,255,0.6);">ATTEMPT ${liftInfo.attempt}</span>`;
+        } else {
+            banner.style.display = 'none';
+        }
+
+        // Sort: pending in current column first by weight, then sheet order
+        const sorted = [...athletes].sort((a, b) => {
+            const ap = hasPendingInColumn(a, currentCol);
+            const bp = hasPendingInColumn(b, currentCol);
+            if (ap && !bp) return -1;
+            if (!ap && bp) return 1;
+            if (ap && bp && currentCol) {
+                const aw = parseFloat(a[currentCol].replace(/[xgXGfF]/g,'').trim()) || 0;
+                const bw = parseFloat(b[currentCol].replace(/[xgXGfF]/g,'').trim()) || 0;
+                if (aw !== bw) return aw - bw;
+            }
+            return a.sheetOrder - b.sheetOrder;
+        });
+
+        const pending = sorted.filter(a => hasPendingInColumn(a, currentCol));
+
+        if (pending.length === 0) {
+            container.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,0.4);padding:40px 0;font-size:0.95rem;">No active lifts on this platform.</div>';
+            return;
+        }
+
+        let html = '';
+
+        // LIFTING (pos 1)
+        const lifting = pending[0];
+        const liftingMySchool = configuredSchool && lifting.school && lifting.school.toLowerCase().includes(configuredSchool);
+        html += buildLiftingCard(lifting, currentCol, liftingMySchool);
+
+        // ON DECK (pos 2)
+        if (pending[1]) {
+            const onDeck = pending[1];
+            const onDeckMySchool = configuredSchool && onDeck.school && onDeck.school.toLowerCase().includes(configuredSchool);
+            html += buildOnDeckCard(onDeck, currentCol, onDeckMySchool);
+        }
+
+        // Next up (pos 3+)
+        if (pending.length > 2) {
+            html += `<div class="divider-label"><span>Next Up</span></div>`;
+            for (let i = 2; i < pending.length; i++) {
+                html += buildPositionRow(pending[i], currentCol, i + 1);
+            }
+        }
+
+        container.innerHTML = html;
+    }
+
+    // ── Data loading (shared with platform.html) ───────────────────────────────
+    function toggleAutoRefresh() {
+        const btn = document.getElementById('refreshToggle');
+        if (autoRefreshInterval) {
+            clearInterval(autoRefreshInterval);
+            autoRefreshInterval = null;
+            btn.innerHTML = '<i class="fas fa-sync-alt me-2"></i>Auto-Refresh: OFF';
+            btn.style.background = 'rgba(96,165,250,0.8)';
+            localStorage.setItem('ptAutoRefresh', 'off');
+        } else {
+            const cfg = JSON.parse(localStorage.getItem('trplConfig') || '{}');
+            const ms = (cfg.autoRefreshSeconds || 20) * 1000;
+            autoRefreshInterval = setInterval(loadPlatformData, ms);
+            btn.innerHTML = '<i class="fas fa-sync-alt fa-spin me-2"></i>Auto-Refresh: ON';
+            btn.style.background = 'rgba(16,185,129,0.8)';
+            localStorage.setItem('ptAutoRefresh', 'on');
+            loadPlatformData();
+        }
+    }
+
+    function updateCacheBadge(status, age) {
+        const el = document.getElementById('cacheBadge');
+        const ageStr = age ? ` · ${age}s old` : '';
+        el.textContent = `Cache: ${status || '—'}${ageStr}`;
+    }
+
+    function loadPlatformsList() {
+        const configStr = localStorage.getItem('trplConfig');
+        if (!configStr) return;
+        try {
+            const config = JSON.parse(configStr);
+            const sel = document.getElementById('platformSelect');
+            const platforms = config.sheets.filter(s => s.name.toLowerCase().startsWith('platform'));
+            sel.innerHTML = '<option value="">— Select Platform —</option>';
+            platforms.forEach(p => {
+                const o = document.createElement('option');
+                o.value = p.gid;
+                o.textContent = p.name;
+                sel.appendChild(o);
+            });
+
+            fetch(`https://pllv4.streamwaveprod.com/cache/meta_${config.spreadsheetId}.html`)
+                .then(r => r.text())
+                .then(html => {
+                    const m = html.match(/<title>([^<]+)<\/title>/);
+                    if (m) {
+                        const t = m[1].toLowerCase();
+                        platformGender = t.includes('women') || t.includes('female') || t.includes('girls') ? 'W' : 'M';
+                    }
+                }).catch(() => {});
+        } catch(e) {}
+    }
+
+    function loadPlatform() {
+        const sel = document.getElementById('platformSelect');
+        currentPlatformGid = sel.value;
+        if (!currentPlatformGid) {
+            document.getElementById('athleteContainer').innerHTML = '';
+            document.getElementById('eventBanner').style.display = 'none';
+            return;
+        }
+        loadPlatformData();
+    }
+
+    async function loadPlatformData() {
+        if (!currentPlatformGid) return;
+        try {
+            const config = JSON.parse(localStorage.getItem('trplConfig') || '{}');
+            const url = `https://pllv4.streamwaveprod.com/cache/sheet_${config.spreadsheetId}_${currentPlatformGid}.csv`;
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(res.status);
+            updateCacheBadge(res.headers.get('X-Cache'), res.headers.get('X-Cache-Age'));
+            const athletes = parseAthletes(parseCSV(await res.text()));
+            if (athletes.length === 0) {
+                document.getElementById('athleteContainer').innerHTML = '<div style="text-align:center;color:rgba(255,255,255,0.4);padding:40px 0;">No athletes found.</div>';
+                return;
+            }
+            window._lastAthletes = athletes;
+            renderAthletes(athletes);
+        } catch(e) {
+            console.error('Load error:', e);
+        }
+    }
+
+    function parseCSV(csv) {
+        const lines = csv.split('\n');
+        const result = [];
+        for (let line of lines) {
+            if (!line.trim()) continue;
+            const values = [];
+            let current = '', inQuotes = false;
+            for (let j = 0; j < line.length; j++) {
+                const c = line[j];
+                if (c === '"') { inQuotes = !inQuotes; }
+                else if (c === ',' && !inQuotes) { values.push(current.trim().replace(/^"|"$/g,'')); current = ''; }
+                else { current += c; }
+            }
+            values.push(current.trim().replace(/^"|"$/g,''));
+            result.push(values);
+        }
+        return result;
+    }
+
+    function parseAthletes(csvData) {
+        const athletes = [];
+        let headerRow = -1;
+        let nameCol=-1, schoolCol=-1, weightClassCol=-1, bodyWeightCol=-1, designationCol=-1;
+        let squat1Col=-1, squat2Col=-1, squat3Col=-1;
+        let bench1Col=-1, bench2Col=-1, bench3Col=-1;
+        let dead1Col=-1, dead2Col=-1, dead3Col=-1;
+        let totalCol=-1;
+
+        for (let i = 0; i < Math.min(15, csvData.length); i++) {
+            const row = csvData[i];
+            for (let j = 0; j < row.length; j++) {
+                const cell = row[j].toLowerCase().trim();
+                if ((cell==='name'||cell==='lifter') && nameCol===-1) nameCol=j;
+                if (cell==='school' && schoolCol===-1) schoolCol=j;
+                if ((cell==='weight class'||cell==='wt class'||cell==='wt. class'||cell==='class'||cell==='wc'||cell==='weight'||(cell.includes('wt')&&cell.includes('class'))) && weightClassCol===-1) weightClassCol=j;
+                if ((cell==='body weight'||cell==='bw'||cell==='bodyweight'||cell==='weight') && bodyWeightCol===-1) bodyWeightCol=j;
+                if ((cell==='designation'||cell==='div'||cell==='division'||cell==='desig') && designationCol===-1) designationCol=j;
+                if ((cell==='squat 1'||cell==='sq1'||cell==='squat1'||cell==='f') && squat1Col===-1) squat1Col=j;
+                if ((cell==='squat 2'||cell==='sq2'||cell==='squat2') && squat2Col===-1) squat2Col=j;
+                if ((cell==='squat 3'||cell==='sq3'||cell==='squat3') && squat3Col===-1) squat3Col=j;
+                if ((cell==='bench 1'||cell==='bp1'||cell==='bench1') && bench1Col===-1) bench1Col=j;
+                if ((cell==='bench 2'||cell==='bp2'||cell==='bench2') && bench2Col===-1) bench2Col=j;
+                if ((cell==='bench 3'||cell==='bp3'||cell==='bench3') && bench3Col===-1) bench3Col=j;
+                if ((cell==='deadlift 1'||cell==='dead 1'||cell==='dl1'||cell==='deal lift 1') && dead1Col===-1) dead1Col=j;
+                if ((cell==='deadlift 2'||cell==='dead 2'||cell==='dl2'||cell==='dead lift 2') && dead2Col===-1) dead2Col=j;
+                if ((cell==='deadlift 3'||cell==='dead 3'||cell==='dl3'||cell==='dead lift 3') && dead3Col===-1) dead3Col=j;
+                if (cell==='total' && totalCol===-1) totalCol=j;
+            }
+            if (nameCol!==-1 && schoolCol!==-1) { headerRow=i; break; }
+        }
+
+        if (headerRow===-1) {
+            headerRow=7; nameCol=7; schoolCol=5; weightClassCol=3; bodyWeightCol=6;
+            squat1Col=8; squat2Col=9; squat3Col=10;
+            bench1Col=12; bench2Col=13; bench3Col=14;
+            dead1Col=16; dead2Col=17; dead3Col=18; totalCol=20;
+        } else {
+            function scanSub(row) {
+                for (let j=0; j<row.length; j++) {
+                    const cell=row[j].toLowerCase().trim();
+                    if ((cell==='squat 1'||cell==='sq1'||cell==='sq 1'||cell==='squat1')&&squat1Col===-1) squat1Col=j;
+                    if ((cell==='squat 2'||cell==='sq2'||cell==='sq 2'||cell==='squat2')&&squat2Col===-1){squat2Col=j;if(squat1Col===-1&&j>0)squat1Col=j-1;}
+                    if ((cell==='squat 3'||cell==='sq3'||cell==='sq 3'||cell==='squat3')&&squat3Col===-1) squat3Col=j;
+                    if ((cell==='bench 1'||cell==='bp1'||cell==='bp 1'||cell==='bench1')&&bench1Col===-1) bench1Col=j;
+                    if ((cell==='bench 2'||cell==='bp2'||cell==='bp 2'||cell==='bench2')&&bench2Col===-1){bench2Col=j;if(bench1Col===-1&&j>0)bench1Col=j-1;}
+                    if ((cell==='bench 3'||cell==='bp3'||cell==='bp 3'||cell==='bench3')&&bench3Col===-1) bench3Col=j;
+                    if ((cell==='dead lift 1'||cell==='dl1'||cell==='dl 1'||cell==='deadlift 1'||cell==='dead 1')&&dead1Col===-1) dead1Col=j;
+                    if ((cell==='dead lift 2'||cell==='dl2'||cell==='dl 2'||cell==='deadlift 2'||cell==='dead 2')&&dead2Col===-1){dead2Col=j;if(dead1Col===-1&&j>0)dead1Col=j-1;}
+                    if ((cell==='dead lift 3'||cell==='dl3'||cell==='dl 3'||cell==='deadlift 3'||cell==='dead 3')&&dead3Col===-1) dead3Col=j;
+                }
+            }
+            if (csvData[headerRow+1]) { scanSub(csvData[headerRow+1]); headerRow++; }
+            if (squat1Col===-1&&bench1Col===-1&&dead1Col===-1&&csvData[headerRow+1]) { scanSub(csvData[headerRow+1]); headerRow++; }
+        }
+
+        for (let i=headerRow+1; i<csvData.length; i++) {
+            const row=csvData[i];
+            if (row.length<=nameCol) continue;
+            const name=row[nameCol]?.trim();
+            if (!name) continue;
+            const school=schoolCol!==-1?row[schoolCol]?.trim():'';
+            let wcRaw=weightClassCol!==-1?row[weightClassCol]?.trim():'';
+            const rawDesig=designationCol!==-1?(row[designationCol]?.trim()||''):'';
+            const designation=rawDesig.toUpperCase().includes('JV')||(wcRaw&&wcRaw.toUpperCase().includes('JV'))?'JV':'V';
+            let wc=wcRaw; if(wc){const m=wc.match(/(\d+)/);if(m)wc=m[1];}
+            athletes.push({
+                name, school, designation, weightClass:wc,
+                bodyWeight: bodyWeightCol!==-1?parseFloat(row[bodyWeightCol])||0:0,
+                squat1:squat1Col!==-1?row[squat1Col]?.trim():'',
+                squat2:squat2Col!==-1?row[squat2Col]?.trim():'',
+                squat3:squat3Col!==-1?row[squat3Col]?.trim():'',
+                bench1:bench1Col!==-1?row[bench1Col]?.trim():'',
+                bench2:bench2Col!==-1?row[bench2Col]?.trim():'',
+                bench3:bench3Col!==-1?row[bench3Col]?.trim():'',
+                dead1:dead1Col!==-1?row[dead1Col]?.trim():'',
+                dead2:dead2Col!==-1?row[dead2Col]?.trim():'',
+                dead3:dead3Col!==-1?row[dead3Col]?.trim():'',
+                total:totalCol!==-1?parseFloat(row[totalCol])||0:0
+            });
+        }
+        return athletes;
+    }
+
+    function getCurrentAttemptColumn(athletes) {
+        const cols = ['squat1','squat2','squat3','bench1','bench2','bench3','dead1','dead2','dead3'];
+        for (const col of cols) {
+            if (athletes.some(a => { const v=a[col]; if(!v) return false; const l=v.toLowerCase(); return !l.includes('g')&&!l.includes('x'); })) return col;
+        }
+        return null;
+    }
+
+    function hasPendingInColumn(athlete, column) {
+        if (!column) return false;
+        const v=athlete[column]; if (!v) return false;
+        const l=v.toLowerCase(); return !l.includes('g')&&!l.includes('x');
+    }
+
+    // ── Init ───────────────────────────────────────────────────────────────────
+    window.addEventListener('DOMContentLoaded', function() {
+        loadPlatformsList();
+        const gid = new URLSearchParams(window.location.search).get('gid');
+        if (gid) {
+            const sel = document.getElementById('platformSelect');
+            sel.value = gid;
+            if (sel.value) loadPlatform();
+        }
+        if (localStorage.getItem('ptAutoRefresh') === 'on') toggleAutoRefresh();
+    });
+</script>
+</body>
+</html>
