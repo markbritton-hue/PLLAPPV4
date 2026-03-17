@@ -951,7 +951,22 @@
             }
         }
 
+        // Snapshot open expand IDs before rebuild
+        const openIds = new Set(
+            Array.from(container.querySelectorAll('[id^="expand-"]'))
+                .filter(el => el.style.display === 'block')
+                .map(el => el.id)
+        );
+
         container.innerHTML = html;
+
+        // Restore expanded state
+        openIds.forEach(id => {
+            const el = document.getElementById(id);
+            const arrow = document.getElementById('arrow-' + id);
+            if (el) el.style.display = 'block';
+            if (arrow) arrow.style.transform = 'rotate(180deg)';
+        });
 
         // Update dropdown option to show current weight class(es)
         updatePlatformDropdownLabel(pending);
