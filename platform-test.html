@@ -737,6 +737,14 @@
     // ── Render ─────────────────────────────────────────────────────────────────
     function renderAthletes(athletes) {
         const container = document.getElementById('athleteContainer');
+
+        // Snapshot open expand IDs BEFORE clearing the container
+        const openIds = new Set(
+            Array.from(container.querySelectorAll('[id^="expand-"]'))
+                .filter(el => el.style.display === 'block')
+                .map(el => el.id)
+        );
+
         container.innerHTML = '';
 
         const configStr = localStorage.getItem('trplConfig');
@@ -950,13 +958,6 @@
                 html += buildPositionRow(displayPending[i], currentCol, i + 1, configuredSchool);
             }
         }
-
-        // Snapshot open expand IDs before rebuild
-        const openIds = new Set(
-            Array.from(container.querySelectorAll('[id^="expand-"]'))
-                .filter(el => el.style.display === 'block')
-                .map(el => el.id)
-        );
 
         container.innerHTML = html;
 
