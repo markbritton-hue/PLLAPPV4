@@ -975,10 +975,91 @@
         const l=v.toLowerCase(); return !l.includes('g')&&!l.includes('x');
     }
 
+    async function preloadMyAthletePanel() {
+        const configStr = localStorage.getItem('trplConfig');
+        if (!configStr) return;
+        let config, announcementName, displayAthleteNameCfg;
+        try {
+            config = JSON.parse(configStr);
+            announcementName = (config.athleteName || '').toLowerCase().trim();
+            displayAthleteNameCfg = config.athleteName || '';
+        } catch(e) { return; }
+        if (!announcementName || !config.spreadsheetId) return;
+
+        // Try stored platform first, then scan all platforms
+        const stored = (() => { try { return JSON.parse(localStorage.getItem('myAthletePlatform') || 'null'); } catch(e) { return null; } })();
+        const platforms = (config.sheets || []).filter(s => s.name.toLowerCase().startsWith('platform'));
+        const candidates = stored
+            ? [stored, ...platforms.filter(p => p.gid !== stored.gid)]
+            : platforms;
+
+        for (const p of candidates) {
+            const gid = p.gid || p;
+            try {
+                const url = `https://pllv4.streamwaveprod.com/cache/sheet_${config.spreadsheetId}_${gid}.csv`;
+                const res = await fetch(url);
+                if (!res.ok) continue;
+                const athletes = parseAthletes(parseCSV(await res.text()));
+                const myAthleteData = athletes.find(a => a.name.toLowerCase().includes(announcementName));
+                if (!myAthleteData) continue;
+
+                // Found — render panel (no status since we don't know queue without currentCol context)
+                const currentCol = getCurrentAttemptColumn(athletes);
+                const queue = athletes.filter(a => hasPendingInColumn(a, currentCol))
+                    .sort((a, b) => {
+                        const aw = parseFloat((a[currentCol]||'').replace(/[xgXGfF]/g,'').trim())||0;
+                        const bw = parseFloat((b[currentCol]||'').replace(/[xgXGfF]/g,'').trim())||0;
+                        return aw - bw;
+                    });
+                const myQueuePos = queue.findIndex(a => a.name.toLowerCase().includes(announcementName));
+                let statusLabel = '', statusColor = '';
+                if (myQueuePos === 0)      { statusLabel = 'LIFTING';  statusColor = '#ef4444'; }
+                else if (myQueuePos === 1) { statusLabel = 'ON DECK';  statusColor = '#10b981'; }
+                else if (myQueuePos > 1)   { statusLabel = `#${myQueuePos + 1}`; statusColor = '#60a5fa'; }
+                else                       { statusLabel = 'DONE';     statusColor = '#f97316'; }
+
+                const panel = document.getElementById('myAthletePanel');
+                panel.style.display = 'block';
+                panel.innerHTML = `
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+                        <span style="background:rgba(249,115,22,0.9);color:white;font-size:1rem;font-weight:700;padding:5px 12px;border-radius:10px;white-space:nowrap;"><i class="fas fa-person-running me-1"></i>${displayAthleteNameCfg}</span>
+                        <span style="background:${statusColor};color:white;padding:4px 14px;border-radius:10px;font-size:0.85rem;font-weight:800;letter-spacing:0.5px;">${statusLabel}</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+                        <span class="designation-badge ${myAthleteData.designation === 'JV' ? 'jv' : 'varsity'}">${myAthleteData.designation === 'JV' ? 'JV' : 'Varsity'}</span>
+                        ${myAthleteData.school ? `<span style="color:rgba(255,255,255,0.7);font-size:0.82rem;font-weight:600;">${myAthleteData.school}</span>` : ''}
+                        ${myAthleteData.weightClass ? `<span style="color:rgba(255,255,255,0.5);font-size:0.78rem;">${myAthleteData.weightClass} lb class</span>` : ''}
+                        ${myAthleteData.bodyWeight ? `<span style="color:rgba(255,255,255,0.4);font-size:0.78rem;">BW ${myAthleteData.bodyWeight} lbs</span>` : ''}
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:8px;">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <span style="display:inline-flex;align-items:center;gap:5px;color:#60a5fa;font-size:0.85rem;font-weight:700;width:78px;flex-shrink:0;"><i class="fas fa-person-falling"></i>Squat</span>
+                            <div style="display:flex;gap:5px;">${attemptChip(myAthleteData.squat1)||'<span style="color:rgba(255,255,255,0.2);">—</span>'}${attemptChip(myAthleteData.squat2)||'<span style="color:rgba(255,255,255,0.2);">—</span>'}${attemptChip(myAthleteData.squat3)||'<span style="color:rgba(255,255,255,0.2);">—</span>'}</div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <span style="display:inline-flex;align-items:center;gap:5px;color:#a78bfa;font-size:0.85rem;font-weight:700;width:78px;flex-shrink:0;"><i class="fas fa-dumbbell"></i>Bench</span>
+                            <div style="display:flex;gap:5px;">${attemptChip(myAthleteData.bench1)||'<span style="color:rgba(255,255,255,0.2);">—</span>'}${attemptChip(myAthleteData.bench2)||'<span style="color:rgba(255,255,255,0.2);">—</span>'}${attemptChip(myAthleteData.bench3)||'<span style="color:rgba(255,255,255,0.2);">—</span>'}</div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <span style="display:inline-flex;align-items:center;gap:5px;color:#10b981;font-size:0.85rem;font-weight:700;width:78px;flex-shrink:0;"><i class="fas fa-weight-hanging"></i>Deadlift</span>
+                            <div style="display:flex;gap:5px;">${attemptChip(myAthleteData.dead1)||'<span style="color:rgba(255,255,255,0.2);">—</span>'}${attemptChip(myAthleteData.dead2)||'<span style="color:rgba(255,255,255,0.2);">—</span>'}${attemptChip(myAthleteData.dead3)||'<span style="color:rgba(255,255,255,0.2);">—</span>'}</div>
+                        </div>
+                    </div>
+                    ${myAthleteData.total ? `<div style="margin-top:10px;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.25);border-radius:8px;padding:6px 12px;display:inline-flex;align-items:center;gap:8px;">
+                        <span style="font-size:0.65rem;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.8px;">Total</span>
+                        <span style="font-size:1rem;font-weight:800;color:white;">${myAthleteData.total} lbs</span>
+                    </div>` : ''}
+                `;
+                return; // stop after first platform where athlete is found
+            } catch(e) { continue; }
+        }
+    }
+
     // ── Init ───────────────────────────────────────────────────────────────────
     window.addEventListener('DOMContentLoaded', function() {
         refreshStateRecords();
         loadPlatformsList();
+        preloadMyAthletePanel();
         const gid = new URLSearchParams(window.location.search).get('gid');
         if (gid) {
             const sel = document.getElementById('platformSelect');
