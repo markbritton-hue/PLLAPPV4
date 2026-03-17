@@ -442,20 +442,20 @@
                     </div>` : ''}
 
                     <div style="font-size:1.5rem;font-weight:900;color:white;margin-bottom:4px;line-height:1.1;">${athlete.name}</div>
-                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
                         <span class="designation-badge ${athlete.designation === 'JV' ? 'jv' : 'varsity'}">${athlete.designation === 'JV' ? 'JV' : 'Varsity'}</span>
                         ${athlete.weightClass ? `<span style="color:rgba(255,255,255,0.5);font-size:0.78rem;font-weight:600;">${athlete.weightClass} lb class</span>` : ''}
                         ${athlete.bodyWeight ? `<span style="color:rgba(255,255,255,0.4);font-size:0.78rem;">BW ${athlete.bodyWeight} lbs</span>` : ''}
                     </div>
+                </div>
+                <div style="flex-shrink:0;display:flex;align-items:flex-start;">
+                    <img src="${currentCol.startsWith('bench') ? 'benchtrans.gif' : currentCol.startsWith('dead') ? 'deadlifttrans.gif' : 'backsqttrans2.gif'}" alt="lift" style="height:130px;width:auto;object-fit:contain;display:block;">
+                </div>
+            </div>
 
-                    <div style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:7px 14px;text-align:center;">
-                        <div style="font-size:0.65rem;font-weight:700;color:white;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;">Current Attempt</div>
-                        <div style="font-size:2rem;font-weight:900;color:white;line-height:1;">${rawWeight}<span style="font-size:1rem;font-weight:600;color:rgba(255,255,255,0.5);margin-left:6px;">lbs</span></div>
-                    </div>
-                </div>
-                <div style="flex-shrink:0;display:flex;align-items:center;align-self:stretch;">
-                    <img src="deadlifttrans.gif" alt="squat" style="height:140px;width:auto;object-fit:contain;display:block;margin-top:-18px;">
-                </div>
+            <div style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:7px 14px;text-align:center;margin-top:12px;">
+                <div style="font-size:0.65rem;font-weight:700;color:white;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;">Current Attempt</div>
+                <div style="font-size:2rem;font-weight:900;color:white;line-height:1;">${rawWeight}<span style="font-size:1rem;font-weight:600;color:rgba(255,255,255,0.5);margin-left:6px;">lbs</span></div>
             </div>
 
             ${prevHtml}
