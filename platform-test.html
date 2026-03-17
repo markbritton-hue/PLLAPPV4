@@ -795,6 +795,7 @@
         const opt = sel.options[sel.selectedIndex];
         if (!opt || !opt.value || !opt.dataset.baseName) return;
         const wcs = [...new Set(pending.map(a => a.weightClass).filter(Boolean))];
+        opt.dataset.wc = wcs.join(', ');
         opt.text = wcs.length ? `${opt.dataset.baseName}  ·  ${wcs.join(', ')} lb` : opt.dataset.baseName;
     }
 
@@ -860,9 +861,10 @@
                     const wcs = [...new Set(
                         athletes.filter(a => hasPendingInColumn(a, col)).map(a => a.weightClass).filter(Boolean)
                     )];
-                    if (!wcs.length) return;
                     const opt = Array.from(sel.options).find(o => o.value === p.gid);
-                    if (opt) opt.textContent = `${p.name}  ·  ${wcs.join(', ')} lb`;
+                    if (!opt) return;
+                    opt.dataset.wc = wcs.join(', ');
+                    opt.text = wcs.length ? `${p.name}  ·  ${wcs.join(', ')} lb` : p.name;
                 }).catch(() => {});
             });
         } catch(e) {}
@@ -870,8 +872,11 @@
 
     function loadPlatform() {
         const sel = document.getElementById('platformSelect');
-        // Reset other options back to base name (in case they had wc appended by renderAthletes)
-        Array.from(sel.options).forEach(o => { if (o.dataset.baseName) o.text = o.dataset.baseName; });
+        // Rebuild all option labels preserving stored weight class
+        Array.from(sel.options).forEach(o => {
+            if (!o.dataset.baseName) return;
+            o.text = o.dataset.wc ? `${o.dataset.baseName}  ·  ${o.dataset.wc} lb` : o.dataset.baseName;
+        });
         currentPlatformGid = sel.value;
         if (!currentPlatformGid) {
             document.getElementById('athleteContainer').innerHTML = '';
