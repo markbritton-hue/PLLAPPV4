@@ -706,7 +706,8 @@
                 myAthletePanel.style.display = 'block';
                 myAthletePanel.innerHTML = buildMyAthletePanelHTML(myAthleteData, statusLabel, statusColor, displayAthleteNameCfg, curPlatformName, currentPlatformGid);
                 document.getElementById('onPlatformSeparator').style.display = 'flex';
-                document.getElementById('onPlatformName').textContent = curPlatformName ? `  ·  ${curPlatformName}` : '';
+                const _curPNum = curPlatformName ? (curPlatformName.match(/\d+/) || [''])[0] : '';
+                document.getElementById('onPlatformName').textContent = _curPNum ? `  ·  ${_curPNum}` : '';
             }
             // athlete not on this platform — leave panel as-is (preloaded from their platform)
         } else {
@@ -729,7 +730,8 @@
         const _opt = _selOpt ? _selOpt.options[_selOpt.selectedIndex] : null;
         const _pName = _opt ? (_opt.dataset.baseName || _opt.text) : '';
         const _nameEl = document.getElementById('onPlatformName');
-        if (_nameEl) _nameEl.textContent = _pName ? `  ·  ${_pName}` : '';
+        const _pNum = _pName ? (_pName.match(/\d+/) || [''])[0] : '';
+        if (_nameEl) _nameEl.textContent = _pNum ? `  ·  ${_pNum}` : '';
 
         // Sort: pending in current column first by weight, then sheet order
         const sorted = [...athletes].sort((a, b) => {
