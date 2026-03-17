@@ -316,7 +316,20 @@
                     ${athlete.weightClass ? `<span style="color:rgba(255,255,255,0.4);font-size:0.78rem;">${athlete.weightClass} lb class</span>` : ''}
                     ${athlete.bodyWeight ? `<span style="color:rgba(255,255,255,0.35);font-size:0.78rem;">BW ${athlete.bodyWeight} lbs</span>` : ''}
                 </div>
-                ${prevHtml}
+                <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px;">
+                    <div style="display:flex;align-items:center;gap:6px;">
+                        <span style="display:inline-flex;align-items:center;gap:4px;color:#60a5fa;font-size:0.7rem;font-weight:700;width:68px;flex-shrink:0;"><i class="fas fa-person-falling" style="font-size:0.65rem;"></i>Squat</span>
+                        <div style="display:flex;gap:4px;">${attemptChip(athlete.squat1)||'<span style="color:rgba(255,255,255,0.2);font-size:0.75rem;">—</span>'}${attemptChip(athlete.squat2)||'<span style="color:rgba(255,255,255,0.2);font-size:0.75rem;">—</span>'}${attemptChip(athlete.squat3)||'<span style="color:rgba(255,255,255,0.2);font-size:0.75rem;">—</span>'}</div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:6px;">
+                        <span style="display:inline-flex;align-items:center;gap:4px;color:#a78bfa;font-size:0.7rem;font-weight:700;width:68px;flex-shrink:0;"><i class="fas fa-dumbbell" style="font-size:0.65rem;"></i>Bench</span>
+                        <div style="display:flex;gap:4px;">${attemptChip(athlete.bench1)||'<span style="color:rgba(255,255,255,0.2);font-size:0.75rem;">—</span>'}${attemptChip(athlete.bench2)||'<span style="color:rgba(255,255,255,0.2);font-size:0.75rem;">—</span>'}${attemptChip(athlete.bench3)||'<span style="color:rgba(255,255,255,0.2);font-size:0.75rem;">—</span>'}</div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:6px;">
+                        <span style="display:inline-flex;align-items:center;gap:4px;color:#10b981;font-size:0.7rem;font-weight:700;width:68px;flex-shrink:0;"><i class="fas fa-weight-hanging" style="font-size:0.65rem;"></i>Deadlift</span>
+                        <div style="display:flex;gap:4px;">${attemptChip(athlete.dead1)||'<span style="color:rgba(255,255,255,0.2);font-size:0.75rem;">—</span>'}${attemptChip(athlete.dead2)||'<span style="color:rgba(255,255,255,0.2);font-size:0.75rem;">—</span>'}${attemptChip(athlete.dead3)||'<span style="color:rgba(255,255,255,0.2);font-size:0.75rem;">—</span>'}</div>
+                    </div>
+                </div>
                 ${athlete.total ? `<div style="margin-top:8px;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.25);border-radius:8px;padding:6px 12px;display:inline-flex;align-items:center;gap:8px;">
                     <span style="font-size:0.65rem;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.8px;">Total</span>
                     <span style="font-size:1rem;font-weight:800;color:white;">${athlete.total} lbs</span>
