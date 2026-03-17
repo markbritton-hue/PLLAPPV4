@@ -290,14 +290,48 @@
     function buildPositionRow(athlete, currentCol, pos) {
         const lift = getLiftInfo(currentCol);
         const rawWeight = athlete[currentCol] ? athlete[currentCol].replace(/[xgXGfF]/g,'').trim() : '—';
-        return `<div class="card-position">
-            <span style="background:rgba(96,165,250,0.15);border:1px solid rgba(96,165,250,0.25);color:#93c5fd;font-size:0.75rem;font-weight:800;padding:2px 8px;border-radius:6px;flex-shrink:0;">#${pos}</span>
-            <span style="font-size:0.9rem;font-weight:700;color:white;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${athlete.name}</span>
-            ${lift ? `<span style="display:inline-flex;align-items:center;gap:4px;color:${lift.color};font-size:0.72rem;font-weight:700;flex-shrink:0;">
-                <i class="${lift.icon}" style="font-size:0.7rem;"></i>${lift.name}
-            </span>` : ''}
-            <span style="color:rgba(255,255,255,0.6);font-size:0.85rem;font-weight:700;flex-shrink:0;">${rawWeight} lbs</span>
+        const id = `expand-${pos}`;
+        const prevs = getPrevAttempts(athlete, currentCol);
+        const prevHtml = prevs.length
+            ? `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px;">
+                   <span style="font-size:0.68rem;color:rgba(255,255,255,0.35);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-right:2px;">Prev</span>
+                   ${prevs.map(attemptChip).join('')}
+               </div>`
+            : '';
+
+        return `<div class="card-position" style="flex-direction:column;align-items:stretch;cursor:pointer;" onclick="toggleExpand('${id}')">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                <span style="background:rgba(96,165,250,0.15);border:1px solid rgba(96,165,250,0.25);color:#93c5fd;font-size:0.75rem;font-weight:800;padding:2px 8px;border-radius:6px;flex-shrink:0;">#${pos}</span>
+                <span style="font-size:0.9rem;font-weight:700;color:white;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${athlete.name}</span>
+                ${lift ? `<span style="display:inline-flex;align-items:center;gap:4px;color:${lift.color};font-size:0.72rem;font-weight:700;flex-shrink:0;">
+                    <i class="${lift.icon}" style="font-size:0.7rem;"></i>${lift.name}
+                </span>` : ''}
+                <span style="color:rgba(255,255,255,0.6);font-size:0.85rem;font-weight:700;flex-shrink:0;">${rawWeight} lbs</span>
+                <i id="arrow-${id}" class="fas fa-chevron-down" style="color:rgba(255,255,255,0.3);font-size:0.75rem;flex-shrink:0;transition:transform 0.2s;"></i>
+            </div>
+            <div id="${id}" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.07);">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+                    <span class="designation-badge ${athlete.designation === 'JV' ? 'jv' : 'varsity'}">${athlete.designation === 'JV' ? 'JV' : 'Varsity'}</span>
+                    ${athlete.school ? `<span style="color:rgba(255,255,255,0.55);font-size:0.78rem;font-weight:600;">${athlete.school}</span>` : ''}
+                    ${athlete.weightClass ? `<span style="color:rgba(255,255,255,0.4);font-size:0.78rem;">${athlete.weightClass} lb class</span>` : ''}
+                    ${athlete.bodyWeight ? `<span style="color:rgba(255,255,255,0.35);font-size:0.78rem;">BW ${athlete.bodyWeight} lbs</span>` : ''}
+                </div>
+                ${prevHtml}
+                ${athlete.total ? `<div style="margin-top:8px;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.25);border-radius:8px;padding:6px 12px;display:inline-flex;align-items:center;gap:8px;">
+                    <span style="font-size:0.65rem;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.8px;">Total</span>
+                    <span style="font-size:1rem;font-weight:800;color:white;">${athlete.total} lbs</span>
+                </div>` : ''}
+            </div>
         </div>`;
+    }
+
+    function toggleExpand(id) {
+        const el = document.getElementById(id);
+        const arrow = document.getElementById('arrow-' + id);
+        if (!el) return;
+        const open = el.style.display === 'block';
+        el.style.display = open ? 'none' : 'block';
+        if (arrow) arrow.style.transform = open ? '' : 'rotate(180deg)';
     }
 
     // ── Render ─────────────────────────────────────────────────────────────────
