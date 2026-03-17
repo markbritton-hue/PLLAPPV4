@@ -179,38 +179,38 @@
 <div class="container">
 
     <!-- Nav -->
-    <div style="display:flex; gap:8px; margin-bottom:14px; align-items:center; flex-wrap:nowrap; overflow-x:auto;">
+    <div style="display:flex; gap:6px; margin-bottom:8px; align-items:center; flex-wrap:nowrap; overflow-x:auto;">
         <a href="index.html" class="btn-nav"><i class="fas fa-home me-2"></i>Home</a>
 <button id="refreshToggle" onclick="toggleAutoRefresh()" class="btn-nav" style="background:rgba(96,165,250,0.8); border:none;">
             <i class="fas fa-sync-alt me-2"></i>Auto-Refresh: OFF
         </button>
-        <button id="voiceBtn" onclick="tapToEnableVoice()" style="display:none; background:rgba(236,72,153,0.15); border:1px solid rgba(236,72,153,0.4); border-radius:8px; color:white; cursor:pointer; padding:8px 12px; flex-shrink:0;" title="Enable alerts">
+        <button id="voiceBtn" onclick="tapToEnableVoice()" style="display:none; background:rgba(236,72,153,0.15); border:1px solid rgba(236,72,153,0.4); border-radius:8px; color:white; cursor:pointer; padding:6px 10px; flex-shrink:0;" title="Enable alerts">
             <i id="voiceBtnIcon" class="fas fa-volume-xmark" style="color:#ec4899; font-size:1.1rem;"></i>
         </button>
     </div>
 
     <!-- Title -->
-    <div style="text-align:center; margin-bottom:14px;">
-        <h1 style="font-size:1.25rem; font-weight:900; color:white; margin:0;">
-            <i class="fas fa-crosshairs" style="color:#60a5fa; margin-right:8px;"></i>Platform View
+    <div style="text-align:center; margin-bottom:8px;">
+        <h1 style="font-size:1.1rem; font-weight:900; color:white; margin:0;">
+            <i class="fas fa-layer-group" style="color:#06b6d4; margin-right:8px;"></i>Platform View
         </h1>
     </div>
 
     <!-- Platform select -->
-    <div style="background:rgba(30,41,59,0.8); border:1px solid rgba(96,165,250,0.2); border-radius:10px; padding:10px 14px; margin-bottom:14px;">
+    <div style="background:rgba(30,41,59,0.8); border:1px solid rgba(96,165,250,0.2); border-radius:8px; padding:6px 10px; margin-bottom:8px;">
         <select id="platformSelect" class="form-select w-100" onchange="loadPlatform()">
             <option value="">— Select Platform —</option>
         </select>
     </div>
 
     <!-- Current event banner -->
-    <div id="eventBanner" style="display:none; text-align:center; margin-bottom:12px; padding:8px 16px; background:rgba(96,165,250,0.08); border:1px solid rgba(96,165,250,0.25); border-radius:10px;"></div>
+    <div id="eventBanner" style="display:none; text-align:center; margin-bottom:8px; padding:5px 12px; background:rgba(96,165,250,0.08); border:1px solid rgba(96,165,250,0.25); border-radius:8px;"></div>
 
     <!-- My Athlete Panel -->
-    <div id="myAthletePanel" style="display:none; background:rgba(249,115,22,0.1); border:2px solid rgba(249,115,22,0.45); border-radius:14px; padding:14px 16px; margin-bottom:14px;"></div>
+    <div id="myAthletePanel" style="display:none; background:rgba(249,115,22,0.1); border:2px solid rgba(249,115,22,0.45); border-radius:10px; padding:8px 12px; margin-bottom:8px;"></div>
 
     <!-- On Platform separator -->
-    <div id="onPlatformSeparator" style="display:none; align-items:center; gap:10px; margin:4px 0 14px;">
+    <div id="onPlatformSeparator" style="display:none; align-items:center; gap:10px; margin:4px 0 8px;">
         <div style="flex:1; border-top:3px solid rgba(255,255,255,0.8);"></div>
         <span style="color:white; font-size:0.8rem; font-weight:800; letter-spacing:1px; text-transform:uppercase; white-space:nowrap; opacity:0.8;">On Platform<span id="onPlatformName" style="font-size:1.1rem; font-weight:800; color:white; opacity:1; text-transform:none; letter-spacing:0;"></span></span>
         <div style="flex:1; border-top:3px solid rgba(255,255,255,0.8);"></div>
