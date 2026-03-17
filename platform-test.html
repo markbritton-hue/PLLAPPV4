@@ -185,6 +185,9 @@
         <button id="refreshToggle" onclick="toggleAutoRefresh()" class="btn-nav" style="background:rgba(96,165,250,0.8); border:none;">
             <i class="fas fa-sync-alt me-2"></i>Auto-Refresh: OFF
         </button>
+        <button id="voiceBtn" onclick="tapToEnableVoice()" style="display:none; background:rgba(236,72,153,0.15); border:1px solid rgba(236,72,153,0.4); border-radius:8px; color:white; cursor:pointer; padding:8px 12px; flex-shrink:0;" title="Enable alerts">
+            <i id="voiceBtnIcon" class="fas fa-volume-xmark" style="color:#ec4899; font-size:1.1rem;"></i>
+        </button>
     </div>
 
     <!-- Title -->
@@ -264,6 +267,121 @@
     let platformStateRecords = null;
     let platformJvStateRecords = null;
     let myAthletePanelOpen = false;
+    let platformSpeechPrimed = false;
+    let platformPendingAnnouncement = null;
+    let platformLastAnnouncedStatus = null;
+    let liftingAudioCtx = null;
+
+    // ── Audio / Voice ──────────────────────────────────────────────────────────
+    function initAudioCtx() {
+        if (!liftingAudioCtx) {
+            try { liftingAudioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+        } else if (liftingAudioCtx.state === 'suspended') {
+            liftingAudioCtx.resume();
+        }
+    }
+
+    function triggerLiftingAlert() {
+        if (navigator.vibrate) navigator.vibrate([150,80,150,80,150,80,150,80,400]);
+        if (!liftingAudioCtx) return;
+        const ctx = liftingAudioCtx;
+        const tones = [
+            { freq: 880,  start: 0,    dur: 0.28 },
+            { freq: 880,  start: 0.38, dur: 0.28 },
+            { freq: 1000, start: 0.76, dur: 0.28 },
+            { freq: 1000, start: 1.14, dur: 0.28 },
+            { freq: 1175, start: 1.52, dur: 0.5  }
+        ];
+        tones.forEach(({ freq, start, dur }) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.type = 'sine'; osc.frequency.value = freq;
+            const t = ctx.currentTime + start;
+            gain.gain.setValueAtTime(0, t);
+            gain.gain.linearRampToValueAtTime(0.5, t + 0.01);
+            gain.gain.linearRampToValueAtTime(0, t + dur);
+            osc.start(t); osc.stop(t + dur + 0.05);
+        });
+    }
+
+    function triggerOnDeckAlert() {
+        if (navigator.vibrate) navigator.vibrate([120,60,120,60,120,60,250]);
+        if (!liftingAudioCtx) return;
+        const ctx = liftingAudioCtx;
+        const tones = [
+            { freq: 660, start: 0,    dur: 0.28 },
+            { freq: 660, start: 0.38, dur: 0.28 },
+            { freq: 740, start: 0.76, dur: 0.28 },
+            { freq: 740, start: 1.14, dur: 0.42 }
+        ];
+        tones.forEach(({ freq, start, dur }) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.type = 'sine'; osc.frequency.value = freq;
+            const t = ctx.currentTime + start;
+            gain.gain.setValueAtTime(0, t);
+            gain.gain.linearRampToValueAtTime(0.35, t + 0.01);
+            gain.gain.linearRampToValueAtTime(0, t + dur);
+            osc.start(t); osc.stop(t + dur + 0.05);
+        });
+    }
+
+    function setVoiceActive(active) {
+        const icon = document.getElementById('voiceBtnIcon');
+        const btn  = document.getElementById('voiceBtn');
+        if (active) {
+            if (icon) { icon.className = 'fas fa-volume-high'; icon.style.color = '#10b981'; }
+            if (btn)  { btn.style.background = 'rgba(16,185,129,0.15)'; btn.style.borderColor = 'rgba(16,185,129,0.4)'; btn.title = 'Alerts active'; }
+        } else {
+            if (icon) { icon.className = 'fas fa-volume-xmark'; icon.style.color = '#ec4899'; }
+            if (btn)  { btn.style.background = 'rgba(236,72,153,0.15)'; btn.style.borderColor = 'rgba(236,72,153,0.4)'; btn.title = 'Enable alerts'; }
+        }
+    }
+
+    function tapToEnableVoice() {
+        initAudioCtx();
+        const _cfg = JSON.parse(localStorage.getItem('trplConfig') || '{}');
+        if (platformSpeechPrimed) {
+            platformSpeechPrimed = false;
+            localStorage.setItem('platformVoicePrimed', 'off');
+            setVoiceActive(false);
+            if (window.speechSynthesis) window.speechSynthesis.cancel();
+            return;
+        }
+        platformSpeechPrimed = true;
+        localStorage.setItem('platformVoicePrimed', 'on');
+        setVoiceActive(true);
+        if (!_cfg.announcementsEnabled || !window.speechSynthesis) return;
+        if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+        if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
+        if (platformPendingAnnouncement) {
+            const { text } = platformPendingAnnouncement;
+            platformPendingAnnouncement = null;
+            const u = new SpeechSynthesisUtterance(text);
+            u.rate = 0.9; u.pitch = 1.0; u.volume = 1.0;
+            window.speechSynthesis.speak(u);
+        } else {
+            const primer = new SpeechSynthesisUtterance('');
+            primer.volume = 0;
+            window.speechSynthesis.speak(primer);
+        }
+    }
+
+    function speakAnnouncement(text, rollbackStatus) {
+        if (!window.speechSynthesis) return;
+        platformPendingAnnouncement = { text, rollbackStatus };
+        if (!platformSpeechPrimed) return;
+        platformPendingAnnouncement = null;
+        if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.rate = 0.9; u.pitch = 1.0; u.volume = 1.0;
+        u.onstart = function() { if (platformSpeechPrimed) setVoiceActive(true); };
+        u.onerror = function() { platformLastAnnouncedStatus = rollbackStatus !== undefined ? rollbackStatus : null; };
+        window.speechSynthesis.speak(u);
+    }
 
     // ── Lift metadata ──────────────────────────────────────────────────────────
     function getLiftInfo(col) {
@@ -666,17 +784,49 @@
             lastLiftingColumn = currentCol;
         }
 
-        // ── My Athlete Panel ─────────────────────────────────────────────────────
+        // ── Voice / Sound announce ────────────────────────────────────────────────
         const configStr2 = localStorage.getItem('trplConfig');
         let announcementName = '';
         let displayAthleteNameCfg = '';
+        let announcementsOn = false, soundAlertsOn = false;
         if (configStr2) {
             try {
-                const cfg2 = JSON.parse(configStr2);
-                announcementName = (cfg2.athleteName || '').toLowerCase().trim();
-                displayAthleteNameCfg = cfg2.athleteName || '';
+                const _acfg = JSON.parse(configStr2);
+                announcementName = (_acfg.athleteName || '').toLowerCase().trim();
+                displayAthleteNameCfg = _acfg.athleteName || '';
+                announcementsOn = !!_acfg.announcementsEnabled;
+                soundAlertsOn   = !!_acfg.soundNotificationsEnabled;
             } catch(e) {}
         }
+        if ((announcementsOn || soundAlertsOn) && announcementName && platformLastAnnouncedStatus !== 'done') {
+            const queue = athletes.filter(a => hasPendingInColumn(a, currentCol))
+                .sort((a,b) => {
+                    const aw = parseFloat((a[currentCol]||'').replace(/[xgXGfF]/g,'').trim())||0;
+                    const bw = parseFloat((b[currentCol]||'').replace(/[xgXGfF]/g,'').trim())||0;
+                    return aw - bw;
+                });
+            const idx = queue.findIndex(a => a.name.toLowerCase().trim() === announcementName);
+            let newStatus = idx === 0 ? 'lifting' : idx === 1 ? 'on-deck' : null;
+            if (newStatus && newStatus !== platformLastAnnouncedStatus) {
+                if (newStatus === 'lifting' && justFinishedAthlete) {
+                    // hold — wait for just-finished card to clear
+                } else {
+                    const prevStatus = platformLastAnnouncedStatus;
+                    platformLastAnnouncedStatus = newStatus;
+                    const displayName = queue[idx].name;
+                    const text = newStatus === 'lifting'
+                        ? `${displayName} is now lifting!`
+                        : `${displayName} is on deck! Get ready!`;
+                    if (soundAlertsOn) {
+                        if (newStatus === 'lifting') triggerLiftingAlert();
+                        else triggerOnDeckAlert();
+                    }
+                    if (announcementsOn) speakAnnouncement(text, prevStatus);
+                }
+            }
+        }
+
+        // ── My Athlete Panel ─────────────────────────────────────────────────────
         const myAthletePanel = document.getElementById('myAthletePanel');
         if (announcementName) {
             const myAthleteData = athletes.find(a => a.name.toLowerCase().includes(announcementName));
@@ -809,6 +959,7 @@
 
     // ── Data loading (shared with platform.html) ───────────────────────────────
     function toggleAutoRefresh() {
+        initAudioCtx();
         const btn = document.getElementById('refreshToggle');
         if (autoRefreshInterval) {
             clearInterval(autoRefreshInterval);
@@ -823,6 +974,19 @@
             btn.innerHTML = '<i class="fas fa-sync-alt fa-spin me-2"></i>Auto-Refresh: ON';
             btn.style.background = 'rgba(16,185,129,0.8)';
             localStorage.setItem('ptAutoRefresh', 'on');
+            if (cfg.announcementsEnabled || cfg.soundNotificationsEnabled) {
+                if (!platformSpeechPrimed) {
+                    platformSpeechPrimed = true;
+                    localStorage.setItem('platformVoicePrimed', 'on');
+                    setVoiceActive(true);
+                }
+            }
+            if (window.speechSynthesis && cfg.announcementsEnabled) {
+                const primer = new SpeechSynthesisUtterance('');
+                primer.volume = 0;
+                primer.onstart = function() { if (platformSpeechPrimed) setVoiceActive(true); };
+                window.speechSynthesis.speak(primer);
+            }
             loadPlatformData();
         }
     }
@@ -880,6 +1044,7 @@
 
     function loadPlatform() {
         const sel = document.getElementById('platformSelect');
+        platformLastAnnouncedStatus = null;
         // Rebuild all option labels preserving stored weight class
         Array.from(sel.options).forEach(o => {
             if (!o.dataset.baseName) return;
@@ -1088,6 +1253,16 @@
     // ── Init ───────────────────────────────────────────────────────────────────
     window.addEventListener('DOMContentLoaded', function() {
         refreshStateRecords();
+        const _cfg = JSON.parse(localStorage.getItem('trplConfig') || '{}');
+        if (_cfg.announcementsEnabled || _cfg.soundNotificationsEnabled) {
+            document.getElementById('voiceBtn').style.display = 'flex';
+            if (localStorage.getItem('platformVoicePrimed') === 'on') {
+                platformSpeechPrimed = true;
+                setVoiceActive(true);
+            } else {
+                setVoiceActive(false);
+            }
+        }
         loadPlatformsList();
         preloadMyAthletePanel();
         const gid = new URLSearchParams(window.location.search).get('gid');
