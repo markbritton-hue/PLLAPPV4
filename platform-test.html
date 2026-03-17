@@ -127,6 +127,52 @@
             flex: 1;
             border-top: 1px solid rgba(255,255,255,0.1);
         }
+
+        /* ── Just-finished card ───────────────────────────── */
+        .card-just-finished {
+            background: rgba(167, 139, 250, 0.1);
+            border: 2px solid rgba(167, 139, 250, 0.55);
+            border-left: 6px solid #a78bfa;
+            border-radius: 14px;
+            padding: 20px 18px;
+            margin-bottom: 12px;
+            box-shadow: 0 8px 30px rgba(167, 139, 250, 0.15);
+        }
+        .card-fade-out {
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            opacity: 0 !important;
+            transform: scale(0.95);
+            pointer-events: none;
+        }
+
+        /* ── Banners ──────────────────────────────────────── */
+        @keyframes recordPop {
+            0%   { transform: scale(0.3) rotate(-6deg); opacity: 0; }
+            50%  { transform: scale(1.08) rotate(2deg); opacity: 1; }
+            70%  { transform: scale(0.96) rotate(-1deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        @keyframes recordFadeOut {
+            0%   { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(1.1); }
+        }
+        .pt-banner {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 99998;
+            background: rgba(0,0,0,0.55);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            pointer-events: none;
+        }
+        .pt-banner.show { display: flex; }
+        .pt-banner .banner-inner {
+            text-align: center;
+            animation: recordPop 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
+        }
+        #ptStateRecordBanner { z-index: 99999; background: rgba(0,0,0,0.65); }
     </style>
 </head>
 <body>
@@ -158,6 +204,33 @@
     <!-- Current event banner -->
     <div id="eventBanner" style="display:none; text-align:center; margin-bottom:12px; padding:8px 16px; background:rgba(96,165,250,0.08); border:1px solid rgba(96,165,250,0.25); border-radius:10px;"></div>
 
+    <!-- Good Lift Banner -->
+    <div id="ptGoodLiftBanner" class="pt-banner">
+        <div class="banner-inner">
+            <div style="font-size:3.5rem;margin-bottom:8px;filter:drop-shadow(0 0 16px #10b981);">✅</div>
+            <div style="font-size:clamp(2.5rem,9vw,5rem);font-weight:900;background:linear-gradient(135deg,#10b981,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px;text-transform:uppercase;line-height:1;filter:drop-shadow(0 4px 16px rgba(16,185,129,0.6));">Good Lift!</div>
+            <div id="ptGoodLiftSub" style="font-size:clamp(1rem,4vw,1.6rem);font-weight:700;color:white;margin-top:10px;opacity:0.85;"></div>
+        </div>
+    </div>
+
+    <!-- Failed Attempt Banner -->
+    <div id="ptFailedBanner" class="pt-banner">
+        <div class="banner-inner">
+            <div style="font-size:3.5rem;margin-bottom:8px;filter:drop-shadow(0 0 16px #ef4444);">❌</div>
+            <div style="font-size:clamp(2.5rem,9vw,5rem);font-weight:900;background:linear-gradient(135deg,#ef4444,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px;text-transform:uppercase;line-height:1;filter:drop-shadow(0 4px 16px rgba(239,68,68,0.6));">Failed Attempt!</div>
+            <div id="ptFailedSub" style="font-size:clamp(1rem,4vw,1.6rem);font-weight:700;color:white;margin-top:10px;opacity:0.85;"></div>
+        </div>
+    </div>
+
+    <!-- State Record Banner -->
+    <div id="ptStateRecordBanner" class="pt-banner">
+        <div class="banner-inner">
+            <div style="font-size:4rem;margin-bottom:8px;filter:drop-shadow(0 0 20px #ef4444);">⭐</div>
+            <div style="font-size:clamp(2.5rem,10vw,5.5rem);font-weight:900;background:linear-gradient(135deg,#ef4444,#f59e0b,#ef4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px;text-transform:uppercase;line-height:1;filter:drop-shadow(0 4px 20px rgba(239,68,68,0.6));">New State Record!</div>
+            <div id="ptStateRecordSub" style="font-size:clamp(1rem,4vw,1.8rem);font-weight:700;color:white;margin-top:12px;opacity:0.9;"></div>
+        </div>
+    </div>
+
     <!-- Athlete cards -->
     <div id="athleteContainer"></div>
 
@@ -166,11 +239,20 @@
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 <script src="state-records-data.js"></script>
 <script>
     let autoRefreshInterval = null;
     let currentPlatformGid = null;
     let platformGender = 'M';
+    let justFinishedAthlete = null;
+    let lastLiftingName = null;
+    let lastLiftingColumn = null;
+    let lastJustFinishedName = null;
+    let justFinishedResult = null;
+    let removeCardTimer = null;
+    let platformStateRecords = null;
+    let platformJvStateRecords = null;
 
     // ── Lift metadata ──────────────────────────────────────────────────────────
     function getLiftInfo(col) {
@@ -349,6 +431,118 @@
         if (arrow) arrow.style.transform = open ? '' : 'rotate(180deg)';
     }
 
+    // ── State records ──────────────────────────────────────────────────────────
+    function loadStateRecords() {
+        initStateRecordsStorage();
+        const raw = localStorage.getItem(`trplStateRecords2_${platformGender}`);
+        try { return raw ? JSON.parse(raw) : (platformGender === 'M' ? BUILTIN_M_RECORDS : BUILTIN_W_RECORDS); }
+        catch(e) { return platformGender === 'M' ? BUILTIN_M_RECORDS : BUILTIN_W_RECORDS; }
+    }
+    function loadJvStateRecords() {
+        const raw = localStorage.getItem(`trplStateRecords2_JV_${platformGender}`);
+        try { return raw ? JSON.parse(raw) : (platformGender === 'M' ? BUILTIN_JV_M_RECORDS : BUILTIN_JV_W_RECORDS); }
+        catch(e) { return platformGender === 'M' ? BUILTIN_JV_M_RECORDS : BUILTIN_JV_W_RECORDS; }
+    }
+    function refreshStateRecords() {
+        platformStateRecords = loadStateRecords();
+        platformJvStateRecords = loadJvStateRecords();
+    }
+    function getAthleteRecords(designation) {
+        return designation === 'JV' ? platformJvStateRecords : platformStateRecords;
+    }
+    function isStateRecordAttempt(weight, liftKey, weightClass, records) {
+        if (!records || !weightClass || !liftKey || !weight) return false;
+        const rec = records[String(weightClass)];
+        if (!rec || !rec[liftKey]) return false;
+        return weight > rec[liftKey].weight;
+    }
+
+    // ── Banners & confetti ─────────────────────────────────────────────────────
+    let ptGoodLiftTimer = null, ptFailedTimer = null, ptStateRecordTimer = null;
+
+    function showBanner(bannerId, subId, subText, duration) {
+        const banner = document.getElementById(bannerId);
+        const sub = document.getElementById(subId);
+        if (sub) sub.textContent = subText;
+        banner.classList.add('show');
+        banner.style.animation = '';
+        const timerVar = bannerId === 'ptGoodLiftBanner' ? 'ptGoodLiftTimer'
+                       : bannerId === 'ptFailedBanner' ? 'ptFailedTimer' : 'ptStateRecordTimer';
+        if (window[timerVar]) clearTimeout(window[timerVar]);
+        window[timerVar] = setTimeout(() => {
+            banner.style.animation = 'recordFadeOut 0.5s ease forwards';
+            setTimeout(() => { banner.classList.remove('show'); banner.style.animation = ''; }, 500);
+        }, duration);
+    }
+
+    function showGoodLiftBanner(name, liftName, weight) {
+        showBanner('ptGoodLiftBanner', 'ptGoodLiftSub', `${name} — ${liftName} ${weight} lbs`, 2500);
+    }
+    function showFailedAttemptBanner(name, liftName, weight) {
+        showBanner('ptFailedBanner', 'ptFailedSub', `${name} — ${liftName} ${weight} lbs`, 2500);
+    }
+    function showStateRecordBanner(name, liftName, weight) {
+        showBanner('ptStateRecordBanner', 'ptStateRecordSub', `${name} — ${liftName} ${weight} lbs`, 3500);
+    }
+
+    function fireConfetti() {
+        const duration = 2500;
+        const end = Date.now() + duration;
+        const colors = ['#a78bfa','#60a5fa','#f59e0b','#10b981','#ec4899'];
+        (function frame() {
+            confetti({ particleCount: 6, angle: 60,  spread: 55, origin: { x: 0 }, colors });
+            confetti({ particleCount: 6, angle: 120, spread: 55, origin: { x: 1 }, colors });
+            if (Date.now() < end) requestAnimationFrame(frame);
+        })();
+    }
+
+    // ── Just-finished card builder ─────────────────────────────────────────────
+    function buildResultOverlay(result) {
+        if (!result) return '';
+        const configs = {
+            good:   { icon: '✅', text: 'Good Lift!',        gradient: 'linear-gradient(135deg,#10b981,#60a5fa)',  glow: 'rgba(16,185,129,0.5)' },
+            failed: { icon: '❌', text: 'Failed Attempt!',   gradient: 'linear-gradient(135deg,#ef4444,#f97316)',  glow: 'rgba(239,68,68,0.5)' },
+            record: { icon: '⭐', text: 'New State Record!', gradient: 'linear-gradient(135deg,#f59e0b,#fbbf24)',  glow: 'rgba(245,158,11,0.5)' },
+        };
+        const c = configs[result];
+        return `<div style="text-align:center;margin-bottom:14px;padding:10px 0 6px;">
+            <div style="font-size:2rem;margin-bottom:4px;">${c.icon}</div>
+            <div style="font-size:1.5rem;font-weight:900;background:${c.gradient};-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:1px;text-transform:uppercase;line-height:1;filter:drop-shadow(0 3px 10px ${c.glow});">${c.text}</div>
+        </div>`;
+    }
+
+    function buildJustFinishedCard(athlete, result) {
+        const resultHtml = buildResultOverlay(result);
+        return `<div class="card-just-finished" id="justFinishedCard">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px;">
+                <span style="background:#a78bfa;color:white;padding:3px 12px;border-radius:20px;font-size:0.72rem;font-weight:800;letter-spacing:0.8px;">JUST FINISHED</span>
+                ${athlete.school ? `<span style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);padding:2px 10px;border-radius:6px;font-size:0.72rem;font-weight:700;color:rgba(255,255,255,0.75);">${athlete.school}</span>` : ''}
+            </div>
+            ${resultHtml}
+            <div style="font-size:1.4rem;font-weight:900;color:white;margin-bottom:6px;">${athlete.name}</div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <span class="designation-badge ${athlete.designation === 'JV' ? 'jv' : 'varsity'}">${athlete.designation === 'JV' ? 'JV' : 'Varsity'}</span>
+                ${athlete.weightClass ? `<span style="color:rgba(255,255,255,0.5);font-size:0.78rem;font-weight:600;">${athlete.weightClass} lb class</span>` : ''}
+                ${athlete.bodyWeight ? `<span style="color:rgba(255,255,255,0.4);font-size:0.78rem;">BW ${athlete.bodyWeight} lbs</span>` : ''}
+            </div>
+        </div>`;
+    }
+
+    function scheduleCardRemoval() {
+        if (removeCardTimer) clearTimeout(removeCardTimer);
+        removeCardTimer = setTimeout(() => {
+            const card = document.getElementById('justFinishedCard');
+            if (card) {
+                card.classList.add('card-fade-out');
+                setTimeout(() => card.remove(), 650);
+            }
+            justFinishedAthlete = null;
+            justFinishedResult = null;
+            removeCardTimer = null;
+            if (window._lastAthletes) renderAthletes(window._lastAthletes);
+        }, 5000);
+    }
+
     // ── Render ─────────────────────────────────────────────────────────────────
     function renderAthletes(athletes) {
         const container = document.getElementById('athleteContainer');
@@ -362,7 +556,45 @@
 
         athletes.forEach((a, i) => { a.sheetOrder = i; });
 
+        if (!platformStateRecords) refreshStateRecords();
+
         const currentCol = getCurrentAttemptColumn(athletes);
+
+        // ── Just-finished detection ───────────────────────────────────────────
+        const currentLifter = athletes.find(a => hasPendingInColumn(a, currentCol));
+        if (lastLiftingName && currentLifter?.name !== lastLiftingName) {
+            const lastAthlete = athletes.find(a => a.name === lastLiftingName);
+            if (lastAthlete && !hasPendingInColumn(lastAthlete, currentCol)) {
+                justFinishedAthlete = lastAthlete;
+                if (lastAthlete.name !== lastJustFinishedName) {
+                    lastJustFinishedName = lastAthlete.name;
+                    const lastVal = lastLiftingColumn ? lastAthlete[lastLiftingColumn] : null;
+                    const colToKey  = { squat1:'sq', squat2:'sq', squat3:'sq', bench1:'bp', bench2:'bp', bench3:'bp', dead1:'dl', dead2:'dl', dead3:'dl' };
+                    const colToName = { squat1:'Squat', squat2:'Squat', squat3:'Squat', bench1:'Bench', bench2:'Bench', bench3:'Bench', dead1:'Deadlift', dead2:'Deadlift', dead3:'Deadlift' };
+                    const liftKey   = lastLiftingColumn ? colToKey[lastLiftingColumn]  : null;
+                    const liftName  = lastLiftingColumn ? colToName[lastLiftingColumn] : null;
+                    const liftWeight = lastVal ? parseFloat(lastVal.replace(/[xgXG]/g,'')) : 0;
+                    if (lastVal && lastVal.toLowerCase().includes('g')) {
+                        const isRecord = isStateRecordAttempt(liftWeight, liftKey, lastAthlete.weightClass, getAthleteRecords(lastAthlete.designation));
+                        if (isRecord) {
+                            showStateRecordBanner(lastAthlete.name, liftName, liftWeight);
+                            justFinishedResult = 'record';
+                        } else {
+                            showGoodLiftBanner(lastAthlete.name, liftName, liftWeight);
+                            justFinishedResult = 'good';
+                        }
+                        fireConfetti();
+                    } else if (lastVal && lastVal.toLowerCase().includes('x')) {
+                        showFailedAttemptBanner(lastAthlete.name, liftName, liftWeight);
+                        justFinishedResult = 'failed';
+                    }
+                }
+            }
+        }
+        if (currentLifter) {
+            lastLiftingName = currentLifter.name;
+            lastLiftingColumn = currentCol;
+        }
 
         // Update event banner
         const banner = document.getElementById('eventBanner');
@@ -390,30 +622,46 @@
 
         const pending = sorted.filter(a => hasPendingInColumn(a, currentCol));
 
-        if (pending.length === 0) {
+        if (pending.length === 0 && !justFinishedAthlete) {
             container.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,0.4);padding:40px 0;font-size:0.95rem;">No active lifts on this platform.</div>';
             return;
         }
 
         let html = '';
 
+        // Just-finished card (pinned at top)
+        if (justFinishedAthlete) {
+            html += buildJustFinishedCard(justFinishedAthlete, justFinishedResult);
+            scheduleCardRemoval();
+        }
+
+        // Exclude just-finished from pending list
+        const displayPending = justFinishedAthlete
+            ? pending.filter(a => a.name !== justFinishedAthlete.name)
+            : pending;
+
+        if (displayPending.length === 0) {
+            container.innerHTML = html;
+            return;
+        }
+
         // LIFTING (pos 1)
-        const lifting = pending[0];
+        const lifting = displayPending[0];
         const liftingMySchool = configuredSchool && lifting.school && lifting.school.toLowerCase().includes(configuredSchool);
         html += buildLiftingCard(lifting, currentCol, liftingMySchool);
 
         // ON DECK (pos 2)
-        if (pending[1]) {
-            const onDeck = pending[1];
+        if (displayPending[1]) {
+            const onDeck = displayPending[1];
             const onDeckMySchool = configuredSchool && onDeck.school && onDeck.school.toLowerCase().includes(configuredSchool);
             html += buildOnDeckCard(onDeck, currentCol, onDeckMySchool);
         }
 
         // Next up (pos 3+)
-        if (pending.length > 2) {
+        if (displayPending.length > 2) {
             html += `<div class="divider-label"><span>Next Up</span></div>`;
-            for (let i = 2; i < pending.length; i++) {
-                html += buildPositionRow(pending[i], currentCol, i + 1);
+            for (let i = 2; i < displayPending.length; i++) {
+                html += buildPositionRow(displayPending[i], currentCol, i + 1);
             }
         }
 
@@ -623,6 +871,7 @@
 
     // ── Init ───────────────────────────────────────────────────────────────────
     window.addEventListener('DOMContentLoaded', function() {
+        refreshStateRecords();
         loadPlatformsList();
         const gid = new URLSearchParams(window.location.search).get('gid');
         if (gid) {
