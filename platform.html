@@ -421,6 +421,8 @@
         const lift = getLiftInfo(currentCol);
         const rawWeight = athlete[currentCol] ? athlete[currentCol].replace(/[xgXGfF]/g,'').trim() : '—';
         const prevs = getPrevAttempts(athlete, currentCol);
+        const liftKey = currentCol.startsWith('squat') ? 'sq' : currentCol.startsWith('bench') ? 'bp' : currentCol.startsWith('dead') ? 'dl' : null;
+        const isRecordAttempt = liftKey ? isStateRecordAttempt(parseFloat(rawWeight), liftKey, athlete.weightClass, getAthleteRecords(athlete.designation)) : false;
         const prevHtml = prevs.length
             ? `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:10px;">
                    <span style="font-size:0.68rem;color:rgba(255,255,255,0.35);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-right:2px;">Prev ${lift ? lift.name : ''}</span>
@@ -448,8 +450,8 @@
                 </div>
             </div>
 
-            <div style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:4px 10px;text-align:center;margin-top:8px;">
-                <div style="font-size:0.6rem;font-weight:700;color:white;text-transform:uppercase;letter-spacing:1px;margin-bottom:1px;">Current Attempt</div>
+            <div style="background:${isRecordAttempt ? 'rgba(245,158,11,0.15)' : 'rgba(239,68,68,0.12)'};border:1px solid ${isRecordAttempt ? 'rgba(245,158,11,0.5)' : 'rgba(239,68,68,0.3)'};border-radius:8px;padding:4px 10px;text-align:center;margin-top:8px;">
+                <div style="font-size:0.6rem;font-weight:700;color:white;text-transform:uppercase;letter-spacing:1px;margin-bottom:1px;">Current Attempt${isRecordAttempt ? ' <span style="color:#f59e0b;">⭐ State Record Attempt</span>' : ''}</div>
                 <div style="font-size:1.4rem;font-weight:900;color:white;line-height:1;">${rawWeight}<span style="font-size:0.8rem;font-weight:600;color:rgba(255,255,255,0.5);margin-left:4px;">lbs</span></div>
             </div>
 
@@ -461,6 +463,8 @@
         const lift = getLiftInfo(currentCol);
         const rawWeight = athlete[currentCol] ? athlete[currentCol].replace(/[xgXGfF]/g,'').trim() : '—';
         const prevs = getPrevAttempts(athlete, currentCol);
+        const liftKey = currentCol.startsWith('squat') ? 'sq' : currentCol.startsWith('bench') ? 'bp' : currentCol.startsWith('dead') ? 'dl' : null;
+        const isRecordAttempt = liftKey ? isStateRecordAttempt(parseFloat(rawWeight), liftKey, athlete.weightClass, getAthleteRecords(athlete.designation)) : false;
         const prevHtml = prevs.length
             ? `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px;">
                    <span style="font-size:0.68rem;color:rgba(255,255,255,0.35);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-right:2px;">Prev ${lift ? lift.name : ''}</span>
@@ -484,8 +488,8 @@
                     ${athlete.school ? `<span style="background:${schoolBg};border:1px solid ${schoolBorder};padding:2px 10px;border-radius:6px;font-size:0.72rem;font-weight:700;color:rgba(255,255,255,0.75);">${athlete.school}</span>` : ''}
                 </div>
                 <div style="text-align:right;flex-shrink:0;">
-                    <div style="font-size:0.6rem;font-weight:700;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.8px;">Attempt</div>
-                    <div style="font-size:2rem;font-weight:900;color:#10b981;line-height:1;">${rawWeight}</div>
+                    <div style="font-size:0.6rem;font-weight:700;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.8px;">Attempt${isRecordAttempt ? ' ⭐' : ''}</div>
+                    <div style="font-size:2rem;font-weight:900;color:${isRecordAttempt ? '#f59e0b' : '#10b981'};line-height:1;">${rawWeight}</div>
                     <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);font-weight:600;">lbs</div>
                 </div>
             </div>
