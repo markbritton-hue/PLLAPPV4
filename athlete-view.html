@@ -163,8 +163,8 @@
 
         .event-section {
             margin-bottom: 8px;
-            background: rgba(15,23,42,0.7);
-            border: 1px solid rgba(96,165,250,0.15);
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(96,165,250,0.3);
             border-radius: 8px;
             padding: 8px 10px;
         }
@@ -769,9 +769,9 @@
                         return `<div style="text-align:center;"><div style="font-size:0.7rem;color:rgba(255,255,255,0.55);font-weight:600;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:2px;">${label}</div><div style="font-size:0.95rem;font-weight:800;color:${color};">${sign}${diff} lbs</div></div>`;
                     }
 
-                    const squatBg = athlete.squatDone ? 'background:rgba(16,185,129,0.18); border:1px solid rgba(16,185,129,0.5); border-left:3px solid #10b981; border-radius:8px; padding:8px 10px; margin-bottom:8px;' : 'background:rgba(96,165,250,0.15); border:1px solid rgba(96,165,250,0.4); border-left:3px solid #60a5fa; border-radius:8px; padding:8px 10px; margin-bottom:8px;';
-                    const benchBg = athlete.benchDone ? 'background:rgba(16,185,129,0.18); border:1px solid rgba(16,185,129,0.5); border-left:3px solid #10b981; border-radius:8px; padding:8px 10px; margin-bottom:8px;' : 'background:rgba(167,139,250,0.15); border:1px solid rgba(167,139,250,0.4); border-left:3px solid #a78bfa; border-radius:8px; padding:8px 10px; margin-bottom:8px;';
-                    const deadBg  = athlete.deadDone  ? 'background:rgba(16,185,129,0.18); border:1px solid rgba(16,185,129,0.5); border-left:3px solid #10b981; border-radius:8px; padding:8px 10px; margin-bottom:8px;' : 'background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.4); border-left:3px solid #10b981; border-radius:8px; padding:8px 10px; margin-bottom:8px;';
+                    const squatBg = athlete.squatDone ? 'background:rgba(0,0,0,0.55); border:1px solid rgba(16,185,129,0.6); border-left:3px solid #10b981; border-radius:8px; padding:8px 10px; margin-bottom:8px;' : 'background:rgba(0,0,0,0.55); border:1px solid rgba(96,165,250,0.5); border-left:3px solid #60a5fa; border-radius:8px; padding:8px 10px; margin-bottom:8px;';
+                    const benchBg = athlete.benchDone ? 'background:rgba(0,0,0,0.55); border:1px solid rgba(16,185,129,0.6); border-left:3px solid #10b981; border-radius:8px; padding:8px 10px; margin-bottom:8px;' : 'background:rgba(0,0,0,0.55); border:1px solid rgba(167,139,250,0.5); border-left:3px solid #a78bfa; border-radius:8px; padding:8px 10px; margin-bottom:8px;';
+                    const deadBg  = athlete.deadDone  ? 'background:rgba(0,0,0,0.55); border:1px solid rgba(16,185,129,0.6); border-left:3px solid #10b981; border-radius:8px; padding:8px 10px; margin-bottom:8px;' : 'background:rgba(0,0,0,0.55); border:1px solid rgba(16,185,129,0.5); border-left:3px solid #10b981; border-radius:8px; padding:8px 10px; margin-bottom:8px;';
 
                     const isMyAthlete = announcementName && athlete.name.toLowerCase().includes(announcementName);
                     html += `
@@ -996,9 +996,9 @@
             posEl.style.display = positionBadgeHtml ? 'inline' : 'none';
 
             const isJV = myAthlete.designation === 'JV';
-            const squatBg = myAthlete.squatDone ? 'background:rgba(16,185,129,0.18); border:1px solid rgba(16,185,129,0.5); border-left:3px solid #10b981; border-radius:8px; padding:8px 10px; margin-bottom:8px;' : 'background:rgba(96,165,250,0.15); border:1px solid rgba(96,165,250,0.4); border-left:3px solid #60a5fa; border-radius:8px; padding:8px 10px; margin-bottom:8px;';
-            const benchBg = myAthlete.benchDone ? 'background:rgba(16,185,129,0.18); border:1px solid rgba(16,185,129,0.5); border-left:3px solid #10b981; border-radius:8px; padding:8px 10px; margin-bottom:8px;' : 'background:rgba(167,139,250,0.15); border:1px solid rgba(167,139,250,0.4); border-left:3px solid #a78bfa; border-radius:8px; padding:8px 10px; margin-bottom:8px;';
-            const deadBg  = myAthlete.deadDone  ? 'background:rgba(16,185,129,0.18); border:1px solid rgba(16,185,129,0.5); border-left:3px solid #10b981; border-radius:8px; padding:8px 10px; margin-bottom:8px;' : 'background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.4); border-left:3px solid #10b981; border-radius:8px; padding:8px 10px; margin-bottom:8px;';
+            const squatBg = myAthlete.squatDone ? 'background:rgba(0,0,0,0.55); border:1px solid rgba(16,185,129,0.6); border-left:3px solid #10b981; border-radius:8px; padding:8px 10px; margin-bottom:8px;' : 'background:rgba(0,0,0,0.55); border:1px solid rgba(96,165,250,0.5); border-left:3px solid #60a5fa; border-radius:8px; padding:8px 10px; margin-bottom:8px;';
+            const benchBg = myAthlete.benchDone ? 'background:rgba(0,0,0,0.55); border:1px solid rgba(16,185,129,0.6); border-left:3px solid #10b981; border-radius:8px; padding:8px 10px; margin-bottom:8px;' : 'background:rgba(0,0,0,0.55); border:1px solid rgba(167,139,250,0.5); border-left:3px solid #a78bfa; border-radius:8px; padding:8px 10px; margin-bottom:8px;';
+            const deadBg  = myAthlete.deadDone  ? 'background:rgba(0,0,0,0.55); border:1px solid rgba(16,185,129,0.6); border-left:3px solid #10b981; border-radius:8px; padding:8px 10px; margin-bottom:8px;' : 'background:rgba(0,0,0,0.55); border:1px solid rgba(16,185,129,0.5); border-left:3px solid #10b981; border-radius:8px; padding:8px 10px; margin-bottom:8px;';
 
             document.getElementById('myAthletePanelBody').innerHTML = `
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap;">
