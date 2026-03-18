@@ -909,34 +909,28 @@
 
                                 <!-- Expandable details -->
                                 <div class="athlete-details" id="${detailId}">
-                                    <div style="display:flex; gap:10px; align-items:stretch; margin-bottom:10px;">
-                                        <div style="flex:3;">
-                                            <div style="font-size:0.65rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;"><i class="fas fa-compress-arrows-alt me-1"></i>Squat</div>
-                                            <div class="row g-2">
-                                                ${renderAttempt(athlete.squat1, '1')}
-                                                ${renderAttempt(athlete.squat2, '2')}
-                                                ${renderAttempt(athlete.squat3, '3')}
-                                            </div>
+                                    <div style="background:rgba(15,23,42,0.7);border:1px solid rgba(96,165,250,0.15);border-radius:8px;padding:10px 12px;margin-bottom:8px;">
+                                        <div style="font-size:0.65rem; color:#60a5fa; text-transform:uppercase; letter-spacing:1px; font-weight:700; margin-bottom:6px;"><i class="fas fa-person-falling me-1"></i>Squat</div>
+                                        <div class="row g-2">
+                                            ${renderAttempt(athlete.squat1, '1')}
+                                            ${renderAttempt(athlete.squat2, '2')}
+                                            ${renderAttempt(athlete.squat3, '3')}
                                         </div>
                                     </div>
-                                    <div style="display:flex; gap:10px; align-items:stretch; margin-bottom:10px;">
-                                        <div style="flex:3;">
-                                            <div style="font-size:0.65rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;"><i class="fas fa-hands me-1"></i>Bench Press</div>
-                                            <div class="row g-2">
-                                                ${renderAttempt(athlete.bench1, '1')}
-                                                ${renderAttempt(athlete.bench2, '2')}
-                                                ${renderAttempt(athlete.bench3, '3')}
-                                            </div>
+                                    <div style="background:rgba(15,23,42,0.7);border:1px solid rgba(96,165,250,0.15);border-radius:8px;padding:10px 12px;margin-bottom:8px;">
+                                        <div style="font-size:0.65rem; color:#a78bfa; text-transform:uppercase; letter-spacing:1px; font-weight:700; margin-bottom:6px;"><i class="fas fa-dumbbell me-1"></i>Bench Press</div>
+                                        <div class="row g-2">
+                                            ${renderAttempt(athlete.bench1, '1')}
+                                            ${renderAttempt(athlete.bench2, '2')}
+                                            ${renderAttempt(athlete.bench3, '3')}
                                         </div>
                                     </div>
-                                    <div style="display:flex; gap:10px; align-items:stretch; margin-bottom:10px;">
-                                        <div style="flex:3;">
-                                            <div style="font-size:0.65rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;"><i class="fas fa-weight-hanging me-1"></i>Deadlift</div>
-                                            <div class="row g-2">
-                                                ${renderAttempt(athlete.dead1, '1')}
-                                                ${renderAttempt(athlete.dead2, '2')}
-                                                ${renderAttempt(athlete.dead3, '3')}
-                                            </div>
+                                    <div style="background:rgba(15,23,42,0.7);border:1px solid rgba(96,165,250,0.15);border-radius:8px;padding:10px 12px;margin-bottom:8px;">
+                                        <div style="font-size:0.65rem; color:#10b981; text-transform:uppercase; letter-spacing:1px; font-weight:700; margin-bottom:6px;"><i class="fas fa-weight-hanging me-1"></i>Deadlift</div>
+                                        <div class="row g-2">
+                                            ${renderAttempt(athlete.dead1, '1')}
+                                            ${renderAttempt(athlete.dead2, '2')}
+                                            ${renderAttempt(athlete.dead3, '3')}
                                         </div>
                                     </div>
                                     ${athlete.bodyWeight ? `<div style="display:flex; gap:12px; margin-bottom:10px;">
