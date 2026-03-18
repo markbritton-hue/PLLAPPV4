@@ -435,11 +435,6 @@
 
             <div style="display:flex;align-items:flex-start;gap:10px;">
                 <div style="flex:1;min-width:0;">
-                    ${lift ? `<div style="display:flex;align-items:center;gap:5px;margin-bottom:6px;">
-                        <i class="${lift.icon}" style="color:${lift.color};font-size:1rem;"></i>
-                        <span style="font-size:0.8rem;font-weight:800;color:${lift.color};text-transform:uppercase;letter-spacing:0.5px;">${lift.name}</span>
-                    </div>` : ''}
-
                     <div style="font-size:1.5rem;font-weight:900;color:white;margin-bottom:4px;line-height:1.1;">${athlete.name}</div>
                     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
                         <span class="designation-badge ${athlete.designation === 'JV' ? 'jv' : 'varsity'}">${athlete.designation === 'JV' ? 'JV' : 'Varsity'}</span>
@@ -481,10 +476,6 @@
 
             <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
                 <div style="flex:1;min-width:0;">
-                    ${lift ? `<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
-                        <i class="${lift.icon}" style="color:${lift.color};font-size:1rem;"></i>
-                        <span style="font-size:0.85rem;font-weight:800;color:${lift.color};text-transform:uppercase;">${lift.name}</span>
-                    </div>` : ''}
                     <div style="font-size:1.2rem;font-weight:800;color:white;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${athlete.name}</div>
                     <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:4px;margin-bottom:4px;">
                         <span class="designation-badge ${athlete.designation === 'JV' ? 'jv' : 'varsity'}">${athlete.designation === 'JV' ? 'JV' : 'Varsity'}</span>
