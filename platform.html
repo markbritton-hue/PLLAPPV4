@@ -21,7 +21,7 @@
             border: 2px solid rgba(239, 68, 68, 0.65);
             border-left: 6px solid #ef4444;
             border-radius: 14px;
-            padding: 20px 18px;
+            padding: 24px 22px;
             box-shadow: 0 8px 30px rgba(239, 68, 68, 0.2);
             height: 100%;
         }
@@ -32,7 +32,7 @@
             border: 2px solid rgba(16, 185, 129, 0.55);
             border-left: 6px solid #10b981;
             border-radius: 14px;
-            padding: 16px 16px;
+            padding: 20px 20px;
             box-shadow: 0 4px 16px rgba(16, 185, 129, 0.12);
             height: 100%;
         }
@@ -423,7 +423,7 @@
         const prevs = getPrevAttempts(athlete, currentCol);
         const prevHtml = prevs.length
             ? `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:10px;">
-                   <span style="font-size:0.68rem;color:rgba(255,255,255,0.35);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-right:2px;">Prev</span>
+                   <span style="font-size:0.68rem;color:rgba(255,255,255,0.35);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-right:2px;">Prev ${lift ? lift.name : ''}</span>
                    ${prevs.map(attemptChip).join('')}
                </div>`
             : '';
@@ -435,7 +435,7 @@
 
             <div style="display:flex;align-items:flex-start;gap:10px;">
                 <div style="flex:1;min-width:0;">
-                    <div style="font-size:1.5rem;font-weight:900;color:white;margin-bottom:4px;line-height:1.1;">${athlete.name}</div>
+                    <div style="font-size:1.75rem;font-weight:900;color:white;margin-bottom:4px;line-height:1.1;">${athlete.name}</div>
                     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
                         <span class="designation-badge ${athlete.designation === 'JV' ? 'jv' : 'varsity'}">${athlete.designation === 'JV' ? 'JV' : 'Varsity'}</span>
                         ${athlete.weightClass ? `<span style="color:rgba(255,255,255,0.5);font-size:0.78rem;font-weight:600;">${athlete.weightClass} lb class</span>` : ''}
@@ -463,7 +463,7 @@
         const prevs = getPrevAttempts(athlete, currentCol);
         const prevHtml = prevs.length
             ? `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px;">
-                   <span style="font-size:0.68rem;color:rgba(255,255,255,0.35);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-right:2px;">Prev</span>
+                   <span style="font-size:0.68rem;color:rgba(255,255,255,0.35);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-right:2px;">Prev ${lift ? lift.name : ''}</span>
                    ${prevs.map(attemptChip).join('')}
                </div>`
             : '';
@@ -476,7 +476,7 @@
 
             <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
                 <div style="flex:1;min-width:0;">
-                    <div style="font-size:1.2rem;font-weight:800;color:white;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${athlete.name}</div>
+                    <div style="font-size:1.4rem;font-weight:800;color:white;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${athlete.name}</div>
                     <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:4px;margin-bottom:4px;">
                         <span class="designation-badge ${athlete.designation === 'JV' ? 'jv' : 'varsity'}">${athlete.designation === 'JV' ? 'JV' : 'Varsity'}</span>
                         ${athlete.weightClass ? `<span style="color:rgba(255,255,255,0.45);font-size:0.72rem;font-weight:600;">${athlete.weightClass} lb class</span>` : ''}
