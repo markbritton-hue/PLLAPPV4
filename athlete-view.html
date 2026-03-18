@@ -389,7 +389,7 @@
                 const dlName = rec.dl?.name ? ` <span style="color:rgba(255,255,255,0.5); font-size:0.78rem;">(${rec.dl.name})</span>` : '';
                 return `
                     <div style="margin-bottom:8px;">
-                        <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:${color}; margin-bottom:4px;">${label}</div>
+                        <div style="display:inline-block; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:white; background:${color}; border-radius:4px; padding:1px 7px; margin-bottom:5px;">${label}</div>
                         <div style="display:flex; flex-wrap:wrap; gap:8px 24px;">
                             <span style="white-space:nowrap;">
                                 <span style="color:rgba(255,255,255,0.6); font-size:0.85rem; font-weight:600;">Squat</span>
@@ -407,8 +407,8 @@
                     </div>`;
             }
 
-            const varsityRow = recRow(athleteViewRecords, 'Varsity', '#fbbf24');
-            const jvRow = recRow(athleteViewJvRecords, 'JV', '#60a5fa');
+            const varsityRow = recRow(athleteViewRecords, 'Varsity', '#7c3aed');
+            const jvRow = recRow(athleteViewJvRecords, 'JV', '#059669');
             if (!varsityRow && !jvRow) return '';
 
             return `
