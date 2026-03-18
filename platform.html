@@ -504,6 +504,20 @@
         const rawWeight = athlete[currentCol] ? athlete[currentCol].replace(/[xgXGfF]/g,'').trim() : '—';
         const id = `expand-${pos}`;
         const prevs = getPrevAttempts(athlete, currentCol);
+        const liftKey = currentCol.startsWith('squat') ? 'sq' : currentCol.startsWith('bench') ? 'bp' : currentCol.startsWith('dead') ? 'dl' : null;
+        const rec = getAthleteRecords(athlete.designation);
+        const wc = athlete.weightClass;
+        const isCurrentRecord = liftKey ? isStateRecordAttempt(parseFloat(rawWeight), liftKey, wc, rec) : false;
+
+        // Helper: chip + star if state record attempt
+        const chipStar = (val, lk, large = true) => {
+            const chip = attemptChip(val, large);
+            if (!chip) return '<span style="color:rgba(255,255,255,0.25);font-size:0.95rem;">—</span>';
+            const numW = parseFloat((val || '').replace(/[xgXGfF]/g, ''));
+            const isSR = lk ? isStateRecordAttempt(numW, lk, wc, rec) : false;
+            return chip + (isSR ? '<span style="color:#f59e0b;font-size:0.75rem;margin-left:2px;">⭐</span>' : '');
+        };
+
         const prevHtml = prevs.length
             ? `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px;">
                    <span style="font-size:0.68rem;color:rgba(255,255,255,0.35);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-right:2px;">Prev</span>
@@ -519,7 +533,7 @@
                 ${lift ? `<span style="display:inline-flex;align-items:center;gap:4px;color:${lift.color};font-size:0.72rem;font-weight:700;flex-shrink:0;">
                     <i class="${lift.icon}" style="font-size:0.7rem;"></i>${lift.name}
                 </span>` : ''}
-                <span style="color:rgba(255,255,255,0.6);font-size:0.85rem;font-weight:700;flex-shrink:0;">${rawWeight} lbs</span>
+                <span style="color:${isCurrentRecord ? '#f59e0b' : 'rgba(255,255,255,0.6)'};font-size:0.85rem;font-weight:700;flex-shrink:0;">${rawWeight} lbs${isCurrentRecord ? ' ⭐' : ''}</span>
                 <i id="arrow-${id}" class="fas fa-chevron-down" style="color:rgba(255,255,255,0.3);font-size:0.75rem;flex-shrink:0;transition:transform 0.2s;"></i>
             </div>
             <div id="${id}" style="display:none;margin-top:10px;padding:10px 12px;border-radius:8px;background:rgba(15,23,42,0.7);border:1px solid rgba(96,165,250,0.15);">
@@ -532,15 +546,15 @@
                 <div style="display:flex;flex-direction:column;gap:10px;margin-top:6px;">
                     <div style="display:flex;align-items:center;gap:8px;">
                         <span style="display:inline-flex;align-items:center;gap:5px;color:#60a5fa;font-size:0.9rem;font-weight:700;width:80px;flex-shrink:0;"><i class="fas fa-person-falling"></i>Squat</span>
-                        <div style="display:flex;gap:6px;">${attemptChip(athlete.squat1,true)||'<span style="color:rgba(255,255,255,0.25);font-size:0.95rem;">—</span>'}${attemptChip(athlete.squat2,true)||'<span style="color:rgba(255,255,255,0.25);font-size:0.95rem;">—</span>'}${attemptChip(athlete.squat3,true)||'<span style="color:rgba(255,255,255,0.25);font-size:0.95rem;">—</span>'}</div>
+                        <div style="display:flex;gap:6px;align-items:center;">${chipStar(athlete.squat1,'sq')}${chipStar(athlete.squat2,'sq')}${chipStar(athlete.squat3,'sq')}</div>
                     </div>
                     <div style="display:flex;align-items:center;gap:8px;">
                         <span style="display:inline-flex;align-items:center;gap:5px;color:#a78bfa;font-size:0.9rem;font-weight:700;width:80px;flex-shrink:0;"><i class="fas fa-dumbbell"></i>Bench</span>
-                        <div style="display:flex;gap:6px;">${attemptChip(athlete.bench1,true)||'<span style="color:rgba(255,255,255,0.25);font-size:0.95rem;">—</span>'}${attemptChip(athlete.bench2,true)||'<span style="color:rgba(255,255,255,0.25);font-size:0.95rem;">—</span>'}${attemptChip(athlete.bench3,true)||'<span style="color:rgba(255,255,255,0.25);font-size:0.95rem;">—</span>'}</div>
+                        <div style="display:flex;gap:6px;align-items:center;">${chipStar(athlete.bench1,'bp')}${chipStar(athlete.bench2,'bp')}${chipStar(athlete.bench3,'bp')}</div>
                     </div>
                     <div style="display:flex;align-items:center;gap:8px;">
                         <span style="display:inline-flex;align-items:center;gap:5px;color:#10b981;font-size:0.9rem;font-weight:700;width:80px;flex-shrink:0;"><i class="fas fa-weight-hanging"></i>Deadlift</span>
-                        <div style="display:flex;gap:6px;">${attemptChip(athlete.dead1,true)||'<span style="color:rgba(255,255,255,0.25);font-size:0.95rem;">—</span>'}${attemptChip(athlete.dead2,true)||'<span style="color:rgba(255,255,255,0.25);font-size:0.95rem;">—</span>'}${attemptChip(athlete.dead3,true)||'<span style="color:rgba(255,255,255,0.25);font-size:0.95rem;">—</span>'}</div>
+                        <div style="display:flex;gap:6px;align-items:center;">${chipStar(athlete.dead1,'dl')}${chipStar(athlete.dead2,'dl')}${chipStar(athlete.dead3,'dl')}</div>
                     </div>
                 </div>
                 ${athlete.total ? `<div style="margin-top:8px;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.25);border-radius:8px;padding:6px 12px;display:inline-flex;align-items:center;gap:8px;">
