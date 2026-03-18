@@ -372,18 +372,45 @@
         }
 
         function renderStateRecordLegend(wc) {
-            if (!athleteViewRecords || !wc) return '';
-            const rec = athleteViewRecords[String(wc)];
-            if (!rec) return '';
-            const sq = rec.sq?.weight || '—';
-            const bp = rec.bp?.weight || '—';
-            const dl = rec.dl?.weight || '—';
-            const sqName = rec.sq?.name ? ` <span style="color:rgba(255,255,255,0.6); font-size:0.85rem;">(${rec.sq.name})</span>` : '';
-            const bpName = rec.bp?.name ? ` <span style="color:rgba(255,255,255,0.6); font-size:0.85rem;">(${rec.bp.name})</span>` : '';
-            const dlName = rec.dl?.name ? ` <span style="color:rgba(255,255,255,0.6); font-size:0.85rem;">(${rec.dl.name})</span>` : '';
+            if (!wc) return '';
             const isOpen = localStorage.getItem('athleteViewStateRecordsOpen') === 'true';
-            const bodyDisplay = isOpen ? 'flex' : 'none';
+            const bodyDisplay = isOpen ? 'block' : 'none';
             const chevronRotate = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+
+            function recRow(records, label, color) {
+                if (!records) return '';
+                const rec = records[String(wc)];
+                if (!rec) return '';
+                const sq = rec.sq?.weight || '—';
+                const bp = rec.bp?.weight || '—';
+                const dl = rec.dl?.weight || '—';
+                const sqName = rec.sq?.name ? ` <span style="color:rgba(255,255,255,0.5); font-size:0.78rem;">(${rec.sq.name})</span>` : '';
+                const bpName = rec.bp?.name ? ` <span style="color:rgba(255,255,255,0.5); font-size:0.78rem;">(${rec.bp.name})</span>` : '';
+                const dlName = rec.dl?.name ? ` <span style="color:rgba(255,255,255,0.5); font-size:0.78rem;">(${rec.dl.name})</span>` : '';
+                return `
+                    <div style="margin-bottom:8px;">
+                        <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:${color}; margin-bottom:4px;">${label}</div>
+                        <div style="display:flex; flex-wrap:wrap; gap:8px 24px;">
+                            <span style="white-space:nowrap;">
+                                <span style="color:rgba(255,255,255,0.6); font-size:0.85rem; font-weight:600;">Squat</span>
+                                <strong style="color:#ff4444; font-size:1.05rem; margin-left:6px;">${sq} lbs</strong>${sqName}
+                            </span>
+                            <span style="white-space:nowrap;">
+                                <span style="color:rgba(255,255,255,0.6); font-size:0.85rem; font-weight:600;">Bench</span>
+                                <strong style="color:#ff4444; font-size:1.05rem; margin-left:6px;">${bp} lbs</strong>${bpName}
+                            </span>
+                            <span style="white-space:nowrap;">
+                                <span style="color:rgba(255,255,255,0.6); font-size:0.85rem; font-weight:600;">Deadlift</span>
+                                <strong style="color:#ff4444; font-size:1.05rem; margin-left:6px;">${dl} lbs</strong>${dlName}
+                            </span>
+                        </div>
+                    </div>`;
+            }
+
+            const varsityRow = recRow(athleteViewRecords, 'Varsity', '#fbbf24');
+            const jvRow = recRow(athleteViewJvRecords, 'JV', '#60a5fa');
+            if (!varsityRow && !jvRow) return '';
+
             return `
                 <div style="background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.3); border-radius: 12px; margin-bottom: 20px; overflow:hidden;">
                     <div onclick="toggleStateRecords()" style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; padding:12px 20px; user-select:none;">
@@ -392,19 +419,9 @@
                         </div>
                         <i id="stateRecordsChevron" class="fas fa-chevron-down" style="color:rgba(255,255,255,0.5); font-size:0.9rem; transition:transform 0.2s; transform:${chevronRotate};"></i>
                     </div>
-                    <div id="stateRecordsBody" style="display:${bodyDisplay}; flex-wrap:wrap; gap:12px 28px; padding:0 20px 16px;">
-                        <span style="font-size:1rem; white-space:nowrap;">
-                            <span style="color:rgba(255,255,255,0.7); font-size:0.95rem; font-weight:600;">Squat</span>
-                            <strong style="color:#ff4444; font-size:1.15rem; margin-left:8px;">${sq} lbs</strong>${sqName}
-                        </span>
-                        <span style="font-size:1rem; white-space:nowrap;">
-                            <span style="color:rgba(255,255,255,0.7); font-size:0.95rem; font-weight:600;">Bench</span>
-                            <strong style="color:#ff4444; font-size:1.15rem; margin-left:8px;">${bp} lbs</strong>${bpName}
-                        </span>
-                        <span style="font-size:1rem; white-space:nowrap;">
-                            <span style="color:rgba(255,255,255,0.7); font-size:0.95rem; font-weight:600;">Deadlift</span>
-                            <strong style="color:#ff4444; font-size:1.15rem; margin-left:8px;">${dl} lbs</strong>${dlName}
-                        </span>
+                    <div id="stateRecordsBody" style="display:${bodyDisplay}; padding:0 20px 16px;">
+                        ${varsityRow}
+                        ${jvRow}
                     </div>
                 </div>`;
         }
