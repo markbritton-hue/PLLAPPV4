@@ -162,14 +162,18 @@
         }
 
         .event-section {
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            background: rgba(15,23,42,0.7);
+            border: 1px solid rgba(96,165,250,0.15);
+            border-radius: 8px;
+            padding: 8px 10px;
         }
 
         .event-header {
             color: rgba(255,255,255,0.8);
             font-size: 0.65rem;
             font-weight: 700;
-            margin-bottom: 3px;
+            margin-bottom: 5px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -789,7 +793,7 @@
                                 <span style="color: rgba(255,255,255,0.85); font-size: 0.85rem; font-weight: 700;">${athlete.school || '—'}</span>
                             </div>
                             <div class="event-section" style="${squatBg}">
-                                <div class="event-header"><i class="fas fa-compress-arrows-alt me-1"></i>Squat</div>
+                                <div class="event-header" style="color:#60a5fa;"><i class="fas fa-person-falling me-1"></i>Squat</div>
                                 <div class="attempts-row">
                                     ${renderAttempt(athlete.sq1, '1', 'sq', athlete.wc, athlete.designation)}
                                     ${renderAttempt(athlete.sq2, '2', 'sq', athlete.wc, athlete.designation)}
@@ -798,7 +802,7 @@
                                 ${diffHtml(athlete.squat, diffSquat)}
                             </div>
                             <div class="event-section" style="${benchBg}">
-                                <div class="event-header"><i class="fas fa-hands me-1"></i>Bench</div>
+                                <div class="event-header" style="color:#a78bfa;"><i class="fas fa-dumbbell me-1"></i>Bench</div>
                                 <div class="attempts-row">
                                     ${renderAttempt(athlete.bp1, '1', 'bp', athlete.wc, athlete.designation)}
                                     ${renderAttempt(athlete.bp2, '2', 'bp', athlete.wc, athlete.designation)}
@@ -807,7 +811,7 @@
                                 ${diffHtml(athlete.bench, diffBench)}
                             </div>
                             <div class="event-section" style="${deadBg}">
-                                <div class="event-header"><i class="fas fa-weight-hanging me-1"></i>Deadlift</div>
+                                <div class="event-header" style="color:#10b981;"><i class="fas fa-weight-hanging me-1"></i>Deadlift</div>
                                 <div class="attempts-row">
                                     ${renderAttempt(athlete.dl1, '1', 'dl', athlete.wc, athlete.designation)}
                                     ${renderAttempt(athlete.dl2, '2', 'dl', athlete.wc, athlete.designation)}
@@ -1005,7 +1009,7 @@
                 </div>
                 <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:8px;">
                     <div class="event-section" style="${squatBg}">
-                        <div class="event-header"><i class="fas fa-compress-arrows-alt me-1"></i>Squat</div>
+                        <div class="event-header" style="color:#60a5fa;"><i class="fas fa-person-falling me-1"></i>Squat</div>
                         <div class="attempts-row">
                             ${renderAttempt(myAthlete.sq1, '1', 'sq', myWC, myAthlete.designation)}
                             ${renderAttempt(myAthlete.sq2, '2', 'sq', myWC, myAthlete.designation)}
@@ -1014,7 +1018,7 @@
                         ${diffHtml(myAthlete.squat, diffSquat)}
                     </div>
                     <div class="event-section" style="${benchBg}">
-                        <div class="event-header"><i class="fas fa-hands me-1"></i>Bench</div>
+                        <div class="event-header" style="color:#a78bfa;"><i class="fas fa-dumbbell me-1"></i>Bench</div>
                         <div class="attempts-row">
                             ${renderAttempt(myAthlete.bp1, '1', 'bp', myWC, myAthlete.designation)}
                             ${renderAttempt(myAthlete.bp2, '2', 'bp', myWC, myAthlete.designation)}
@@ -1023,7 +1027,7 @@
                         ${diffHtml(myAthlete.bench, diffBench)}
                     </div>
                     <div class="event-section" style="${deadBg}">
-                        <div class="event-header"><i class="fas fa-weight-hanging me-1"></i>Deadlift</div>
+                        <div class="event-header" style="color:#10b981;"><i class="fas fa-weight-hanging me-1"></i>Deadlift</div>
                         <div class="attempts-row">
                             ${renderAttempt(myAthlete.dl1, '1', 'dl', myWC, myAthlete.designation)}
                             ${renderAttempt(myAthlete.dl2, '2', 'dl', myWC, myAthlete.designation)}
