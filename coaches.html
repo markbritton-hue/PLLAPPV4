@@ -99,6 +99,20 @@
             flex-shrink: 0;
         }
 
+        .expand-hint {
+            text-align: center;
+            color: rgba(255,255,255,0.25);
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+            pointer-events: none;
+        }
+
+        .expand-hint.hidden {
+            display: none;
+        }
+
         .total-box {
             background: rgba(139, 92, 246, 0.07);
             border: 1px solid rgba(139, 92, 246, 0.25);
@@ -927,6 +941,7 @@
                                 ${athlete.bodyWeight ? `<span style="color:rgba(255,255,255,0.5); font-size:0.75rem; font-weight:600; white-space:nowrap;">(${athlete.bodyWeight} lbs BW)</span>` : ''}
                                 ${attemptWeight ? `<span style="color:${isRecordAttempt ? '#f59e0b' : 'white'}; font-size:0.78rem; font-weight:700; white-space:nowrap; margin-left:auto;">${isRecordAttempt ? '⭐ SR Attempt ' : 'Attempting '}${attemptWeight}</span>` : ''}
                             </div>
+                            <div class="expand-hint" id="hint-${detailId}"><i class="fas fa-chevron-down"></i> <i class="fas fa-chevron-down"></i> tap to expand <i class="fas fa-chevron-down"></i> <i class="fas fa-chevron-down"></i></div>
                         </div>
                         <div class="athlete-details" id="${detailId}">
                             <div style="margin-top:2px;padding:10px 12px;border-radius:8px;background:rgba(15,23,42,0.7);border:1px solid rgba(96,165,250,0.15);">
@@ -967,8 +982,11 @@
         function toggleDetail(id) {
             const el = document.getElementById(id);
             el.classList.toggle('open');
+            const open = el.classList.contains('open');
             const arrow = document.getElementById('arrow-' + id);
-            if (arrow) arrow.style.transform = el.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+            if (arrow) arrow.style.transform = open ? 'rotate(180deg)' : 'rotate(0deg)';
+            const hint = document.getElementById('hint-' + id);
+            if (hint) hint.classList.toggle('hidden', open);
             // Persist expanded names to localStorage
             const container = document.getElementById('displayContainer');
             const expanded = new Set();
