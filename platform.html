@@ -1037,6 +1037,33 @@
         el.textContent = `Cache: ${status || '—'}${ageStr}`;
     }
 
+    async function checkHeartbeat() {
+        try {
+            const r = await fetch('https://pllv4.streamwaveprod.com/cache/heartbeat.json?_=' + Date.now());
+            if (!r.ok) return;
+            const data = await r.json();
+            const ageSecs = Math.floor(Date.now() / 1000) - data.ts;
+            const btn = document.getElementById('refreshToggle');
+            if (!btn) return;
+            if (ageSecs > 30) {
+                const mins = Math.floor(ageSecs / 60);
+                const secs = ageSecs % 60;
+                const ageStr = mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+                btn.style.background = 'rgba(239,68,68,0.8)';
+                btn.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i>Data Stale · ${ageStr}`;
+            } else {
+                // Data is fresh — restore normal button appearance if it was showing stale
+                if (btn.innerHTML.includes('Data Stale')) {
+                    btn.style.background = 'rgba(96,165,250,0.8)';
+                    const isOn = !!autoRefreshInterval;
+                    btn.innerHTML = isOn
+                        ? '<i class="fas fa-sync-alt fa-spin me-2"></i>Auto-Refresh: ON'
+                        : '<i class="fas fa-sync-alt me-2"></i>Auto-Refresh: OFF';
+                }
+            }
+        } catch(e) { /* network error — ignore */ }
+    }
+
     function loadPlatformsList() {
         const configStr = localStorage.getItem('trplConfig');
         if (!configStr) return;
@@ -1107,6 +1134,7 @@
             const res = await fetch(url);
             if (!res.ok) throw new Error(res.status);
             updateCacheBadge(res.headers.get('X-Cache'), res.headers.get('X-Cache-Age'));
+            checkHeartbeat();
             const athletes = parseAthletes(parseCSV(await res.text()));
             if (athletes.length === 0) {
                 document.getElementById('athleteContainer').innerHTML = '<div style="text-align:center;color:rgba(255,255,255,0.4);padding:40px 0;">No athletes found.</div>';
