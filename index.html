@@ -566,36 +566,72 @@
                 const modal = document.getElementById('setupModal');
                 modal.style.display = 'flex';
             } else {
-                // Try to show meet info from saved event selection first
+                showMeetHeader();
+            }
+
+            async function showMeetHeader() {
+                const el = document.getElementById('meet-name');
+
+                // 1. Use cached meet info if already saved
                 const meetInfoRaw = localStorage.getItem('selectedMeetInfo');
                 if (meetInfoRaw) {
                     try {
-                        const info = JSON.parse(meetInfoRaw);
-                        const el = document.getElementById('meet-name');
-                        const d = info.date ? new Date(info.date + 'T12:00:00').toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) : '';
-                        const t = info.time ? (() => { const [h,m] = info.time.split(':'); const hr = parseInt(h); return `${hr%12||12}:${m} ${hr>=12?'PM':'AM'}`; })() : '';
-                        const parts = [info.name, d && t ? `${d} · ${t}` : d || t, info.location].filter(Boolean);
-                        el.innerHTML = parts.join('<span style="color:rgba(255,255,255,0.3);margin:0 6px;">·</span>');
-                        el.style.display = 'block';
+                        displayMeetInfo(JSON.parse(meetInfoRaw), el);
+                        return;
                     } catch(e) {}
-                } else {
-                    // Fallback: fetch sheet title from cache
+                }
+
+                // 2. Look up the selected meet from Firestore REST API
+                const savedUrl = localStorage.getItem('selectedMeetUrl');
+                if (savedUrl) {
+                    try {
+                        const r = await fetch('https://firestore.googleapis.com/v1/projects/powerlift-live/databases/(default)/documents/events');
+                        if (r.ok) {
+                            const data = await r.json();
+                            const docs = data.documents || [];
+                            for (const doc of docs) {
+                                const f = doc.fields || {};
+                                const sheetUrl = f.sheetUrl?.stringValue || '';
+                                if (sheetUrl === savedUrl) {
+                                    const info = {
+                                        name:     f.name?.stringValue     || '',
+                                        date:     f.date?.stringValue     || '',
+                                        time:     f.time?.stringValue     || '',
+                                        location: f.location?.stringValue || ''
+                                    };
+                                    localStorage.setItem('selectedMeetInfo', JSON.stringify(info));
+                                    displayMeetInfo(info, el);
+                                    return;
+                                }
+                            }
+                        }
+                    } catch(e) {}
+                }
+
+                // 3. Final fallback: sheet title from cache
+                try {
                     const { spreadsheetId } = JSON.parse(config);
                     if (spreadsheetId) {
-                        fetch(`https://pllv4.streamwaveprod.com/cache/meta_${spreadsheetId}.html`)
-                            .then(r => r.text())
-                            .then(html => {
-                                const match = html.match(/<title>([^<]+)<\/title>/);
-                                if (match) {
-                                    const title = match[1].replace(' - Google Sheets', '').trim();
-                                    const el = document.getElementById('meet-name');
-                                    el.textContent = title;
-                                    el.style.display = 'block';
-                                }
-                            })
-                            .catch(() => {});
+                        const r = await fetch(`https://pllv4.streamwaveprod.com/cache/meta_${spreadsheetId}.html`);
+                        if (r.ok) {
+                            const html = await r.text();
+                            const match = html.match(/<title>([^<]+)<\/title>/);
+                            if (match) {
+                                el.textContent = match[1].replace(' - Google Sheets', '').trim();
+                                el.style.display = 'block';
+                            }
+                        }
                     }
-                }
+                } catch(e) {}
+            }
+
+            function displayMeetInfo(info, el) {
+                const d = info.date ? new Date(info.date + 'T12:00:00').toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) : '';
+                const t = info.time ? (() => { const [h,m] = info.time.split(':'); const hr = parseInt(h); return `${hr%12||12}:${m} ${hr>=12?'PM':'AM'}`; })() : '';
+                const parts = [info.name, d && t ? `${d} · ${t}` : d || t, info.location].filter(Boolean);
+                if (!parts.length) return;
+                el.innerHTML = parts.join('<span style="color:rgba(255,255,255,0.3);margin:0 6px;">·</span>');
+                el.style.display = 'block';
             }
 
             // Check if cache server is online
