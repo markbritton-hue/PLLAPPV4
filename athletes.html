@@ -307,6 +307,20 @@
             flex-shrink: 0;
         }
 
+        .expand-hint {
+            text-align: center;
+            color: rgba(255,255,255,0.25);
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+            pointer-events: none;
+        }
+
+        .expand-hint.hidden {
+            display: none;
+        }
+
         #platformToast {
             position: fixed;
             bottom: 24px;
@@ -905,6 +919,7 @@
                                         ${pm ? `<a href="platform.html?gid=${pm.gid}" onclick="event.stopPropagation();" style="background:#06b6d4; color:white; padding:3px 10px; border-radius:6px; font-size:0.8rem; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><i class="fas fa-layer-group"></i> ${pm.name}</a>` : ''}
                                         ${wcLabel ? `<span style="color:rgba(255,255,255,0.7); font-size:0.85rem; font-weight:700; white-space:nowrap;">${wcLabel}</span>` : ''}
                                     </div>
+                                    <div class="expand-hint" id="hint-${detailId}"><i class="fas fa-chevron-down"></i> <i class="fas fa-chevron-down"></i> tap to expand <i class="fas fa-chevron-down"></i> <i class="fas fa-chevron-down"></i></div>
                                 </div>
 
                                 <!-- Expandable details -->
@@ -1072,8 +1087,11 @@
         function toggleAthleteDetail(id) {
             const el = document.getElementById(id);
             el.classList.toggle('open');
+            const open = el.classList.contains('open');
             const arrow = document.getElementById('arrow-' + id);
-            if (arrow) arrow.style.transform = el.classList.contains('open') ? 'rotate(180deg)' : '';
+            if (arrow) arrow.style.transform = open ? 'rotate(180deg)' : '';
+            const hint = document.getElementById('hint-' + id);
+            if (hint) hint.classList.toggle('hidden', open);
         }
 
         async function checkHeartbeat() {
