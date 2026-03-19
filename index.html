@@ -617,7 +617,7 @@
                             const html = await r.text();
                             const match = html.match(/<title>([^<]+)<\/title>/);
                             if (match) {
-                                el.textContent = match[1].replace(' - Google Sheets', '').trim();
+                                el.innerHTML = '<span style="color:rgba(255,255,255,0.45);font-weight:600;">Current Meet:</span> ' + match[1].replace(' - Google Sheets', '').trim();
                                 el.style.display = 'block';
                             }
                         }
@@ -630,7 +630,7 @@
                 const t = info.time ? (() => { const [h,m] = info.time.split(':'); const hr = parseInt(h); return `${hr%12||12}:${m} ${hr>=12?'PM':'AM'}`; })() : '';
                 const parts = [info.name, d && t ? `${d} · ${t}` : d || t, info.location].filter(Boolean);
                 if (!parts.length) return;
-                el.innerHTML = parts.join('<span style="color:rgba(255,255,255,0.3);margin:0 6px;">·</span>');
+                el.innerHTML = '<span style="color:rgba(255,255,255,0.45);font-weight:600;">Current Meet:</span> ' + parts.join('<span style="color:rgba(255,255,255,0.3);margin:0 6px;">·</span>');
                 el.style.display = 'block';
             }
 
