@@ -891,11 +891,12 @@
             const container = document.getElementById('weightClassContainer');
             container.innerHTML = '';
 
-            // Sort alphabetically by first name
+            // Sort: Varsity first, then JV, by total (highest first) within each group
             const sorted = [...athleteData].sort((a, b) => {
-                const fa = (a.name || '').split(' ')[0].toLowerCase();
-                const fb = (b.name || '').split(' ')[0].toLowerCase();
-                return fa.localeCompare(fb);
+                const aIsJV = (a.designation || '').toUpperCase() === 'JV' ? 1 : 0;
+                const bIsJV = (b.designation || '').toUpperCase() === 'JV' ? 1 : 0;
+                if (aIsJV !== bIsJV) return aIsJV - bIsJV;
+                return (b.currentTotal || 0) - (a.currentTotal || 0);
             });
 
             const section = document.createElement('div');
