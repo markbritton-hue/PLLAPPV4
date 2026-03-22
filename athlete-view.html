@@ -300,15 +300,15 @@
         </div>
 
         <!-- My Athlete Panel -->
-        <div id="myAthletePanel" style="display:none; background: rgba(249,115,22,0.12); border: 2px solid rgba(249,115,22,0.5); border-radius: 14px; padding: 14px 20px; margin-bottom: 0;">
-            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:10px;">
-                <div style="display:flex; flex-direction:column; gap:6px; min-width:0; flex:1;">
-                    <a id="myAthletePanelName" href="#" style="background:rgba(249,115,22,0.9);color:white;font-size:1rem;font-weight:700;padding:5px 12px;border-radius:10px;white-space:nowrap;align-self:flex-start;text-decoration:none;cursor:pointer;overflow:hidden;text-overflow:ellipsis;max-width:100%;"></a>
-                    <div id="myAthletePanelSubLine" style="display:none; align-items:center; gap:8px; flex-wrap:wrap;"></div>
+        <div id="myAthletePanel" class="athlete-card my-school" style="display:none; margin-bottom: 0;">
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:6px;">
+                <div style="display:flex; flex-direction:column; gap:4px; min-width:0; flex:1;">
+                    <a id="myAthletePanelName" href="#" style="background:rgba(249,115,22,0.9);color:white;font-size:1rem;font-weight:700;padding:3px 10px;border-radius:8px;white-space:nowrap;align-self:flex-start;text-decoration:none;cursor:pointer;overflow:hidden;text-overflow:ellipsis;max-width:100%;"></a>
+                    <div id="myAthletePanelSubLine" style="display:none; align-items:center; gap:6px; flex-wrap:wrap;"></div>
                 </div>
-                <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-end; flex-shrink:0;">
-                    <span id="myAthletePanelRank" style="display:none; padding:5px 12px; border-radius:10px; font-weight:700; font-size:0.85rem; color:white; white-space:nowrap;"></span>
-                    <span id="myAthletePanelStatus" style="display:none; padding:5px 12px; border-radius:10px; font-weight:700; font-size:0.85rem; color:white; white-space:nowrap;"></span>
+                <div style="display:flex; flex-direction:column; gap:4px; align-items:flex-end; flex-shrink:0;">
+                    <span id="myAthletePanelRank" style="display:none; padding:3px 10px; border-radius:8px; font-weight:700; font-size:0.8rem; color:white; white-space:nowrap;"></span>
+                    <span id="myAthletePanelStatus" style="display:none; padding:3px 10px; border-radius:8px; font-weight:700; font-size:0.8rem; color:white; white-space:nowrap;"></span>
                     <span id="myAthletePanelPosition" style="display:none;"></span>
                 </div>
             </div>
@@ -1028,34 +1028,32 @@
                     <span style="color:rgba(255,255,255,0.5); font-size:0.8rem;">${myWC} lbs WC</span>
                     ${myAthlete.bodyWeight ? `<span style="color:rgba(255,255,255,0.65); font-size:0.85rem; font-weight:700; margin-left:auto;">BW: ${myAthlete.bodyWeight} lbs${myAthlete.bodyWeight > 0 ? ` &nbsp;<span style="color:#a78bfa;">(${(myAthlete.total/myAthlete.bodyWeight).toFixed(2)} lb/lb)</span>` : ''}</span>` : ''}
                 </div>
-                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:8px;">
-                    <div class="event-section" style="${squatBg}">
-                        <div class="event-header" style="color:#60a5fa;"><i class="fas fa-person-falling me-1"></i>Squat</div>
-                        <div class="attempts-row">
-                            ${renderAttempt(myAthlete.sq1, '1', 'sq', myWC, myAthlete.designation)}
-                            ${renderAttempt(myAthlete.sq2, '2', 'sq', myWC, myAthlete.designation)}
-                            ${renderAttempt(myAthlete.sq3, '3', 'sq', myWC, myAthlete.designation)}
-                        </div>
-                        ${diffHtml(myAthlete.squat, diffSquat)}
+                <div class="event-section" style="${squatBg}">
+                    <div class="event-header" style="color:#60a5fa;"><i class="fas fa-person-falling me-1"></i>Squat</div>
+                    <div class="attempts-row">
+                        ${renderAttempt(myAthlete.sq1, '1', 'sq', myWC, myAthlete.designation)}
+                        ${renderAttempt(myAthlete.sq2, '2', 'sq', myWC, myAthlete.designation)}
+                        ${renderAttempt(myAthlete.sq3, '3', 'sq', myWC, myAthlete.designation)}
                     </div>
-                    <div class="event-section" style="${benchBg}">
-                        <div class="event-header" style="color:#a78bfa;"><i class="fas fa-dumbbell me-1"></i>Bench</div>
-                        <div class="attempts-row">
-                            ${renderAttempt(myAthlete.bp1, '1', 'bp', myWC, myAthlete.designation)}
-                            ${renderAttempt(myAthlete.bp2, '2', 'bp', myWC, myAthlete.designation)}
-                            ${renderAttempt(myAthlete.bp3, '3', 'bp', myWC, myAthlete.designation)}
-                        </div>
-                        ${diffHtml(myAthlete.bench, diffBench)}
+                    ${diffHtml(myAthlete.squat, diffSquat)}
+                </div>
+                <div class="event-section" style="${benchBg}">
+                    <div class="event-header" style="color:#a78bfa;"><i class="fas fa-dumbbell me-1"></i>Bench</div>
+                    <div class="attempts-row">
+                        ${renderAttempt(myAthlete.bp1, '1', 'bp', myWC, myAthlete.designation)}
+                        ${renderAttempt(myAthlete.bp2, '2', 'bp', myWC, myAthlete.designation)}
+                        ${renderAttempt(myAthlete.bp3, '3', 'bp', myWC, myAthlete.designation)}
                     </div>
-                    <div class="event-section" style="${deadBg}">
-                        <div class="event-header" style="color:#10b981;"><i class="fas fa-weight-hanging me-1"></i>Deadlift</div>
-                        <div class="attempts-row">
-                            ${renderAttempt(myAthlete.dl1, '1', 'dl', myWC, myAthlete.designation)}
-                            ${renderAttempt(myAthlete.dl2, '2', 'dl', myWC, myAthlete.designation)}
-                            ${renderAttempt(myAthlete.dl3, '3', 'dl', myWC, myAthlete.designation)}
-                        </div>
-                        ${diffHtml(myAthlete.deadlift, diffDead)}
+                    ${diffHtml(myAthlete.bench, diffBench)}
+                </div>
+                <div class="event-section" style="${deadBg}">
+                    <div class="event-header" style="color:#10b981;"><i class="fas fa-weight-hanging me-1"></i>Deadlift</div>
+                    <div class="attempts-row">
+                        ${renderAttempt(myAthlete.dl1, '1', 'dl', myWC, myAthlete.designation)}
+                        ${renderAttempt(myAthlete.dl2, '2', 'dl', myWC, myAthlete.designation)}
+                        ${renderAttempt(myAthlete.dl3, '3', 'dl', myWC, myAthlete.designation)}
                     </div>
+                    ${diffHtml(myAthlete.deadlift, diffDead)}
                 </div>
                 <div class="total-box" style="flex-direction:column; gap:10px;">
                     <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
