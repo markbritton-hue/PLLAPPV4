@@ -548,8 +548,11 @@
                     select.appendChild(opt);
                 });
 
+                const savedWC = localStorage.getItem('selectedAthleteViewWC');
                 if (prevVal && grouped[prevVal]) {
                     select.value = prevVal;
+                } else if (savedWC && grouped[savedWC]) {
+                    select.value = savedWC;
                 } else {
                     // Auto-select my athlete's weight class if configured, else first class
                     const _cfg = JSON.parse(localStorage.getItem('trplConfig') || '{}');
@@ -722,6 +725,7 @@
 
         function renderWeightClass() {
             const wc = document.getElementById('wcSelect').value;
+            if (wc) localStorage.setItem('selectedAthleteViewWC', wc);
             const container = document.getElementById('athleteCards');
             const announcementName = (JSON.parse(localStorage.getItem('trplConfig') || '{}').athleteName || '').toLowerCase().trim();
 
