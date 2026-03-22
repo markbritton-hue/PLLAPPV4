@@ -551,7 +551,13 @@
                 .then(r => r.json())
                 .then(tags => {
                     if (!tags || !tags.length) return;
-                    const tag = tags[0];
+                    const v41tags = tags.filter(t => /^v4\.1\.\d+$/.test(t.name));
+                    if (!v41tags.length) return;
+                    v41tags.sort((a, b) => {
+                        const n = x => parseInt(x.name.split('.')[2]);
+                        return n(b) - n(a);
+                    });
+                    const tag = v41tags[0];
                     return fetch(tag.commit.url)
                         .then(r => r.json())
                         .then(commit => {
