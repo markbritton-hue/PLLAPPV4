@@ -476,8 +476,8 @@
         const color  = good ? '#10b981' : failed ? '#ef4444' : 'rgba(255,255,255,0.45)';
         const bg     = good ? 'rgba(16,185,129,0.15)' : failed ? 'rgba(239,68,68,0.15)' : 'rgba(255,255,255,0.05)';
         const border = good ? 'rgba(16,185,129,0.45)' : failed ? 'rgba(239,68,68,0.45)' : 'rgba(255,255,255,0.1)';
-        const pad  = large ? '6px 14px' : '3px 9px';
-        const size = large ? '1rem'     : '0.82rem';
+        const pad  = large ? '3px 9px' : '3px 9px';
+        const size = large ? '0.88rem' : '0.82rem';
         return `<span style="display:inline-flex;align-items:center;gap:4px;background:${bg};border:1px solid ${border};border-radius:6px;padding:${pad};font-size:${size};font-weight:700;color:${color};">${icon} ${num}</span>`;
     }
 
