@@ -491,7 +491,7 @@
         const prevHtml = prevs.length
             ? `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px;">
                    <span style="font-size:0.68rem;color:rgba(255,255,255,0.35);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-right:2px;">Prev ${lift ? lift.name : ''}</span>
-                   ${prevs.map(attemptChip).join('')}
+                   ${prevs.map(v => attemptChip(v, true)).join('')}
                </div>`
             : '';
         const schoolBg = isMySchool ? 'rgba(249,115,22,0.15)' : 'rgba(255,255,255,0.05)';
@@ -537,7 +537,7 @@
         const prevHtml = prevs.length
             ? `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px;">
                    <span style="font-size:0.68rem;color:rgba(255,255,255,0.35);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-right:2px;">Prev ${lift ? lift.name : ''}</span>
-                   ${prevs.map(attemptChip).join('')}
+                   ${prevs.map(v => attemptChip(v, true)).join('')}
                </div>`
             : '';
         const schoolBg = isMySchool ? 'rgba(249,115,22,0.15)' : 'rgba(255,255,255,0.05)';
