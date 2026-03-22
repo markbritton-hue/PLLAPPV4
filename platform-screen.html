@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PowerLift Live | Platform Screen</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #0a0f1e; --navy2: #1e293b; --navy3: #334155;
+      --blue: #3b82f6; --green: #22c55e; --red: #ef4444;
+      --text: #f1f5f9; --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--navy); color: var(--text);
+      font-family: 'Segoe UI', sans-serif;
+      height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+    }
+
+    /* ── Top bar ── */
+    .top-bar {
+      background: var(--navy2); border-bottom: 2px solid var(--blue);
+      padding: .5rem 1.2rem; display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0; gap: .75rem;
+    }
+    .meet-name { font-size: .95rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .live-pill {
+      font-size: .75rem; font-weight: 700; letter-spacing: .08em;
+      color: var(--green); display: flex; align-items: center; gap: .4rem; flex-shrink: 0;
+    }
+    .live-dot {
+      width: 9px; height: 9px; border-radius: 50%; background: var(--green);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.35;} }
+
+    /* Platform tabs */
+    .platform-tabs { display: flex; gap: .4rem; flex-wrap: nowrap; overflow-x: auto; flex-shrink: 0; }
+    .ptab {
+      background: var(--navy3); border: 1px solid #475569; color: var(--muted);
+      border-radius: 6px; padding: .28rem .8rem; font-size: .78rem; font-weight: 600;
+      cursor: pointer; transition: all .15s; white-space: nowrap; flex-shrink: 0;
+    }
+    .ptab.active { background: var(--blue); border-color: var(--blue); color: #fff; }
+    .ptab:hover:not(.active) { background: #475569; color: #fff; }
+
+    /* Nav button */
+    .btn-nav {
+      background: var(--navy3); border: 1px solid #475569; color: var(--muted);
+      border-radius: 6px; padding: .28rem .75rem; font-size: .78rem; font-weight: 600;
+      text-decoration: none; cursor: pointer; transition: all .15s; flex-shrink: 0;
+    }
+    .btn-nav:hover { background: #475569; color: #fff; }
+
+    /* ── Event banner ── */
+    .event-banner {
+      background: rgba(59,130,246,.08); border-bottom: 1px solid rgba(59,130,246,.2);
+      padding: .3rem 1.2rem; text-align: center; font-size: .78rem; font-weight: 800;
+      letter-spacing: .1em; text-transform: uppercase; flex-shrink: 0;
+    }
+
+    /* ── Display body ── */
+    .display-body {
+      flex: 1; display: flex; flex-direction: column;
+      padding: .6rem 1rem; gap: .6rem; overflow: hidden; min-height: 0;
+    }
+
+    /* ── Now Lifting card ── */
+    .lifting-card {
+      background: var(--navy2); border: 2px solid rgba(239,68,68,.55);
+      border-left: 5px solid #ef4444;
+      border-radius: 14px; padding: .75rem 1.2rem; flex: 1.1; min-height: 0;
+      display: flex; flex-direction: column; justify-content: space-between; overflow: hidden;
+    }
+    .lifting-label {
+      font-size: .72rem; font-weight: 900; letter-spacing: .15em; text-transform: uppercase;
+      color: #f87171; display: flex; align-items: center; gap: .4rem; margin-bottom: .2rem;
+    }
+    .lifting-name {
+      font-size: clamp(1.5rem, 3.8vw, 3.2rem); font-weight: 900; line-height: 1.05;
+    }
+    .lifting-meta { font-size: clamp(.72rem, 1.4vw, .95rem); color: var(--muted); font-weight: 500; }
+    .lifting-weight {
+      font-size: clamp(3rem, 8vw, 7.5rem); font-weight: 900; line-height: 1;
+      color: #fff; letter-spacing: -.03em;
+    }
+    .lifting-weight-unit { font-size: clamp(1.4rem, 3vw, 2.8rem); color: var(--muted); font-weight: 600; margin-left: .15em; }
+    .lifting-attempt {
+      font-size: clamp(.68rem, 1.3vw, .9rem); color: var(--muted); font-weight: 600;
+      text-transform: uppercase; letter-spacing: .08em;
+    }
+
+    /* ── On Deck card ── */
+    .ondeck-card {
+      background: var(--navy2); border: 2px solid rgba(34,197,94,.35);
+      border-left: 5px solid #22c55e;
+      border-radius: 14px; padding: .75rem 1.2rem; flex: 1.6; min-height: 0;
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .ondeck-label {
+      font-size: .72rem; font-weight: 900; letter-spacing: .15em; text-transform: uppercase;
+      color: #4ade80; margin-bottom: .15rem;
+    }
+    .ondeck-name { font-size: clamp(1.8rem, 4.5vw, 4.5rem); font-weight: 800; }
+    .ondeck-meta { font-size: clamp(.8rem, 1.4vw, 1rem); color: var(--muted); }
+    .ondeck-weight {
+      font-size: clamp(5rem, 13vw, 13rem); font-weight: 900; color: #4ade80;
+      display: flex; align-items: baseline; gap: .2em; flex-shrink: 0; line-height: 1;
+    }
+    .ondeck-weight-unit { font-size: clamp(1.8rem, 3.5vw, 3.2rem); color: var(--muted); font-weight: 600; }
+
+    /* ── Empty / loading state ── */
+    .empty-state {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 1rem;
+      color: var(--muted); font-size: 1.2rem;
+    }
+
+    /* Badges */
+    .desig-badge {
+      font-size: .68rem; font-weight: 700; padding: .15em .5em; border-radius: 999px;
+    }
+    .badge-varsity { background: rgba(168,85,247,.2); color: #d8b4fe; border: 1px solid rgba(168,85,247,.4); }
+    .badge-jv      { background: rgba(34,197,94,.2);  color: #4ade80;  border: 1px solid rgba(34,197,94,.4); }
+
+    /* Barbell */
+    .barbell-wrap { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; overflow: hidden; }
+    .barbell-wrap svg { width: 100%; max-height: 120px; overflow: visible; }
+    .barbell-wrap.ondeck svg { max-height: 320px; }
+    .barbell-sub { color: var(--muted); font-size: .78rem; font-weight: 600; margin-top: .35rem; }
+
+    /* School badge */
+    .school-badge {
+      display: inline-block; padding: 2px 10px; border-radius: 6px;
+      font-size: .72rem; font-weight: 700; color: rgba(255,255,255,.7);
+    }
+
+    /* State record star */
+    .record-star { color: #f59e0b; font-size: .85em; margin-left: .2em; }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <div style="display:flex;align-items:center;gap:.75rem;min-width:0;flex:1;overflow:hidden;">
+      <a href="index.html" class="btn-nav"><i class="fas fa-home"></i></a>
+      <div class="meet-name" id="meetName">PowerLift Live</div>
+    </div>
+    <div class="platform-tabs" id="platformTabs"></div>
+    <div style="display:flex;align-items:center;gap:.6rem;flex-shrink:0;">
+      <button id="refreshToggle" onclick="toggleAutoRefresh()" class="ptab">
+        <i class="fas fa-sync-alt me-1"></i>Auto
+      </button>
+      <div class="live-pill"><span class="live-dot"></span>LIVE</div>
+    </div>
+  </div>
+
+  <div class="event-banner" id="eventBanner" style="display:none;"></div>
+
+  <div class="display-body" id="displayBody">
+    <div class="empty-state">
+      <i class="fas fa-weight-hanging" style="font-size:3rem;opacity:.25;"></i>
+      <span>Select a platform above</span>
+    </div>
+  </div>
+
+  <script src="state-records-data.js"></script>
+  <script>
+    // ── State ────────────────────────────────────────────────────────────────
+    let currentPlatformGid = null;
+    let autoRefreshInterval = null;
+    let platformGender = 'M';
+    let stateRecords = null, jvStateRecords = null;
+
+    // ── Plate colors / dims (same as platform.html) ──────────────────────────
+    const PLATE_COLORS = {
+      45:  { bg: '#dc2626', text: '#fff',    border: '#f87171' },
+      35:  { bg: '#1d4ed8', text: '#fff',    border: '#60a5fa' },
+      25:  { bg: '#ca8a04', text: '#fff',    border: '#fde047' },
+      10:  { bg: '#e5e7eb', text: '#111827', border: '#9ca3af' },
+      5:   { bg: '#1f2937', text: '#e5e7eb', border: '#4b5563' },
+      2.5: { bg: '#7c3aed', text: '#fff',    border: '#a78bfa' },
+    };
+    const PLATE_DIMS = {
+      45:  { h: 90, w: 16 }, 35: { h: 76, w: 14 }, 25: { h: 62, w: 12 },
+      10:  { h: 46, w: 9  }, 5:  { h: 36, w: 11 }, 2.5: { h: 28, w: 10 },
+    };
+
+    function calcPlates(totalLbs) {
+      const BAR = 45, PLATES = [45, 35, 25, 10, 5, 2.5];
+      const perSide = Math.round(((totalLbs - BAR) / 2) * 10) / 10;
+      if (perSide < 0) return null;
+      let remaining = perSide;
+      const breakdown = [];
+      for (const p of PLATES) {
+        const count = Math.floor(Math.round(remaining / p * 10) / 10);
+        if (count > 0) { breakdown.push({ plate: p, count }); remaining = Math.round((remaining - count * p) * 10) / 10; }
+      }
+      return { perSide, breakdown };
+    }
+
+    function renderPlates(totalLbs, isOndeck = false) {
+      const result = calcPlates(totalLbs);
+      if (!result) return '';
+      const plates = result.breakdown.flatMap(({ plate, count }) => Array(count).fill(plate));
+      const SCALE = 3.2, BAR_H = 34, BAR_STUB = 80, COLLAR_W = 30, COLLAR_H = 88, END_W = 42, END_H = BAR_H + 12, PAD = 20;
+      const scaledDim = p => ({ w: (PLATE_DIMS[p]?.w || 13) * SCALE, h: (PLATE_DIMS[p]?.h || 46) * SCALE });
+      const maxH = plates.length ? Math.max(COLLAR_H, ...plates.map(p => scaledDim(p).h)) : COLLAR_H;
+      const svgH = maxH + PAD * 2, cy = svgH / 2;
+      const platesW = plates.reduce((s, p) => s + scaledDim(p).w, 0);
+      const svgW = PAD + BAR_STUB + COLLAR_W + platesW + END_W + PAD;
+      const els = [];
+      els.push(`<rect x="0" y="${cy - BAR_H/2}" width="${svgW}" height="${BAR_H}" rx="6" fill="#4b5563"/>`);
+      const collarX = PAD + BAR_STUB;
+      els.push(`<rect x="${collarX}" y="${cy - COLLAR_H/2}" width="${COLLAR_W}" height="${COLLAR_H}" rx="5" fill="#6b7280" stroke="#9ca3af" stroke-width="2.5"/>`);
+      let x = collarX + COLLAR_W;
+      for (const p of plates) {
+        const { w, h } = scaledDim(p);
+        const col = PLATE_COLORS[p] || { bg: '#6b7280', border: '#9ca3af', text: '#fff' };
+        const fs = Math.round(w * 0.72), mid = x + w / 2;
+        els.push(`<rect x="${x}" y="${cy - h/2}" width="${w}" height="${h}" rx="5" fill="${col.bg}" stroke="${col.border}" stroke-width="3"/>`);
+        els.push(`<text x="${mid}" y="${cy}" text-anchor="middle" dominant-baseline="middle" fill="${col.text}" font-size="${fs}" font-weight="900" font-family="Segoe UI,sans-serif" transform="rotate(-90 ${mid} ${cy})">${p}</text>`);
+        x += w;
+      }
+      els.push(`<rect x="${x}" y="${cy - END_H/2}" width="${END_W}" height="${END_H}" rx="6" fill="#374151" stroke="#6b7280" stroke-width="2"/>`);
+      const sub = plates.length === 0 ? 'Just the bar — 45 lbs' : `${result.perSide} lbs each side · 45 lb bar`;
+      return `<div class="barbell-wrap${isOndeck ? ' ondeck' : ''}">
+        <svg viewBox="0 0 ${svgW} ${svgH}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMid meet">${els.join('')}</svg>
+        <div class="barbell-sub">${sub}</div>
+      </div>`;
+    }
+
+    // ── CSV / Athlete parsing (mirrors platform.html) ───────────────────────
+    function parseCSV(csv) {
+      const lines = csv.split('\n'), result = [];
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        const values = [];
+        let current = '', inQuotes = false;
+        for (let j = 0; j < line.length; j++) {
+          const c = line[j];
+          if (c === '"') { inQuotes = !inQuotes; }
+          else if (c === ',' && !inQuotes) { values.push(current.trim().replace(/^"|"$/g,'')); current = ''; }
+          else { current += c; }
+        }
+        values.push(current.trim().replace(/^"|"$/g,''));
+        result.push(values);
+      }
+      return result;
+    }
+
+    function parseAthletes(csvData) {
+      const athletes = [];
+      let headerRow = -1;
+      let nameCol=-1, schoolCol=-1, weightClassCol=-1, bodyWeightCol=-1, designationCol=-1;
+      let squat1Col=-1, squat2Col=-1, squat3Col=-1;
+      let bench1Col=-1, bench2Col=-1, bench3Col=-1;
+      let dead1Col=-1, dead2Col=-1, dead3Col=-1, totalCol=-1;
+
+      for (let i = 0; i < Math.min(15, csvData.length); i++) {
+        const row = csvData[i];
+        for (let j = 0; j < row.length; j++) {
+          const cell = row[j].toLowerCase().trim();
+          if ((cell==='name'||cell==='lifter') && nameCol===-1) nameCol=j;
+          if (cell==='school' && schoolCol===-1) schoolCol=j;
+          if ((cell==='weight class'||cell==='wt class'||cell==='wt. class'||cell==='class'||cell==='wc'||(cell.includes('wt')&&cell.includes('class'))) && weightClassCol===-1) weightClassCol=j;
+          if ((cell==='body weight'||cell==='bw'||cell==='bodyweight') && bodyWeightCol===-1) bodyWeightCol=j;
+          if ((cell==='designation'||cell==='div'||cell==='division'||cell==='desig') && designationCol===-1) designationCol=j;
+          if ((cell==='squat 1'||cell==='sq1'||cell==='squat1') && squat1Col===-1) squat1Col=j;
+          if ((cell==='squat 2'||cell==='sq2'||cell==='squat2') && squat2Col===-1) squat2Col=j;
+          if ((cell==='squat 3'||cell==='sq3'||cell==='squat3') && squat3Col===-1) squat3Col=j;
+          if ((cell==='bench 1'||cell==='bp1'||cell==='bench1') && bench1Col===-1) bench1Col=j;
+          if ((cell==='bench 2'||cell==='bp2'||cell==='bench2') && bench2Col===-1) bench2Col=j;
+          if ((cell==='bench 3'||cell==='bp3'||cell==='bench3') && bench3Col===-1) bench3Col=j;
+          if ((cell==='deadlift 1'||cell==='dead 1'||cell==='dl1'||cell==='dead lift 1') && dead1Col===-1) dead1Col=j;
+          if ((cell==='deadlift 2'||cell==='dead 2'||cell==='dl2'||cell==='dead lift 2') && dead2Col===-1) dead2Col=j;
+          if ((cell==='deadlift 3'||cell==='dead 3'||cell==='dl3'||cell==='dead lift 3') && dead3Col===-1) dead3Col=j;
+          if (cell==='total' && totalCol===-1) totalCol=j;
+        }
+        if (nameCol!==-1 && schoolCol!==-1) { headerRow=i; break; }
+      }
+
+      if (headerRow===-1) {
+        headerRow=7; nameCol=7; schoolCol=5; weightClassCol=3; bodyWeightCol=6;
+        squat1Col=8; squat2Col=9; squat3Col=10;
+        bench1Col=12; bench2Col=13; bench3Col=14;
+        dead1Col=16; dead2Col=17; dead3Col=18; totalCol=20;
+      } else {
+        function scanSub(row) {
+          for (let j=0; j<row.length; j++) {
+            const cell=row[j].toLowerCase().trim();
+            if ((cell==='squat 1'||cell==='sq1'||cell==='sq 1'||cell==='squat1')&&squat1Col===-1) squat1Col=j;
+            if ((cell==='squat 2'||cell==='sq2'||cell==='sq 2'||cell==='squat2')&&squat2Col===-1){squat2Col=j;if(squat1Col===-1&&j>0)squat1Col=j-1;}
+            if ((cell==='squat 3'||cell==='sq3'||cell==='sq 3'||cell==='squat3')&&squat3Col===-1) squat3Col=j;
+            if ((cell==='bench 1'||cell==='bp1'||cell==='bp 1'||cell==='bench1')&&bench1Col===-1) bench1Col=j;
+            if ((cell==='bench 2'||cell==='bp2'||cell==='bp 2'||cell==='bench2')&&bench2Col===-1){bench2Col=j;if(bench1Col===-1&&j>0)bench1Col=j-1;}
+            if ((cell==='bench 3'||cell==='bp3'||cell==='bp 3'||cell==='bench3')&&bench3Col===-1) bench3Col=j;
+            if ((cell==='dead lift 1'||cell==='dl1'||cell==='dl 1'||cell==='deadlift 1'||cell==='dead 1')&&dead1Col===-1) dead1Col=j;
+            if ((cell==='dead lift 2'||cell==='dl2'||cell==='dl 2'||cell==='deadlift 2'||cell==='dead 2')&&dead2Col===-1){dead2Col=j;if(dead1Col===-1&&j>0)dead1Col=j-1;}
+            if ((cell==='dead lift 3'||cell==='dl3'||cell==='dl 3'||cell==='deadlift 3'||cell==='dead 3')&&dead3Col===-1) dead3Col=j;
+          }
+        }
+        if (csvData[headerRow+1]) { scanSub(csvData[headerRow+1]); headerRow++; }
+        if (squat1Col===-1&&bench1Col===-1&&dead1Col===-1&&csvData[headerRow+1]) { scanSub(csvData[headerRow+1]); headerRow++; }
+      }
+
+      for (let i=headerRow+1; i<csvData.length; i++) {
+        const row=csvData[i];
+        if (row.length<=nameCol) continue;
+        const name=row[nameCol]?.trim(); if (!name) continue;
+        const school=schoolCol!==-1?row[schoolCol]?.trim():'';
+        let wcRaw=weightClassCol!==-1?row[weightClassCol]?.trim():'';
+        const rawDesig=designationCol!==-1?(row[designationCol]?.trim()||''):'';
+        const designation=rawDesig.toUpperCase().includes('JV')||(wcRaw&&wcRaw.toUpperCase().includes('JV'))?'JV':'V';
+        let wc=wcRaw; if(wc){const m=wc.match(/(\d+)/);if(m)wc=m[1];}
+        athletes.push({
+          name, school, designation, weightClass:wc,
+          bodyWeight: bodyWeightCol!==-1?parseFloat(row[bodyWeightCol])||0:0,
+          squat1:squat1Col!==-1?row[squat1Col]?.trim():'',
+          squat2:squat2Col!==-1?row[squat2Col]?.trim():'',
+          squat3:squat3Col!==-1?row[squat3Col]?.trim():'',
+          bench1:bench1Col!==-1?row[bench1Col]?.trim():'',
+          bench2:bench2Col!==-1?row[bench2Col]?.trim():'',
+          bench3:bench3Col!==-1?row[bench3Col]?.trim():'',
+          dead1:dead1Col!==-1?row[dead1Col]?.trim():'',
+          dead2:dead2Col!==-1?row[dead2Col]?.trim():'',
+          dead3:dead3Col!==-1?row[dead3Col]?.trim():'',
+          total:totalCol!==-1?parseFloat(row[totalCol])||0:0
+        });
+      }
+      return athletes;
+    }
+
+    function getCurrentAttemptColumn(athletes) {
+      const cols = ['squat1','squat2','squat3','bench1','bench2','bench3','dead1','dead2','dead3'];
+      for (const col of cols) {
+        if (athletes.some(a => { const v=a[col]; if(!v) return false; const l=v.toLowerCase(); return !l.includes('g')&&!l.includes('x'); })) return col;
+      }
+      return null;
+    }
+
+    function hasPending(athlete, col) {
+      if (!col) return false;
+      const v = athlete[col]; if (!v) return false;
+      const l = v.toLowerCase(); return !l.includes('g') && !l.includes('x');
+    }
+
+    function getNextAttemptWeight(athlete, col) {
+      if (!col) return null;
+      const raw = athlete[col]; if (!raw) return null;
+      const w = parseFloat(raw.replace(/[xgXGfF]/g,'').trim());
+      const num = parseInt(col.replace(/[a-z]/gi,''));
+      return isNaN(w) || w <= 0 ? null : { weight: w, num };
+    }
+
+    // ── State records ────────────────────────────────────────────────────────
+    function loadStateRecords() {
+      if (typeof initStateRecordsStorage === 'function') initStateRecordsStorage();
+      const raw = localStorage.getItem(`trplStateRecords2_${platformGender}`);
+      try { return raw ? JSON.parse(raw) : (platformGender === 'M' ? BUILTIN_M_RECORDS : BUILTIN_W_RECORDS); }
+      catch(e) { return platformGender === 'M' ? BUILTIN_M_RECORDS : BUILTIN_W_RECORDS; }
+    }
+    function loadJvStateRecords() {
+      const raw = localStorage.getItem(`trplStateRecords2_JV_${platformGender}`);
+      try { return raw ? JSON.parse(raw) : (platformGender === 'M' ? BUILTIN_JV_M_RECORDS : BUILTIN_JV_W_RECORDS); }
+      catch(e) { return platformGender === 'M' ? BUILTIN_JV_M_RECORDS : BUILTIN_JV_W_RECORDS; }
+    }
+    function isStateRecord(weight, liftKey, wc, desig) {
+      const rec = desig === 'JV' ? jvStateRecords : stateRecords;
+      if (!rec || !wc || !liftKey || !weight) return false;
+      const r = rec[String(wc)];
+      return r && r[liftKey] && weight > r[liftKey].weight;
+    }
+
+    function colToLift(col) {
+      if (!col) return null;
+      if (col.startsWith('squat')) return { name: 'Squat',    icon: 'fas fa-person-falling', color: '#60a5fa', key: 'sq' };
+      if (col.startsWith('bench')) return { name: 'Bench Press', icon: 'fas fa-dumbbell',     color: '#a78bfa', key: 'bp' };
+      if (col.startsWith('dead'))  return { name: 'Deadlift', icon: 'fas fa-weight-hanging',  color: '#10b981', key: 'dl' };
+      return null;
+    }
+
+    // ── Render ───────────────────────────────────────────────────────────────
+    function render(athletes) {
+      const body = document.getElementById('displayBody');
+      const banner = document.getElementById('eventBanner');
+
+      // Sort pending first, by weight asc
+      const currentCol = getCurrentAttemptColumn(athletes);
+      const liftInfo = colToLift(currentCol);
+
+      // Update event banner
+      if (liftInfo) {
+        banner.style.display = 'block';
+        banner.innerHTML = `<i class="${liftInfo.icon}" style="color:${liftInfo.color};margin-right:6px;"></i><span style="color:${liftInfo.color};">${liftInfo.name.toUpperCase()}</span>`;
+      } else {
+        banner.style.display = 'none';
+      }
+
+      const pending = athletes
+        .filter(a => hasPending(a, currentCol))
+        .sort((a, b) => {
+          const aw = parseFloat((a[currentCol]||'').replace(/[xgXGfF]/g,'').trim())||0;
+          const bw = parseFloat((b[currentCol]||'').replace(/[xgXGfF]/g,'').trim())||0;
+          return aw - bw;
+        });
+
+      if (pending.length === 0) {
+        body.innerHTML = `<div class="empty-state">
+          <i class="fas fa-weight-hanging" style="font-size:3rem;opacity:.25;"></i>
+          <span>No active lifts on this platform</span>
+        </div>`;
+        return;
+      }
+
+      const lifter  = pending[0];
+      const onDeck  = pending[1] || null;
+      const lifterNext = getNextAttemptWeight(lifter, currentCol);
+      const onDeckNext = onDeck ? getNextAttemptWeight(onDeck, currentCol) : null;
+
+      const desigBadge = a => {
+        const cls = a.designation === 'JV' ? 'badge-jv' : 'badge-varsity';
+        return `<span class="desig-badge ${cls}">${esc(a.designation === 'JV' ? 'JV' : 'Varsity')}</span>`;
+      };
+
+      const liftLabel = liftInfo ? `${liftInfo.name} · Attempt ${lifterNext ? lifterNext.num : '—'} of 3` : '';
+      const lifterRecord = lifterNext && liftInfo ? isStateRecord(lifterNext.weight, liftInfo.key, lifter.weightClass, lifter.designation) : false;
+      const onDeckRecord = onDeckNext && liftInfo ? isStateRecord(onDeckNext.weight, liftInfo.key, onDeck.weightClass, onDeck.designation) : false;
+
+      body.innerHTML = '';
+
+      // ── Now Lifting ──
+      const liftCard = document.createElement('div');
+      liftCard.className = 'lifting-card';
+      liftCard.innerHTML = `
+        <div>
+          <div class="lifting-label"><i class="fas fa-circle-dot"></i>&nbsp; Now Lifting</div>
+          <div class="lifting-name">${esc(lifter.name)} ${desigBadge(lifter)}</div>
+          <div class="lifting-meta">${esc(lifter.school || '—')} &nbsp;·&nbsp; ${esc(lifter.weightClass || '—')} lb class${lifter.bodyWeight ? ` &nbsp;·&nbsp; BW ${lifter.bodyWeight} lbs` : ''}</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:2rem;flex:1;min-height:0;overflow:hidden;padding:.4rem 0;">
+          <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;">
+            <div class="lifting-weight">
+              ${lifterNext ? lifterNext.weight : '—'}<span class="lifting-weight-unit">lbs</span>${lifterRecord ? '<span class="record-star">⭐</span>' : ''}
+            </div>
+            <div class="lifting-attempt mt-1">${liftLabel}</div>
+          </div>
+          ${lifterNext && lifterNext.weight > 0 ? `<div style="flex:1;min-width:0;display:flex;align-items:center;overflow:hidden;">${renderPlates(lifterNext.weight)}</div>` : ''}
+        </div>
+      `;
+      body.appendChild(liftCard);
+
+      // ── On Deck ──
+      const deckCard = document.createElement('div');
+      deckCard.className = 'ondeck-card';
+      if (onDeck) {
+        const onDeckLiftLabel = liftInfo ? `${liftInfo.name} · Attempt ${onDeckNext ? onDeckNext.num : '—'} of 3` : '';
+        deckCard.innerHTML = `
+          <div style="flex-shrink:0;margin-bottom:.4rem;">
+            <div class="ondeck-label"><i class="fas fa-angles-right me-1"></i>On Deck</div>
+            <div class="ondeck-name">${esc(onDeck.name)} ${desigBadge(onDeck)}</div>
+            <div class="ondeck-meta">${esc(onDeck.school || '—')} &nbsp;·&nbsp; ${esc(onDeck.weightClass || '—')} lb class</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:2rem;flex:1;min-height:0;min-width:0;overflow:hidden;">
+            <div class="ondeck-weight" style="flex-shrink:0;">
+              ${onDeckNext ? onDeckNext.weight : '—'}<span class="ondeck-weight-unit">lbs</span>${onDeckRecord ? '<span class="record-star" style="font-size:.6em;">⭐</span>' : ''}
+            </div>
+            ${onDeckNext && onDeckNext.weight > 0 ? `<div style="flex:1;min-width:0;min-height:0;display:flex;align-items:center;overflow:hidden;">${renderPlates(onDeckNext.weight, true)}</div>` : ''}
+          </div>
+          <div style="font-size:.65rem;color:var(--muted);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-top:.3rem;">${onDeckLiftLabel}</div>
+        `;
+      } else {
+        deckCard.innerHTML = `
+          <div class="ondeck-label"><i class="fas fa-angles-right me-1"></i>On Deck</div>
+          <div class="ondeck-name" style="color:var(--muted);">—</div>
+        `;
+      }
+      body.appendChild(deckCard);
+    }
+
+    function esc(str) {
+      return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // ── Data loading ─────────────────────────────────────────────────────────
+    async function loadData() {
+      if (!currentPlatformGid) return;
+      try {
+        const config = JSON.parse(localStorage.getItem('trplConfig') || '{}');
+        if (!config.spreadsheetId) return;
+        const url = `https://pllv4.streamwaveprod.com/cache/sheet_${config.spreadsheetId}_${currentPlatformGid}.csv`;
+        const res = await fetch(url);
+        if (!res.ok) return;
+        const athletes = parseAthletes(parseCSV(await res.text()));
+        render(athletes);
+      } catch(e) { console.error(e); }
+    }
+
+    function selectPlatform(gid, btn) {
+      currentPlatformGid = gid;
+      localStorage.setItem('psSelectedPlatformGid', gid);
+      document.querySelectorAll('.ptab[data-gid]').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      loadData();
+    }
+
+    function toggleAutoRefresh() {
+      const btn = document.getElementById('refreshToggle');
+      if (autoRefreshInterval) {
+        clearInterval(autoRefreshInterval);
+        autoRefreshInterval = null;
+        btn.innerHTML = '<i class="fas fa-sync-alt me-1"></i>Auto';
+        btn.style.background = '';
+        btn.style.color = '';
+        localStorage.setItem('psAutoRefresh', 'off');
+      } else {
+        const cfg = JSON.parse(localStorage.getItem('trplConfig') || '{}');
+        const ms = (cfg.autoRefreshSeconds || 20) * 1000;
+        autoRefreshInterval = setInterval(loadData, ms);
+        btn.innerHTML = '<i class="fas fa-sync-alt fa-spin me-1"></i>Auto: ON';
+        btn.style.background = 'rgba(34,197,94,.8)';
+        btn.style.color = '#fff';
+        localStorage.setItem('psAutoRefresh', 'on');
+        loadData();
+      }
+    }
+
+    // ── Init ─────────────────────────────────────────────────────────────────
+    window.addEventListener('DOMContentLoaded', function() {
+      if (typeof initStateRecordsStorage === 'function') initStateRecordsStorage();
+      stateRecords    = loadStateRecords();
+      jvStateRecords  = loadJvStateRecords();
+
+      const config = JSON.parse(localStorage.getItem('trplConfig') || '{}');
+
+      // Meet name
+      if (config.meetName) document.getElementById('meetName').textContent = config.meetName;
+
+      // Detect gender for state records
+      if (config.spreadsheetId) {
+        fetch(`https://pllv4.streamwaveprod.com/cache/meta_${config.spreadsheetId}.html`)
+          .then(r => r.text())
+          .then(html => {
+            const m = html.match(/<title>([^<]+)<\/title>/);
+            if (m) {
+              const t = m[1].toLowerCase();
+              platformGender = t.includes('women') || t.includes('female') || t.includes('girls') ? 'W' : 'M';
+              stateRecords   = loadStateRecords();
+              jvStateRecords = loadJvStateRecords();
+            }
+          }).catch(() => {});
+      }
+
+      // Build platform tabs from config
+      const tabs = document.getElementById('platformTabs');
+      const platforms = (config.sheets || []).filter(s => s.name.toLowerCase().startsWith('platform'));
+      platforms.forEach((p, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'ptab' + (i === 0 ? ' active' : '');
+        btn.dataset.gid = p.gid;
+        btn.textContent = p.name;
+        btn.addEventListener('click', () => selectPlatform(p.gid, btn));
+        tabs.appendChild(btn);
+      });
+
+      // Restore saved platform or default to first
+      const savedGid = new URLSearchParams(location.search).get('gid')
+        || localStorage.getItem('psSelectedPlatformGid');
+      const savedBtn = savedGid ? tabs.querySelector(`[data-gid="${savedGid}"]`) : null;
+      if (savedBtn) {
+        tabs.querySelectorAll('.ptab').forEach(b => b.classList.remove('active'));
+        savedBtn.classList.add('active');
+        selectPlatform(savedGid, savedBtn);
+      } else if (platforms.length > 0) {
+        selectPlatform(platforms[0].gid, tabs.querySelector('.ptab'));
+      }
+
+      // Restore auto-refresh
+      if (localStorage.getItem('psAutoRefresh') === 'on') toggleAutoRefresh();
+    });
+  </script>
+</body>
+</html>
