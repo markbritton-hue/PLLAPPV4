@@ -303,15 +303,16 @@
         <div class="row g-3" id="myAthletePanelRow" style="display:none; margin-bottom:0;">
         <div class="col-12 col-sm-6 col-xl-4">
         <div id="myAthletePanel" class="athlete-card my-school" style="display:block; margin-bottom: 0; height:100%;">
-            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:6px;">
+            <div id="myAthletePanelHeader" onclick="toggleMyAthletePanel()" style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:6px; cursor:pointer; user-select:none;">
                 <div style="display:flex; flex-direction:column; gap:4px; min-width:0; flex:1;">
-                    <a id="myAthletePanelName" href="#" style="background:rgba(249,115,22,0.9);color:white;font-size:1rem;font-weight:700;padding:3px 10px;border-radius:8px;white-space:nowrap;align-self:flex-start;text-decoration:none;cursor:pointer;overflow:hidden;text-overflow:ellipsis;max-width:100%;"></a>
+                    <a id="myAthletePanelName" href="#" onclick="event.stopPropagation()" style="background:rgba(249,115,22,0.9);color:white;font-size:1rem;font-weight:700;padding:3px 10px;border-radius:8px;white-space:nowrap;align-self:flex-start;text-decoration:none;cursor:pointer;overflow:hidden;text-overflow:ellipsis;max-width:100%;"></a>
                     <div id="myAthletePanelSubLine" style="display:none; align-items:center; gap:6px; flex-wrap:wrap;"></div>
                 </div>
                 <div style="display:flex; flex-direction:column; gap:4px; align-items:flex-end; flex-shrink:0;">
                     <span id="myAthletePanelRank" style="display:none; padding:3px 10px; border-radius:8px; font-weight:700; font-size:0.8rem; color:white; white-space:nowrap;"></span>
                     <span id="myAthletePanelStatus" style="display:none; padding:3px 10px; border-radius:8px; font-weight:700; font-size:0.8rem; color:white; white-space:nowrap;"></span>
                     <span id="myAthletePanelPosition" style="display:none;"></span>
+                    <span id="myAthletePanelChevron" style="color:rgba(255,255,255,0.5); font-size:0.85rem; margin-top:2px;"><i class="fas fa-chevron-up"></i></span>
                 </div>
             </div>
             <div id="myAthletePanelBody"></div>
@@ -896,6 +897,28 @@
             return v && !v.toLowerCase().includes('g') && !v.toLowerCase().includes('x');
         }
 
+        function toggleMyAthletePanel() {
+            const body = document.getElementById('myAthletePanelBody');
+            const chevron = document.getElementById('myAthletePanelChevron');
+            const isCollapsed = body.style.display === 'none';
+            body.style.display = isCollapsed ? '' : 'none';
+            chevron.innerHTML = isCollapsed ? '<i class="fas fa-chevron-up"></i>' : '<i class="fas fa-chevron-down"></i>';
+            localStorage.setItem('myAthletePanelCollapsed', isCollapsed ? '0' : '1');
+        }
+
+        function applyMyAthletePanelCollapse() {
+            const collapsed = localStorage.getItem('myAthletePanelCollapsed') === '1';
+            const body = document.getElementById('myAthletePanelBody');
+            const chevron = document.getElementById('myAthletePanelChevron');
+            if (collapsed) {
+                body.style.display = 'none';
+                chevron.innerHTML = '<i class="fas fa-chevron-down"></i>';
+            } else {
+                body.style.display = '';
+                chevron.innerHTML = '<i class="fas fa-chevron-up"></i>';
+            }
+        }
+
         function updateMyAthletePanel() {
             const cfg = JSON.parse(localStorage.getItem('trplConfig') || '{}');
             const athleteName = (cfg.athleteName || '').toLowerCase().trim();
@@ -942,6 +965,7 @@
                         style="display:inline-flex; align-items:center; gap:8px; background:rgba(96,165,250,0.15); border:1px solid rgba(96,165,250,0.4); color:#93c5fd; font-size:0.85rem; font-weight:700; padding:7px 16px; border-radius:8px; cursor:pointer; margin-top:4px;">
                         <i class="fas fa-person-running"></i> Go to ${cfg.athleteName}'s weight class (${myWC} lbs)
                     </button>`;
+                applyMyAthletePanelCollapse();
                 return;
             }
 
@@ -1081,6 +1105,7 @@
                         ${gapChip('To 10th', diffTo10th, rank <= 10)}
                     </div>
                 </div>`;
+            applyMyAthletePanelCollapse();
         }
 
         window.addEventListener('DOMContentLoaded', function() {
