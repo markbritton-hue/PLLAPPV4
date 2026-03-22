@@ -1154,6 +1154,13 @@
                 sel.appendChild(o);
             });
 
+            // Restore previously selected platform
+            const savedGid = localStorage.getItem('selectedPlatformGid');
+            if (savedGid && Array.from(sel.options).some(o => o.value === savedGid)) {
+                sel.value = savedGid;
+                loadPlatform();
+            }
+
             fetch(`https://pllv4.streamwaveprod.com/cache/meta_${config.spreadsheetId}.html`)
                 .then(r => r.text())
                 .then(html => {
@@ -1192,6 +1199,7 @@
             o.text = o.dataset.wc ? `${o.dataset.baseName}  ·  ${o.dataset.wc} lb` : o.dataset.baseName;
         });
         currentPlatformGid = sel.value;
+        if (currentPlatformGid) localStorage.setItem('selectedPlatformGid', currentPlatformGid);
         if (!currentPlatformGid) {
             document.getElementById('athleteContainer').innerHTML = '';
             document.getElementById('eventBanner').style.display = 'none';
