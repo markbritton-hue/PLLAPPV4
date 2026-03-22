@@ -489,7 +489,7 @@
         const liftKey = currentCol.startsWith('squat') ? 'sq' : currentCol.startsWith('bench') ? 'bp' : currentCol.startsWith('dead') ? 'dl' : null;
         const isRecordAttempt = liftKey ? isStateRecordAttempt(parseFloat(rawWeight), liftKey, athlete.weightClass, getAthleteRecords(athlete.designation)) : false;
         const prevHtml = prevs.length
-            ? `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:10px;">
+            ? `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px;">
                    <span style="font-size:0.68rem;color:rgba(255,255,255,0.35);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-right:2px;">Prev ${lift ? lift.name : ''}</span>
                    ${prevs.map(attemptChip).join('')}
                </div>`
