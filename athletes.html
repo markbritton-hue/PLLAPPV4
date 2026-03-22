@@ -363,7 +363,9 @@
                 <button id="refreshToggle" onclick="toggleAutoRefresh()" class="btn" style="background: rgba(96, 165, 250, 0.8); border: none; color: white; cursor: pointer; white-space: nowrap; flex-shrink: 0;">
                     <i class="fas fa-sync-alt me-2"></i>Auto-Refresh: OFF
                 </button>
-                
+                <button id="sortToggle" onclick="toggleSort()" class="btn" style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(96, 165, 250, 0.2); color: white; cursor: pointer; white-space: nowrap; flex-shrink: 0;">
+                    <i class="fas fa-sort-alpha-down me-2"></i>Sort: Name
+                </button>
             </div>
 
             <!-- School Name Header -->
@@ -402,6 +404,27 @@
         let athleteData = [];
         let autoRefreshInterval = null;
         let platformMap = {}; // name (lowercase) -> platform name
+
+        function toggleSort() {
+            const current = localStorage.getItem('athletesSortMode') || 'name';
+            const next = current === 'name' ? 'weightclass' : 'name';
+            localStorage.setItem('athletesSortMode', next);
+            const btn = document.getElementById('sortToggle');
+            if (next === 'weightclass') {
+                btn.innerHTML = '<i class="fas fa-weight-hanging me-2"></i>Sort: Weight Class';
+            } else {
+                btn.innerHTML = '<i class="fas fa-sort-alpha-down me-2"></i>Sort: Name';
+            }
+            renderAthletes();
+        }
+
+        function applySortToggleLabel() {
+            const mode = localStorage.getItem('athletesSortMode') || 'name';
+            const btn = document.getElementById('sortToggle');
+            if (btn && mode === 'weightclass') {
+                btn.innerHTML = '<i class="fas fa-weight-hanging me-2"></i>Sort: Weight Class';
+            }
+        }
 
         function toggleAutoRefresh() {
             const btn = document.getElementById('refreshToggle');
@@ -891,11 +914,21 @@
             const container = document.getElementById('weightClassContainer');
             container.innerHTML = '';
 
-            // Sort by first name alphabetically
+            // Sort by name or weight class based on toggle
+            const sortByWC = localStorage.getItem('athletesSortMode') === 'weightclass';
             const sorted = [...athleteData].sort((a, b) => {
-                const aFirst = (a.name || '').trim().split(/\s+/)[0].toLowerCase();
-                const bFirst = (b.name || '').trim().split(/\s+/)[0].toLowerCase();
-                return aFirst.localeCompare(bFirst);
+                if (sortByWC) {
+                    const wcA = parseFloat(a.weightClass) || 0;
+                    const wcB = parseFloat(b.weightClass) || 0;
+                    if (wcA !== wcB) return wcA - wcB;
+                    const aFirst = (a.name || '').trim().split(/\s+/)[0].toLowerCase();
+                    const bFirst = (b.name || '').trim().split(/\s+/)[0].toLowerCase();
+                    return aFirst.localeCompare(bFirst);
+                } else {
+                    const aFirst = (a.name || '').trim().split(/\s+/)[0].toLowerCase();
+                    const bFirst = (b.name || '').trim().split(/\s+/)[0].toLowerCase();
+                    return aFirst.localeCompare(bFirst);
+                }
             });
 
             const section = document.createElement('div');
@@ -1074,6 +1107,7 @@
 
             // Update school name display
             updateSchoolNameDisplay();
+            applySortToggleLabel();
 
             // Restore auto-refresh state (toggleAutoRefresh will trigger initial load if ON)
             if (localStorage.getItem('athletesAutoRefresh') === 'on') {
