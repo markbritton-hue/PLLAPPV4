@@ -500,22 +500,24 @@
         return `<div class="card-lifting">
             <div style="display:block;width:100%;text-align:center;background:#ef4444;border-radius:8px;padding:4px 0;font-size:0.85rem;font-weight:900;letter-spacing:3px;color:white;margin-bottom:6px;">L I F T I N G</div>
 
-            <div style="display:flex;align-items:center;gap:10px;">
-                <div style="flex:1;min-width:0;">
-                    <div style="font-size:1.75rem;font-weight:900;color:white;line-height:1.1;">${athlete.name}</div>
-                    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:2px;">
-                        <span class="designation-badge ${athlete.designation === 'JV' ? 'jv' : 'varsity'}">${athlete.designation === 'JV' ? 'JV' : 'Varsity'}</span>
-                        ${athlete.weightClass ? `<span style="color:rgba(255,255,255,0.5);font-size:0.78rem;font-weight:600;">${athlete.weightClass} lb class</span>` : ''}
-                        ${athlete.bodyWeight ? `<span style="color:rgba(255,255,255,0.4);font-size:0.78rem;">BW ${athlete.bodyWeight} lbs</span>` : ''}
-                    </div>
-                    ${athlete.school ? `<span style="background:${schoolBg};border:1px solid ${schoolBorder};padding:2px 10px;border-radius:6px;font-size:0.72rem;font-weight:700;color:rgba(255,255,255,0.75);margin-top:2px;display:inline-block;">${athlete.school}</span>` : ''}
+            <div style="margin-bottom:4px;">
+                <div style="font-size:1.75rem;font-weight:900;color:white;line-height:1.1;">${athlete.name}</div>
+                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:2px;">
+                    <span class="designation-badge ${athlete.designation === 'JV' ? 'jv' : 'varsity'}">${athlete.designation === 'JV' ? 'JV' : 'Varsity'}</span>
+                    ${athlete.weightClass ? `<span style="color:rgba(255,255,255,0.5);font-size:0.78rem;font-weight:600;">${athlete.weightClass} lb class</span>` : ''}
+                    ${athlete.bodyWeight ? `<span style="color:rgba(255,255,255,0.4);font-size:0.78rem;">BW ${athlete.bodyWeight} lbs</span>` : ''}
                 </div>
-                <div style="flex-shrink:0;display:flex;align-items:center;">
-                    <img src="${currentCol.startsWith('bench') ? 'bench500-trans.gif' : currentCol.startsWith('dead') ? 'deadlift500-trans.gif' : 'backsquat500-trans.gif'}" alt="lift" style="height:100px;width:auto;object-fit:contain;display:block;">
-                </div>
+                ${athlete.school ? `<span style="background:${schoolBg};border:1px solid ${schoolBorder};padding:2px 10px;border-radius:6px;font-size:0.72rem;font-weight:700;color:rgba(255,255,255,0.75);margin-top:2px;display:inline-block;">${athlete.school}</span>` : ''}
             </div>
 
-            ${parseFloat(rawWeight) > 0 ? renderBarbellSvg(parseFloat(rawWeight)) : ''}
+            <div style="display:flex;align-items:center;gap:8px;">
+                <div style="flex:1;min-width:0;">
+                    ${parseFloat(rawWeight) > 0 ? renderBarbellSvg(parseFloat(rawWeight)) : ''}
+                </div>
+                <div style="flex-shrink:0;">
+                    <img src="${currentCol.startsWith('bench') ? 'bench500-trans.gif' : currentCol.startsWith('dead') ? 'deadlift500-trans.gif' : 'backsquat500-trans.gif'}" alt="lift" style="height:90px;width:auto;object-fit:contain;display:block;">
+                </div>
+            </div>
 
             <div style="background:${isRecordAttempt ? 'rgba(245,158,11,0.15)' : 'rgba(239,68,68,0.12)'};border:1px solid ${isRecordAttempt ? 'rgba(245,158,11,0.5)' : 'rgba(239,68,68,0.3)'};border-radius:8px;padding:4px 10px;text-align:center;margin-top:6px;">
                 <div style="font-size:0.6rem;font-weight:700;color:white;text-transform:uppercase;letter-spacing:1px;margin-bottom:1px;">Current Attempt${isRecordAttempt ? ' <span style="color:#f59e0b;">⭐ State Record Attempt</span>' : ''}</div>
