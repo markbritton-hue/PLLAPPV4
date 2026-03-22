@@ -300,7 +300,9 @@
         </div>
 
         <!-- My Athlete Panel -->
-        <div id="myAthletePanel" class="athlete-card my-school" style="display:none; margin-bottom: 0;">
+        <div class="row g-3" id="myAthletePanelRow" style="display:none; margin-bottom:0;">
+        <div class="col-12 col-sm-6 col-xl-4">
+        <div id="myAthletePanel" class="athlete-card my-school" style="display:block; margin-bottom: 0; height:100%;">
             <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:6px;">
                 <div style="display:flex; flex-direction:column; gap:4px; min-width:0; flex:1;">
                     <a id="myAthletePanelName" href="#" style="background:rgba(249,115,22,0.9);color:white;font-size:1rem;font-weight:700;padding:3px 10px;border-radius:8px;white-space:nowrap;align-self:flex-start;text-decoration:none;cursor:pointer;overflow:hidden;text-overflow:ellipsis;max-width:100%;"></a>
@@ -313,6 +315,8 @@
                 </div>
             </div>
             <div id="myAthletePanelBody"></div>
+        </div>
+        </div>
         </div>
         <hr id="myAthleteSeparator" style="display:none; border:none; border-top:3px solid rgba(255,255,255,0.3); margin:14px 0;">
 
@@ -896,12 +900,13 @@
             const cfg = JSON.parse(localStorage.getItem('trplConfig') || '{}');
             const athleteName = (cfg.athleteName || '').toLowerCase().trim();
             const panel = document.getElementById('myAthletePanel');
+            const panelRow = document.getElementById('myAthletePanelRow');
             const sep   = document.getElementById('myAthleteSeparator');
 
-            if (!athleteName) { panel.style.display = 'none'; sep.style.display = 'none'; return; }
+            if (!athleteName) { panelRow.style.display = 'none'; sep.style.display = 'none'; return; }
 
             document.getElementById('myAthletePanelName').innerHTML = `<i class="fas fa-person-running me-1"></i>${cfg.athleteName}`;
-            panel.style.display = 'block';
+            panelRow.style.display = 'flex';
             sep.style.display = 'block';
 
             if (Object.keys(allGrouped).length === 0) return;
