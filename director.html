@@ -85,6 +85,14 @@
             border: 1px solid rgba(248,113,113,0.3); border-radius: 8px; display: none;
         }
         .note-text { color: rgba(255,255,255,0.4); font-size: 0.78rem; margin-top: 5px; }
+        .check-row {
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(15,23,42,0.4); border: 1px solid rgba(96,165,250,0.15);
+            border-radius: 8px; padding: 10px 14px; cursor: pointer;
+        }
+        .check-row:hover { border-color: rgba(96,165,250,0.35); }
+        .check-row input[type="checkbox"] { width: 17px; height: 17px; accent-color: #60a5fa; cursor: pointer; flex-shrink: 0; }
+        .check-row label { color: rgba(255,255,255,0.85); font-size: 0.88rem; font-weight: 600; cursor: pointer; margin: 0; }
         .divider { border-color: rgba(96,165,250,0.12); margin: 18px 0; }
         .btn-back {
             display: inline-flex; align-items: center; gap: 8px;
@@ -192,6 +200,16 @@
                 <input type="text" class="form-control" id="fSheetUrl" placeholder="https://docs.google.com/spreadsheets/d/...">
                 <div class="note-text"><i class="fas fa-info-circle me-1"></i>Paste the full shareable link.</div>
             </div>
+            <div class="mb-3 d-flex flex-column gap-2">
+                <div class="check-row" onclick="document.getElementById('fStateMeet').click()">
+                    <input type="checkbox" id="fStateMeet" onclick="event.stopPropagation()">
+                    <label for="fStateMeet"><i class="fas fa-trophy me-2" style="color:#f59e0b;"></i>This is a State Meet</label>
+                </div>
+                <div class="check-row" onclick="document.getElementById('fShowTeamResults').click()">
+                    <input type="checkbox" id="fShowTeamResults" onclick="event.stopPropagation()">
+                    <label for="fShowTeamResults"><i class="fas fa-users me-2" style="color:#60a5fa;"></i>Show Team Results</label>
+                </div>
+            </div>
             <div class="error-msg" id="formError"></div>
             <div style="display:flex;gap:10px;margin-top:4px;">
                 <button class="btn-primary-grad" id="saveBtn" onclick="saveEvent()">
@@ -284,6 +302,8 @@
                     <div class="event-row-meta">
                         ${d ? `<span><i class="fas fa-calendar me-1" style="color:#60a5fa;"></i>${d}${t ? ' · ' + t : ''}</span>` : ''}
                         ${ev.location ? `<span><i class="fas fa-map-marker-alt me-1" style="color:#60a5fa;"></i>${ev.location}</span>` : ''}
+                        ${ev.isStateMeet ? `<span style="background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.4);color:#fbbf24;padding:1px 8px;border-radius:12px;font-size:0.72rem;font-weight:700;"><i class="fas fa-trophy me-1"></i>State Meet</span>` : ''}
+                        ${ev.showTeamResults ? `<span style="background:rgba(96,165,250,0.15);border:1px solid rgba(96,165,250,0.35);color:#93c5fd;padding:1px 8px;border-radius:12px;font-size:0.72rem;font-weight:700;"><i class="fas fa-users me-1"></i>Team Results</span>` : ''}
                     </div>
                 </div>
                 <div class="event-row-actions">
@@ -313,6 +333,8 @@
         document.getElementById('fTime').value     = ev ? ev.time : '';
         document.getElementById('fLocation').value = ev ? ev.location : '';
         document.getElementById('fSheetUrl').value = ev ? ev.sheetUrl : '';
+        document.getElementById('fStateMeet').checked = ev ? !!ev.isStateMeet : false;
+        document.getElementById('fShowTeamResults').checked = ev ? !!ev.showTeamResults : false;
         document.getElementById('saveText').textContent = ev ? 'Save Changes' : 'Save Event';
         document.getElementById('formCard').scrollIntoView({ behavior: 'smooth' });
     }
@@ -332,7 +354,9 @@
         const date     = document.getElementById('fDate').value;
         const time     = document.getElementById('fTime').value;
         const location = document.getElementById('fLocation').value.trim();
-        const sheetUrl = document.getElementById('fSheetUrl').value.trim();
+        const sheetUrl        = document.getElementById('fSheetUrl').value.trim();
+        const isStateMeet     = document.getElementById('fStateMeet').checked;
+        const showTeamResults = document.getElementById('fShowTeamResults').checked;
 
         if (!name || !date || !time || !location || !sheetUrl) {
             showFormError('Please fill in all fields.');
@@ -343,7 +367,7 @@
 
         setSaving(true);
         try {
-            const data = { name, date, time, location, sheetUrl, spreadsheetId: match[1] };
+            const data = { name, date, time, location, sheetUrl, spreadsheetId: match[1], isStateMeet, showTeamResults };
             if (docId) {
                 await db.collection('events').doc(docId).update(data);
                 showToast('Event updated!');
