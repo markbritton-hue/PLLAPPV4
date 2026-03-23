@@ -341,6 +341,28 @@
         });
     }
 
+    function triggerInTheHoleAlert() {
+        if (navigator.vibrate) navigator.vibrate([100,60,100,60,250]);
+        if (!liftingAudioCtx) return;
+        const ctx = liftingAudioCtx;
+        const tones = [
+            { freq: 520, start: 0,    dur: 0.22 },
+            { freq: 520, start: 0.32, dur: 0.22 },
+            { freq: 580, start: 0.64, dur: 0.34 }
+        ];
+        tones.forEach(({ freq, start, dur }) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.type = 'sine'; osc.frequency.value = freq;
+            const t = ctx.currentTime + start;
+            gain.gain.setValueAtTime(0, t);
+            gain.gain.linearRampToValueAtTime(0.28, t + 0.01);
+            gain.gain.linearRampToValueAtTime(0, t + dur);
+            osc.start(t); osc.stop(t + dur + 0.05);
+        });
+    }
+
     function setVoiceActive(active) {
         const icon = document.getElementById('voiceBtnIcon');
         const btn  = document.getElementById('voiceBtn');
@@ -919,7 +941,7 @@
                     return aw - bw;
                 });
             const idx = queue.findIndex(a => a.name.toLowerCase().trim() === announcementName);
-            let newStatus = idx === 0 ? 'lifting' : idx === 1 ? 'on-deck' : null;
+            let newStatus = idx === 0 ? 'lifting' : idx === 1 ? 'on-deck' : idx === 2 ? 'in-the-hole' : null;
             if (newStatus && newStatus !== platformLastAnnouncedStatus) {
                 if (newStatus === 'lifting' && justFinishedAthlete) {
                     // hold — wait for just-finished card to clear
@@ -929,10 +951,13 @@
                     const displayName = queue[idx].name;
                     const text = newStatus === 'lifting'
                         ? `${displayName} is now lifting!`
-                        : `${displayName} is on deck! Get ready!`;
+                        : newStatus === 'on-deck'
+                        ? `${displayName} is on deck! Get ready!`
+                        : `${displayName} is in the hole! Start warming up!`;
                     if (soundAlertsOn) {
                         if (newStatus === 'lifting') triggerLiftingAlert();
-                        else triggerOnDeckAlert();
+                        else if (newStatus === 'on-deck') triggerOnDeckAlert();
+                        else triggerInTheHoleAlert();
                     }
                     if (announcementsOn) speakAnnouncement(text, prevStatus);
                 }
