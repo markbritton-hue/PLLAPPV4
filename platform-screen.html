@@ -133,19 +133,19 @@
 
     /* ── On Deck card ── */
     .ondeck-card {
-      background: var(--navy2); border: 2px solid rgba(34,197,94,.35);
-      border-left: 5px solid #22c55e;
+      background: var(--navy2); border: 2px solid rgba(234,179,8,.35);
+      border-left: 5px solid #eab308;
       border-radius: 14px; padding: .75rem 1.2rem; flex: 2; min-height: 0;
       display: flex; flex-direction: column; overflow: hidden;
     }
     .ondeck-label {
       font-size: .72rem; font-weight: 900; letter-spacing: .15em; text-transform: uppercase;
-      color: #4ade80; margin-bottom: .15rem;
+      color: #facc15; margin-bottom: .15rem;
     }
     .ondeck-name { font-size: clamp(1.8rem, 4.5vw, 4.5rem); font-weight: 800; }
     .ondeck-meta { font-size: clamp(.8rem, 1.4vw, 1rem); color: var(--muted); }
     .ondeck-weight {
-      font-size: clamp(5rem, 13vw, 13rem); font-weight: 900; color: #4ade80;
+      font-size: clamp(5rem, 13vw, 13rem); font-weight: 900; color: #facc15;
       display: flex; align-items: baseline; gap: .2em; flex-shrink: 0; line-height: 1;
     }
     .ondeck-weight-unit { font-size: clamp(1.8rem, 3.5vw, 3.2rem); color: var(--muted); font-weight: 600; }
@@ -471,7 +471,7 @@
           const pos = i + 3;
           const label = pos === 3 ? 'In the Hole' : `#${pos}`;
           const labelStyle = pos === 3
-            ? 'background:rgba(245,158,11,.15);border-color:rgba(245,158,11,.3);color:#fbbf24;'
+            ? 'background:rgba(34,197,94,.15);border-color:rgba(34,197,94,.3);color:#4ade80;'
             : '';
           return `<div class="queue-row">
             <span class="queue-pos" style="${labelStyle}">${esc(label)}</span>
