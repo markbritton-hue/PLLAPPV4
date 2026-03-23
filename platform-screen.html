@@ -467,12 +467,18 @@
       const nextUp = pending.slice(2);
       if (nextUp.length > 0) {
         sidebarCol.style.display = 'flex';
-        sidebarList.innerHTML = nextUp.map((a, i) => `
-          <div class="queue-row">
-            <span class="queue-pos">#${i + 3}</span>
+        sidebarList.innerHTML = nextUp.map((a, i) => {
+          const pos = i + 3;
+          const label = pos === 3 ? 'In the Hole' : `#${pos}`;
+          const labelStyle = pos === 3
+            ? 'background:rgba(245,158,11,.15);border-color:rgba(245,158,11,.3);color:#fbbf24;'
+            : '';
+          return `<div class="queue-row">
+            <span class="queue-pos" style="${labelStyle}">${esc(label)}</span>
             <span class="queue-name">${esc(a.name)}</span>
             <span class="queue-wc">${esc(a.weightClass || '—')} lb</span>
-          </div>`).join('');
+          </div>`;
+        }).join('');
       } else {
         sidebarCol.style.display = 'none';
         sidebarList.innerHTML = '';
