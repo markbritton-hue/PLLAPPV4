@@ -218,6 +218,7 @@
     let autoRefreshInterval = null;
     let platformGender = 'M';
     let stateRecords = null, jvStateRecords = null;
+    let psIsStateMeet = false;
 
     // ── Plate colors / dims (same as platform.html) ──────────────────────────
     const PLATE_COLORS = {
@@ -413,6 +414,7 @@
       catch(e) { return platformGender === 'M' ? BUILTIN_JV_M_RECORDS : BUILTIN_JV_W_RECORDS; }
     }
     function isStateRecord(weight, liftKey, wc, desig) {
+      if (!psIsStateMeet) return false;
       const rec = desig === 'JV' ? jvStateRecords : stateRecords;
       if (!rec || !wc || !liftKey || !weight) return false;
       const r = rec[String(wc)];
@@ -559,6 +561,7 @@
       try {
         const config = JSON.parse(localStorage.getItem('trplConfig') || '{}');
         if (!config.spreadsheetId) return;
+        psIsStateMeet = !!config.isStateMeet;
         const url = `https://pllv4.streamwaveprod.com/cache/sheet_${config.spreadsheetId}_${currentPlatformGid}.csv`;
         const res = await fetch(url);
         if (!res.ok) return;

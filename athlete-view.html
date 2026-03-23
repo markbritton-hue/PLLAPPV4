@@ -348,6 +348,7 @@
         let athleteViewGender = 'M';
         let athleteViewRecords = null;
         let athleteViewJvRecords = null;
+        let athleteViewIsStateMeet = false;
 
         function getAthleteViewRecords() {
             initStateRecordsStorage();
@@ -377,7 +378,7 @@
         }
 
         function renderStateRecordLegend(wc) {
-            if (!wc) return '';
+            if (!wc || !athleteViewIsStateMeet) return '';
             const isOpen = localStorage.getItem('athleteViewStateRecordsOpen') === 'true';
             const bodyDisplay = isOpen ? 'block' : 'none';
             const chevronRotate = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
@@ -485,6 +486,7 @@
             }
 
             const config = JSON.parse(configStr);
+            athleteViewIsStateMeet = !!config.isStateMeet;
             const sheets = config.sheets || [];
 
             // Detect gender for state records
@@ -713,7 +715,7 @@
             const numWeight = parseFloat(value) || 0;
             const _avRec = getAVAthleteRecords(designation);
             const rec = _avRec?.[String(wc)];
-            const isRecord = rec && liftKey && rec[liftKey] && numWeight > rec[liftKey].weight;
+            const isRecord = athleteViewIsStateMeet && rec && liftKey && rec[liftKey] && numWeight > rec[liftKey].weight;
             let bg, border, textColor;
             if (isFailed) {
                 bg = '#ef4444'; border = '#dc2626'; textColor = 'white';

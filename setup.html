@@ -985,6 +985,13 @@
                 return;
             }
 
+            let isStateMeet = false, showTeamResults = false;
+            try {
+                const meetInfo = JSON.parse(localStorage.getItem('selectedMeetInfo') || '{}');
+                isStateMeet = !!meetInfo.isStateMeet;
+                showTeamResults = !!meetInfo.showTeamResults;
+            } catch(e) {}
+
             const config = {
                 schoolName,
                 athleteName,
@@ -994,6 +1001,8 @@
                 spreadsheetId,
                 spreadsheetUrl,
                 sheets,
+                isStateMeet,
+                showTeamResults,
                 lastUpdated: new Date().toISOString()
             };
 
@@ -1396,7 +1405,7 @@
         grid.innerHTML = events.map(ev => {
             const d = ev.date ? new Date(ev.date + 'T12:00:00').toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric', year:'numeric'}) : '';
             const t = ev.time ? formatTime(ev.time) : '';
-            const evMeta = encodeURIComponent(JSON.stringify({ name: ev.name || '', date: ev.date || '', time: ev.time || '', location: ev.location || '' }));
+            const evMeta = encodeURIComponent(JSON.stringify({ name: ev.name || '', date: ev.date || '', time: ev.time || '', location: ev.location || '', isStateMeet: !!ev.isStateMeet, showTeamResults: !!ev.showTeamResults }));
             return `<div data-meet-url="${ev.sheetUrl}" onclick="selectEvent('${ev.sheetUrl}', '${evMeta}')" style="position:relative;background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.3);border-radius:10px;padding:14px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='#a78bfa';this.style.background='rgba(167,139,250,0.2)'" onmouseout="highlightSelectedCard()">
                 <div class="meet-check-badge" style="display:none;position:absolute;top:10px;right:10px;background:#10b981;color:white;border-radius:20px;padding:2px 8px;font-size:0.75rem;font-weight:700;">✓ Selected</div>
                 <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">

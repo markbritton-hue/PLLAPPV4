@@ -270,6 +270,7 @@
     let removeCardTimer = null;
     let platformStateRecords = null;
     let platformJvStateRecords = null;
+    let platformIsStateMeet = false;
     let myAthletePanelOpen = false;
     let platformSpeechPrimed = false;
     let platformPendingAnnouncement = null;
@@ -667,6 +668,7 @@
         return designation === 'JV' ? platformJvStateRecords : platformStateRecords;
     }
     function isStateRecordAttempt(weight, liftKey, weightClass, records) {
+        if (!platformIsStateMeet) return false;
         if (!records || !weightClass || !liftKey || !weight) return false;
         const rec = records[String(weightClass)];
         if (!rec || !rec[liftKey]) return false;
@@ -838,7 +840,11 @@
         const configStr = localStorage.getItem('trplConfig');
         let configuredSchool = '';
         if (configStr) {
-            try { configuredSchool = (JSON.parse(configStr).schoolName || '').toLowerCase(); } catch(e) {}
+            try {
+                const _cfg = JSON.parse(configStr);
+                configuredSchool = (_cfg.schoolName || '').toLowerCase();
+                platformIsStateMeet = !!_cfg.isStateMeet;
+            } catch(e) {}
         }
 
         athletes.forEach((a, i) => { a.sheetOrder = i; });

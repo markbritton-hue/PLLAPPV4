@@ -653,6 +653,12 @@
         }
 
         const config = JSON.parse(configStr);
+
+        if (!config.isStateMeet) {
+            container.innerHTML = `<div class="no-records-msg"><i class="fas fa-trophy" style="color:#6b7280;font-size:2rem;"></i><p style="margin-top:12px;color:rgba(255,255,255,0.5);">State record tracking is not enabled for this meet.<br><span style="font-size:0.85rem;">Enable "Is this a State Meet" in the Director Portal to track records.</span></p></div>`;
+            return;
+        }
+
         const platforms = (config.sheets||[]).filter(s => s.name.toLowerCase().startsWith('platform'));
 
         if (platforms.length === 0) {

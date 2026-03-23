@@ -283,6 +283,7 @@
         let coachGender = 'M';
         let coachStateRecords = {};
         let coachJvStateRecords = {};
+        let coachIsStateMeet = false;
         let announcedStatuses = {}; // { athleteNameLower: lastStatus }
         let speechPrimed = false;
         let sessionPrimed = false; // true only after user taps voice btn this session (iOS requires gesture)
@@ -403,7 +404,7 @@
                 if (good) {
                     const num = parseFloat(val.replace(/[xgXG]/gi, '').trim());
                     const _coachRec = athlete.designation === 'JV' ? coachJvStateRecords : coachStateRecords;
-                    const isRecord = isStateRecordAttempt(num, liftKey, athlete.weightClass, _coachRec);
+                    const isRecord = coachIsStateMeet && isStateRecordAttempt(num, liftKey, athlete.weightClass, _coachRec);
                     return isRecord ? 'record' : 'good';
                 }
                 return 'failed';
@@ -529,6 +530,7 @@
             try {
                 const config = JSON.parse(configStr);
                 schoolName = config.schoolName || '';
+                coachIsStateMeet = !!config.isStateMeet;
                 const schoolEl = document.getElementById('coachesSchoolName');
                 if (schoolEl && schoolName) schoolEl.textContent = schoolName;
 
@@ -878,7 +880,7 @@
             const color = failed ? 'white' : good ? '#10b981' : 'white';
             const icon = failed ? ' ✗' : good ? ' ✓' : '';
             const _rec = designation === 'JV' ? coachJvStateRecords : coachStateRecords;
-            const isRecord = !failed && liftKey && weightClass && isStateRecordAttempt(parseFloat(num), liftKey, weightClass, _rec);
+            const isRecord = coachIsStateMeet && !failed && liftKey && weightClass && isStateRecordAttempt(parseFloat(num), liftKey, weightClass, _rec);
             const star = isRecord ? `<i class="fas fa-star" style="color:#ef4444; font-size:0.7rem; margin-left:2px;" title="State record attempt"></i>` : '';
             return `<div class="attempt-cell" style="background:${bg}; border:1px solid ${border}; color:${color};">${num}${icon}${star}</div>`;
         }
@@ -902,7 +904,7 @@
             if (!chip) return '<span style="color:rgba(255,255,255,0.25);font-size:0.95rem;">—</span>';
             const numW = parseFloat((val || '').replace(/[xgXGfF]/g, ''));
             const rec = designation === 'JV' ? coachJvStateRecords : coachStateRecords;
-            const isSR = lk ? isStateRecordAttempt(numW, lk, weightClass, rec) : false;
+            const isSR = lk && coachIsStateMeet ? isStateRecordAttempt(numW, lk, weightClass, rec) : false;
             return chip + (isSR ? '<span style="color:#f59e0b;font-size:0.75rem;margin-left:2px;">⭐</span>' : '');
         }
 
@@ -937,7 +939,7 @@
                         const colLiftKey = athlete.currentColumn.startsWith('squat') ? 'sq'
                             : athlete.currentColumn.startsWith('bench') ? 'bp' : 'dl';
                         const _cRec = athlete.designation === 'JV' ? coachJvStateRecords : coachStateRecords;
-                        isRecordAttempt = !!(athlete.weightClass && isStateRecordAttempt(parseFloat(weight), colLiftKey, athlete.weightClass, _cRec));
+                        isRecordAttempt = !!(coachIsStateMeet && athlete.weightClass && isStateRecordAttempt(parseFloat(weight), colLiftKey, athlete.weightClass, _cRec));
                     }
                 }
 
