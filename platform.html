@@ -50,6 +50,14 @@
             gap: 10px;
             flex-wrap: wrap;
         }
+        .card-in-the-hole {
+            background: rgba(16,185,129,0.07);
+            border: 1px solid rgba(16,185,129,0.25);
+            border-left: 4px solid #10b981;
+            border-radius: 10px;
+            padding: 11px 14px;
+            margin-bottom: 8px;
+        }
 
         .status-pill {
             display: inline-block;
@@ -600,10 +608,10 @@
             : '';
 
         const rowHighlight = isMySchool ? 'background:rgba(249,115,22,0.1);border-color:rgba(249,115,22,0.4);border-left-color:#f97316;' : '';
-        return `<div class="card-position" style="flex-direction:column;align-items:stretch;cursor:pointer;${rowHighlight}" onclick="toggleExpand('${id}')">
+        return `<div class="card-position${pos === 3 ? ' card-in-the-hole' : ''}" style="flex-direction:column;align-items:stretch;cursor:pointer;${rowHighlight}" onclick="toggleExpand('${id}')">
             <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
                 <span style="${pos === 3 ? 'background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.35);color:#4ade80;' : 'background:rgba(96,165,250,0.15);border:1px solid rgba(96,165,250,0.25);color:#93c5fd;'}font-size:0.75rem;font-weight:800;padding:2px 8px;border-radius:6px;flex-shrink:0;">${pos === 3 ? 'In the Hole' : '#' + pos}</span>
-                <span style="font-size:0.9rem;font-weight:700;color:white;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${athlete.name}</span>
+                <span style="font-size:${pos === 3 ? '1rem' : '0.9rem'};font-weight:700;color:white;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${athlete.name}</span>
                 ${lift ? `<span style="display:inline-flex;align-items:center;gap:4px;color:${lift.color};font-size:0.72rem;font-weight:700;flex-shrink:0;">
                     <i class="${lift.icon}" style="font-size:0.7rem;"></i>${lift.name}
                 </span>` : ''}
