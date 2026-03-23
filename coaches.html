@@ -66,6 +66,12 @@
             border-left-color: #10b981;
         }
 
+        .athlete-card.queued {
+            background: rgba(15, 23, 42, 0.75);
+            border-color: rgba(255,255,255,0.07);
+            border-left-color: #374151;
+        }
+
         .athlete-card.done {
             background: rgba(30, 41, 59, 0.5);
             border-color: rgba(255,255,255,0.12);
@@ -173,6 +179,11 @@
         .status-badge.in-the-hole {
             background: #10b981;
             box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .status-badge.queued {
+            background: #374151;
+            box-shadow: none;
         }
 
         .status-badge.done {
@@ -913,6 +924,8 @@
                     status = 'ON DECK'; statusClass = 'on-deck';
                 } else if (overallPosition === 3) {
                     status = 'IN THE HOLE'; statusClass = 'in-the-hole';
+                } else if (overallPosition > 3) {
+                    status = `#${overallPosition}`; statusClass = 'queued';
                 }
 
                 let attemptWeight = '';
@@ -941,7 +954,6 @@
                                 </div>
                                 <div style="display:flex; flex-direction:column; align-items:flex-end; gap:2px; flex-shrink:0;">
                                     <div style="display:flex; align-items:center; gap:6px;">
-                                        ${athlete.hasPending && overallPosition > 2 ? `<span style="color:white; font-size:1.15rem; font-weight:800; white-space:nowrap;">Pos ${overallPosition}</span>` : ''}
                                         ${status ? `<div class="status-badge ${statusClass}">${status}</div>` : ''}
                                         <i class="fas fa-chevron-down expand-arrow" id="arrow-${detailId}"></i>
                                     </div>
