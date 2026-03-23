@@ -55,6 +55,12 @@
         }
 
         .athlete-card.on-deck {
+            background: rgba(234, 179, 8, 0.18);
+            border-color: rgba(234, 179, 8, 0.7);
+            border-left-color: #eab308;
+        }
+
+        .athlete-card.in-the-hole {
             background: rgba(16, 185, 129, 0.18);
             border-color: rgba(16, 185, 129, 0.7);
             border-left-color: #10b981;
@@ -160,6 +166,11 @@
         }
 
         .status-badge.on-deck {
+            background: #eab308;
+            box-shadow: 0 4px 15px rgba(234, 179, 8, 0.4);
+        }
+
+        .status-badge.in-the-hole {
             background: #10b981;
             box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
         }
@@ -900,6 +911,8 @@
                     status = 'LIFTING'; statusClass = 'lifting';
                 } else if (overallPosition === 2) {
                     status = 'ON DECK'; statusClass = 'on-deck';
+                } else if (overallPosition === 3) {
+                    status = 'IN THE HOLE'; statusClass = 'in-the-hole';
                 }
 
                 let attemptWeight = '';
