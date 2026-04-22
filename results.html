@@ -154,6 +154,7 @@
     </div>
 
     <script>
+        const h = s => (s == null ? '' : String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'));
         let autoRefreshInterval = null;
 
         function toggleAutoRefresh() {
@@ -354,13 +355,13 @@
                         html += `
                             <tr class="${athlete.isMySchool ? 'my-school' : ''}">
                                 <td class="rank">${medal}${rank}</td>
-                                <td>${athlete.name}</td>
-                                <td>${athlete.school}</td>
-                                <td class="stat">${athlete.bw || '-'}</td>
-                                <td class="stat">${athlete.squat || '-'}</td>
-                                <td class="stat">${athlete.bench || '-'}</td>
-                                <td class="stat">${athlete.deadlift || '-'}</td>
-                                <td class="stat"><strong>${athlete.total || '-'}</strong></td>
+                                <td>${h(athlete.name)}</td>
+                                <td>${h(athlete.school)}</td>
+                                <td class="stat">${h(athlete.bw) || '-'}</td>
+                                <td class="stat">${h(athlete.squat) || '-'}</td>
+                                <td class="stat">${h(athlete.bench) || '-'}</td>
+                                <td class="stat">${h(athlete.deadlift) || '-'}</td>
+                                <td class="stat"><strong>${h(athlete.total) || '-'}</strong></td>
                             </tr>
                         `;
                     });
@@ -378,7 +379,7 @@
 
             } catch (error) {
                 console.error('Error loading results:', error);
-                statusDiv.innerHTML = `<div class="status-msg" style="color: #ef4444; border-color: #ef4444;">Error: ${error.message}</div>`;
+                statusDiv.innerHTML = `<div class="status-msg" style="color: #ef4444; border-color: #ef4444;">Error loading data. Please try again.</div>`;
             }
         }
 

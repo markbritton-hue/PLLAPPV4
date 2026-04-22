@@ -401,6 +401,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        const h = s => (s == null ? '' : String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'));
         let athleteData = [];
         let autoRefreshInterval = null;
         let platformMap = {}; // name (lowercase) -> platform name
@@ -945,13 +946,13 @@
                                 <!-- Summary row (always visible) -->
                                 <div class="athlete-summary" onclick="toggleAthleteDetail('${detailId}')" style="flex-direction:column; align-items:stretch; gap:6px;">
                                     <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
-                                        <div style="font-size:1.2rem; font-weight:700; color:white; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; min-width:0;">${athlete.name}</div>
+                                        <div style="font-size:1.2rem; font-weight:700; color:white; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; min-width:0;">${h(athlete.name)}</div>
                                         <i class="fas fa-chevron-down expand-arrow" id="arrow-${detailId}" style="font-size:0.9rem; flex-shrink:0;"></i>
                                     </div>
                                     <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
                                         <span class="designation-badge ${athlete.designation === 'V' ? 'varsity' : 'jv'}" style="margin-bottom:0; font-size:0.8rem; padding:3px 10px;">${athlete.designation === 'V' ? 'Varsity' : 'JV'}</span>
-                                        ${pm ? `<a href="platform.html?gid=${pm.gid}" onclick="event.stopPropagation();" style="background:#06b6d4; color:white; padding:3px 10px; border-radius:6px; font-size:0.8rem; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><i class="fas fa-layer-group"></i> ${pm.name}</a>` : ''}
-                                        ${wcLabel ? `<span style="color:rgba(255,255,255,0.7); font-size:0.85rem; font-weight:700; white-space:nowrap;">${wcLabel}</span>` : ''}
+                                        ${pm ? `<a href="platform.html?gid=${pm.gid}" onclick="event.stopPropagation();" style="background:#06b6d4; color:white; padding:3px 10px; border-radius:6px; font-size:0.8rem; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><i class="fas fa-layer-group"></i> ${h(pm.name)}</a>` : ''}
+                                        ${wcLabel ? `<span style="color:rgba(255,255,255,0.7); font-size:0.85rem; font-weight:700; white-space:nowrap;">${h(wcLabel)}</span>` : ''}
                                     </div>
                                     <div class="expand-hint" id="hint-${detailId}"><i class="fas fa-chevron-down"></i> <i class="fas fa-chevron-down"></i> tap to expand <i class="fas fa-chevron-down"></i> <i class="fas fa-chevron-down"></i></div>
                                 </div>

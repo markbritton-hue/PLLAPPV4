@@ -300,6 +300,7 @@
     </div>
 
     <script>
+        const h = s => (s == null ? '' : String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'));
         let autoRefreshInterval = null;
 
         function toggleAutoRefresh() {
@@ -567,7 +568,7 @@
             // Add headers — only columns G (index 6) onwards
             if (headerRow !== -1) {
                 csvData[headerRow].forEach((header, idx) => {
-                    if (idx >= 6) tableHTML += `<th>${header || ''}</th>`;
+                    if (idx >= 6) tableHTML += `<th>${h(header)}</th>`;
                 });
             }
             tableHTML += '</tr></thead><tbody>';
@@ -585,7 +586,7 @@
                     let cellClass = '';
                     if (totalCol !== -1 && idx === totalCol) cellClass = 'total-column';
                     else if (pointCols.includes(idx) && cell && !isNaN(cell)) cellClass = 'points-column';
-                    tableHTML += `<td class="${cellClass}">${cell || ''}</td>`;
+                    tableHTML += `<td class="${cellClass}">${h(cell)}</td>`;
                 });
 
                 tableHTML += '</tr>';
@@ -661,7 +662,7 @@
                 dashboardHTML += `
                     <div class="podium-card ${podiumClasses[i]}">
                         <div class="medal">${medals[i]}</div>
-                        <div class="team-name">${team.name}</div>
+                        <div class="team-name">${h(team.name)}</div>
                         <div class="points">${team.points}</div>
                         <div class="label">Total Points</div>
                     </div>
@@ -676,7 +677,7 @@
 
                 dashboardHTML += `
                     <div class="school-card">
-                        <h3><i class="fas fa-school me-2"></i>${mySchoolTeam.name} Performance</h3>
+                        <h3><i class="fas fa-school me-2"></i>${h(mySchoolTeam.name)} Performance</h3>
                         <div class="school-stats">
                             <div class="school-stat">
                                 <div class="value">#${mySchoolRank}</div>

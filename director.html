@@ -246,6 +246,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script>
+    const h = s => (s == null ? '' : String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'));
     const DIRECTOR_PASSWORD = 'pll';
 
     firebase.initializeApp({
@@ -298,17 +299,17 @@
             const t = ev.time ? fmtTime(ev.time) : '';
             return `<div class="event-row">
                 <div class="event-row-info">
-                    <div class="event-row-name">${ev.name}</div>
+                    <div class="event-row-name">${h(ev.name)}</div>
                     <div class="event-row-meta">
-                        ${d ? `<span><i class="fas fa-calendar me-1" style="color:#60a5fa;"></i>${d}${t ? ' · ' + t : ''}</span>` : ''}
-                        ${ev.location ? `<span><i class="fas fa-map-marker-alt me-1" style="color:#60a5fa;"></i>${ev.location}</span>` : ''}
+                        ${d ? `<span><i class="fas fa-calendar me-1" style="color:#60a5fa;"></i>${h(d)}${t ? ' · ' + h(t) : ''}</span>` : ''}
+                        ${ev.location ? `<span><i class="fas fa-map-marker-alt me-1" style="color:#60a5fa;"></i>${h(ev.location)}</span>` : ''}
                         ${ev.isStateMeet ? `<span style="background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.4);color:#fbbf24;padding:1px 8px;border-radius:12px;font-size:0.72rem;font-weight:700;"><i class="fas fa-trophy me-1"></i>State Meet</span>` : ''}
                         ${ev.showTeamResults ? `<span style="background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.35);color:#fbbf24;padding:1px 8px;border-radius:12px;font-size:0.72rem;font-weight:700;"><i class="fas fa-trophy me-1"></i>Team Results</span>` : ''}
                     </div>
                 </div>
                 <div class="event-row-actions">
                     <button class="btn-sm-action btn-edit" onclick="editEvent('${ev.id}')"><i class="fas fa-pen"></i> Edit</button>
-                    <button class="btn-sm-action btn-delete" onclick="promptDelete('${ev.id}','${ev.name.replace(/'/g,"\\'")}')"><i class="fas fa-trash"></i></button>
+                    <button class="btn-sm-action btn-delete" onclick="promptDelete('${h(ev.id)}','${h(ev.name)}')"><i class="fas fa-trash"></i></button>
                 </div>
             </div>`;
         }).join('');
