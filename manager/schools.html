@@ -256,26 +256,16 @@
             return;
         }
 
-        el.innerHTML = filtered.map(s => {
-            const hasExtra = s.contacts && s.contacts.length > 0;
-
-            return `
+        el.innerHTML = filtered.map(s => `
             <div class="school-row" id="row-${escapeHtml(s.id)}" style="padding:10px 14px;">
-                <!-- Single line: all info + buttons -->
                 <div style="display:flex; align-items:center; gap:10px; flex-wrap:nowrap;">
-                    <!-- Left: expand toggle + name -->
-                    <div style="display:flex; align-items:center; gap:8px; flex:1; min-width:0; cursor:${hasExtra ? 'pointer' : 'default'};" onclick="${hasExtra ? `toggleExpand('${escapeHtml(s.id)}')` : ''}">
-                        ${hasExtra ? `<i class="fas fa-chevron-right" id="chevron-${escapeHtml(s.id)}" style="color:rgba(255,255,255,0.3); font-size:0.75rem; flex-shrink:0; transition:transform 0.2s;"></i>` : '<span style="width:12px;flex-shrink:0;"></span>'}
-                        <span style="font-weight:700; color:white; font-size:0.92rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(s.schoolName)}</span>
-                        ${statusBadge(s)}
-                    </div>
-                    <!-- Middle: code + expiry -->
-                    ${s.email ? `<span style="color:rgba(255,255,255,0.45); font-size:0.8rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:200px;"><i class="fas fa-envelope" style="margin-right:4px; opacity:0.5;"></i>${escapeHtml(s.email)}</span>` : ''}
-                    <span class="school-code" style="flex-shrink:0;">${escapeHtml(s.code) || '<span style="color:rgba(255,255,255,0.25);font-style:italic;font-size:0.78rem;">no code</span>'}</span>
+                    <span style="font-weight:700; color:white; font-size:0.92rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1; min-width:0;">${escapeHtml(s.schoolName)}</span>
+                    ${statusBadge(s)}
+                    ${s.email ? `<span style="color:rgba(255,255,255,0.45); font-size:0.8rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:220px; flex-shrink:0;"><i class="fas fa-envelope" style="margin-right:4px; opacity:0.5;"></i>${escapeHtml(s.email)}</span>` : ''}
+                    <span class="school-code" style="flex-shrink:0;">${s.code ? escapeHtml(s.code) : '<span style="color:rgba(255,255,255,0.25);font-style:italic;font-size:0.78rem;">no code</span>'}</span>
                     <span style="color:rgba(255,255,255,0.4); font-size:0.8rem; white-space:nowrap; flex-shrink:0;">
                         <i class="fas fa-calendar-alt" style="margin-right:3px;"></i>${s.expiresAt ? escapeHtml(s.expiresAt) : '—'}
                     </span>
-                    <!-- Right: buttons -->
                     <div style="display:flex; align-items:center; gap:6px; flex-shrink:0; margin-left:auto;">
                         <button class="btn-sm btn-edit" onclick="startEdit('${escapeHtml(s.id)}')"><i class="fas fa-pencil"></i></button>
                         <button class="btn-sm btn-delete" onclick="deleteSchool('${escapeHtml(s.id)}', '${escapeHtml(s.schoolName)}')"><i class="fas fa-trash"></i></button>
@@ -285,48 +275,33 @@
                         }
                     </div>
                 </div>
-
-                <!-- Expandable contacts -->
-                ${hasExtra ? `
-                <div id="expand-${escapeHtml(s.id)}" style="display:none; margin-top:10px; padding-top:10px; border-top:1px solid rgba(96,165,250,0.1);">
-                    ${(s.contacts && s.contacts.length) ? `
-                    <div style="font-size:0.75rem; color:rgba(255,255,255,0.35); font-weight:600; text-transform:uppercase; margin-bottom:6px;">Contacts</div>
-                    <div style="display:flex; flex-direction:column; gap:4px;">
-                        ${s.contacts.map(c => `
-                            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:0.83rem; padding:5px 0; border-top:1px solid rgba(96,165,250,0.06);">
-                                <span style="color:white; min-width:150px;">${escapeHtml(c.name || '')}</span>
-                                <span style="color:rgba(255,255,255,0.45);">${escapeHtml(c.email || '')}</span>
-                                <span style="margin-left:auto; display:flex; gap:4px; flex-wrap:wrap;">
-                                    ${(c.roles || []).map(role => `<span style="background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.2);border-radius:12px;padding:1px 8px;color:#93c5fd;font-size:0.75rem;">${escapeHtml(role)}</span>`).join('')}
-                                </span>
-                            </div>
-                        `).join('')}
-                    </div>` : '<span style="color:rgba(255,255,255,0.3); font-size:0.83rem;">No contacts</span>'}
-                </div>` : ''}
-
                 <!-- Edit form -->
                 <div id="edit-${escapeHtml(s.id)}" style="display:none;" class="edit-form">
                     <div class="row g-2">
-                        <div class="col-12 col-md-5">
+                        <div class="col-12 col-md-4">
                             <label class="form-label">School Name</label>
                             <input type="text" id="eName-${escapeHtml(s.id)}" class="form-control" value="${escapeHtml(s.schoolName)}">
                         </div>
                         <div class="col-12 col-md-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" id="eEmail-${escapeHtml(s.id)}" class="form-control" value="${escapeHtml(s.email || '')}">
+                        </div>
+                        <div class="col-12 col-md-2">
                             <label class="form-label">Access Code</label>
-                            <input type="text" id="eCode-${escapeHtml(s.id)}" class="form-control" value="${escapeHtml(s.code)}" style="text-transform:uppercase;">
+                            <input type="text" id="eCode-${escapeHtml(s.id)}" class="form-control" value="${escapeHtml(s.code || '')}" style="text-transform:uppercase;">
                         </div>
                         <div class="col-12 col-md-2">
                             <label class="form-label">Paid Through</label>
-                            <input type="date" id="eExpiry-${escapeHtml(s.id)}" class="form-control" value="${escapeHtml(s.expiresAt)}">
+                            <input type="date" id="eExpiry-${escapeHtml(s.id)}" class="form-control" value="${escapeHtml(s.expiresAt || '')}">
                         </div>
-                        <div class="col-12 col-md-2 d-flex align-items-end gap-2">
-                            <button class="btn-sm btn-edit" onclick="saveEdit('${escapeHtml(s.id)}')"><i class="fas fa-save"></i> Save</button>
-                            <button class="btn-sm btn-cancel" onclick="cancelEdit('${escapeHtml(s.id)}')">Cancel</button>
+                        <div class="col-12 col-md-1 d-flex align-items-end gap-2">
+                            <button class="btn-sm btn-edit" onclick="saveEdit('${escapeHtml(s.id)}')"><i class="fas fa-save"></i></button>
+                            <button class="btn-sm btn-cancel" onclick="cancelEdit('${escapeHtml(s.id)}')"><i class="fas fa-times"></i></button>
                         </div>
                     </div>
                 </div>
-            </div>`;
-        }).join('');
+            </div>`
+        ).join('');
     }
 
     // --- Load ---
@@ -385,11 +360,12 @@
         document.getElementById(`edit-${id}`).style.display = 'none';
     }
     async function saveEdit(id) {
-        const name = document.getElementById(`eName-${id}`).value.trim();
-        const code = document.getElementById(`eCode-${id}`).value.trim().toUpperCase();
+        const name   = document.getElementById(`eName-${id}`).value.trim();
+        const email  = document.getElementById(`eEmail-${id}`).value.trim();
+        const code   = document.getElementById(`eCode-${id}`).value.trim().toUpperCase();
         const expiry = document.getElementById(`eExpiry-${id}`).value;
-        if (!name || !code || !expiry) return;
-        await db.collection('schoolCodes').doc(id).update({ schoolName: name, code, expiresAt: expiry });
+        if (!name) return;
+        await db.collection('schoolCodes').doc(id).update({ schoolName: name, email, code, expiresAt: expiry });
         cancelEdit(id);
     }
 
