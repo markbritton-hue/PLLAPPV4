@@ -17,7 +17,7 @@ jobs:
       - name: Deploy via SFTP
         run: |
           sudo apt-get install -y lftp
-          lftp -c "set sftp:auto-confirm yes; open -u ${{ secrets.FTP_USER }},${{ secrets.FTP_PASS }} sftp://${{ secrets.FTP_HOST }}; mirror -R --overwrite --verbose . /pllappv4/"
+          lftp -c "set sftp:auto-confirm yes; open -u ${{ secrets.FTP_USER }},${{ secrets.FTP_PASS }} sftp://${{ secrets.FTP_HOST }}; mirror -R --overwrite --verbose --exclude-glob .git/ --exclude-glob .github/ --exclude-glob .claude/ --exclude-glob parents/ --exclude-glob manager/ --exclude-glob _parents_build/ --exclude-glob _manager_build/ --exclude-glob '*.sh' --exclude-glob '*.py' --exclude-glob '*.csv' --exclude-glob '*.xlsx' --exclude-glob '*.mp4' . /pllappv4/"
 
   deploy-parents:
     name: SFTP Deploy (parents app)
