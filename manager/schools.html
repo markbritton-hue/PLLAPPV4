@@ -439,7 +439,6 @@
             const codeIdx   = headers.findIndex(h => h === 'APP CODE');
 
             if (schoolIdx === -1) throw new Error('No "School" column found in sheet');
-            if (codeIdx === -1)   throw new Error('No "APP CODE" column found — please add it to the sheet first');
 
             // Deduplicate by school name, keep first non-empty code found
             const seen = {};
