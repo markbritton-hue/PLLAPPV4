@@ -54,3 +54,30 @@ jobs:
         run: |
           sudo apt-get install -y lftp
           lftp -c "set sftp:auto-confirm yes; open -u ${{ secrets.FTP_USER }},${{ secrets.FTP_PASS }} sftp://${{ secrets.FTP_HOST }}; mirror -R --verbose _parents_build/ /pllappv4/pllparents/"
+
+  deploy-manager:
+    name: SFTP Deploy (manager app)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Assemble manager app
+        run: |
+          mkdir -p _manager_build
+          # Manager-specific pages
+          cp manager/index.html _manager_build/index.html
+          cp manager/schools.html _manager_build/schools.html
+          # Director portal
+          cp director.html _manager_build/director.html
+          # Assets
+          cp favicon.png _manager_build/ 2>/dev/null || true
+          cp favicon.svg _manager_build/ 2>/dev/null || true
+          cp *.js _manager_build/ 2>/dev/null || true
+          cp *.css _manager_build/ 2>/dev/null || true
+
+      - name: Deploy via SFTP
+        run: |
+          sudo apt-get install -y lftp
+          lftp -c "set sftp:auto-confirm yes; open -u ${{ secrets.FTP_USER }},${{ secrets.FTP_PASS }} sftp://${{ secrets.FTP_HOST }}; mirror -R --verbose _manager_build/ /pllappv4/pllmanager/"

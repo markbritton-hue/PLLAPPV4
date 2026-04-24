@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; img-src 'self' data: https:; font-src 'self' https://cdnjs.cloudflare.com; connect-src 'self' https://pllv4.streamwaveprod.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; frame-ancestors 'none';">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerLift Live | School Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" integrity="sha384-t1nt8BQoYMLFN5p42tRAtuAAFQaCQODekUVeKKZrEnEyp4H2R0RHFz0KWpmj7i8g" crossorigin="anonymous">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+        .container { max-width: 860px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 28px; }
+        header h1 {
+            font-size: 2rem; font-weight: 800;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+        header p { color: rgba(255,255,255,0.55); font-size: 0.95rem; }
+        .btn-back {
+            background: rgba(30,41,59,0.8); border: 1px solid rgba(96,165,250,0.2);
+            color: white; padding: 8px 18px; border-radius: 8px;
+            text-decoration: none; font-weight: 600; font-size: 0.88rem;
+            display: inline-flex; align-items: center; gap: 6px;
+            transition: all 0.2s; margin-bottom: 24px;
+        }
+        .btn-back:hover { background: rgba(30,41,59,1); color: white; }
+        .card {
+            background: rgba(30,41,59,0.7);
+            border: 1px solid rgba(96,165,250,0.2);
+            border-radius: 14px; padding: 24px; margin-bottom: 20px;
+        }
+        .card h2 {
+            font-size: 1.1rem; font-weight: 700; color: #60a5fa;
+            margin-bottom: 18px; display: flex; align-items: center; gap: 10px;
+        }
+        .form-label { color: rgba(255,255,255,0.8); font-size: 0.88rem; font-weight: 600; margin-bottom: 5px; display: block; }
+        .form-control {
+            background: rgba(15,23,42,0.7); border: 1px solid rgba(96,165,250,0.25);
+            border-radius: 8px; color: white; padding: 10px 14px; font-size: 0.9rem;
+            transition: border-color 0.2s; width: 100%;
+        }
+        .form-control:focus {
+            background: rgba(15,23,42,0.9); border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(96,165,250,0.15); color: white; outline: none;
+        }
+        .form-control::placeholder { color: rgba(255,255,255,0.3); }
+        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1) opacity(0.6); cursor: pointer; }
+        .btn-primary-grad {
+            padding: 10px 22px; border-radius: 9px; border: none;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white; font-size: 0.95rem; font-weight: 700;
+            cursor: pointer; transition: all 0.2s;
+            display: inline-flex; align-items: center; gap: 8px;
+        }
+        .btn-primary-grad:hover:not(:disabled) {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            transform: translateY(-1px); box-shadow: 0 4px 16px rgba(59,130,246,0.35);
+        }
+        .btn-primary-grad:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-sm {
+            padding: 5px 12px; border-radius: 6px; border: none;
+            font-size: 0.8rem; font-weight: 600; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 5px; transition: all 0.15s;
+        }
+        .btn-edit  { background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.4); color: #fbbf24; }
+        .btn-edit:hover  { background: rgba(245,158,11,0.28); }
+        .btn-delete{ background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4); color: #f87171; }
+        .btn-delete:hover{ background: rgba(239,68,68,0.28); }
+        .btn-cancel{ background: rgba(100,116,139,0.2); border: 1px solid rgba(100,116,139,0.4); color: rgba(255,255,255,0.7); }
+        .btn-cancel:hover{ background: rgba(100,116,139,0.35); }
+        .school-row {
+            background: rgba(15,23,42,0.4); border: 1px solid rgba(96,165,250,0.12);
+            border-radius: 10px; padding: 14px 16px; margin-bottom: 10px;
+        }
+        .school-name { font-weight: 700; color: white; font-size: 0.95rem; margin-bottom: 4px; }
+        .school-meta { font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
+        .school-code {
+            font-family: monospace; font-size: 0.9rem; font-weight: 700;
+            background: rgba(96,165,250,0.1); border: 1px solid rgba(96,165,250,0.25);
+            border-radius: 6px; padding: 3px 10px; color: #93c5fd;
+            display: inline-block; letter-spacing: 0.05em;
+        }
+        .badge-active {
+            background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.4);
+            color: #34d399; border-radius: 20px; padding: 2px 10px;
+            font-size: 0.75rem; font-weight: 700;
+        }
+        .badge-inactive {
+            background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4);
+            color: #f87171; border-radius: 20px; padding: 2px 10px;
+            font-size: 0.75rem; font-weight: 700;
+        }
+        .badge-expired {
+            background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.4);
+            color: #fbbf24; border-radius: 20px; padding: 2px 10px;
+            font-size: 0.75rem; font-weight: 700;
+        }
+        .search-bar {
+            background: rgba(15,23,42,0.7); border: 1px solid rgba(96,165,250,0.25);
+            border-radius: 8px; color: white; padding: 10px 14px; font-size: 0.9rem;
+            width: 100%; margin-bottom: 16px;
+        }
+        .search-bar:focus { outline: none; border-color: #60a5fa; }
+        .search-bar::placeholder { color: rgba(255,255,255,0.3); }
+        #statusMsg {
+            margin-top: 12px; font-size: 0.88rem; font-weight: 600;
+            min-height: 20px;
+        }
+        .edit-form {
+            background: rgba(15,23,42,0.5); border: 1px solid rgba(96,165,250,0.2);
+            border-radius: 8px; padding: 14px; margin-top: 10px;
+        }
+        .filter-tabs { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+        .filter-tab {
+            padding: 5px 14px; border-radius: 20px; border: 1px solid rgba(96,165,250,0.2);
+            background: rgba(30,41,59,0.5); color: rgba(255,255,255,0.6);
+            cursor: pointer; font-size: 0.82rem; font-weight: 600; transition: all 0.15s;
+        }
+        .filter-tab.active {
+            background: rgba(96,165,250,0.15); border-color: rgba(96,165,250,0.5); color: #93c5fd;
+        }
+        #gateScreen {
+            display: flex; align-items: center; justify-content: center;
+            min-height: 80vh;
+        }
+        #gateBox {
+            background: rgba(30,41,59,0.8); border: 1px solid rgba(96,165,250,0.25);
+            border-radius: 16px; padding: 40px; max-width: 380px; width: 100%; text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- Password gate -->
+    <div id="gateScreen">
+        <div id="gateBox">
+            <div style="font-size:2.5rem; color:#60a5fa; margin-bottom:16px;">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h2 style="font-size:1.4rem; font-weight:800; color:white; margin-bottom:8px;">Manager Access</h2>
+            <p style="color:rgba(255,255,255,0.55); font-size:0.9rem; margin-bottom:20px;">Enter your manager password to continue.</p>
+            <input type="password" id="gateInput" class="form-control" placeholder="Password" style="margin-bottom:12px;" onkeydown="if(event.key==='Enter')checkGate()">
+            <button onclick="checkGate()" class="btn-primary-grad" style="width:100%; justify-content:center;">
+                <i class="fas fa-unlock"></i> Unlock
+            </button>
+            <div id="gateError" style="color:#f87171; font-size:0.85rem; margin-top:10px; min-height:18px;"></div>
+        </div>
+    </div>
+
+    <!-- Main content (hidden until authenticated) -->
+    <div id="mainContent" style="display:none;">
+        <a href="index.html" class="btn-back"><i class="fas fa-arrow-left"></i> Manager Home</a>
+
+        <header>
+            <h1><i class="fas fa-school me-2" style="-webkit-text-fill-color:#60a5fa;"></i>School Management</h1>
+            <p>Manage school subscriptions and access codes</p>
+        </header>
+
+        <!-- Add School -->
+        <div class="card">
+            <h2><i class="fas fa-plus-circle"></i> Add School</h2>
+            <div class="row g-3">
+                <div class="col-12 col-md-5">
+                    <label class="form-label">School Name</label>
+                    <input type="text" id="schoolName" class="form-control" placeholder="e.g. Grand Blanc High School">
+                </div>
+                <div class="col-12 col-md-3">
+                    <label class="form-label">Access Code</label>
+                    <div style="display:flex; gap:6px;">
+                        <input type="text" id="schoolCode" class="form-control" placeholder="e.g. GB2026" style="text-transform:uppercase;">
+                        <button onclick="generateCode()" title="Generate random code" style="background:rgba(96,165,250,0.15); border:1px solid rgba(96,165,250,0.3); border-radius:8px; color:#93c5fd; padding:0 10px; cursor:pointer; flex-shrink:0;">
+                            <i class="fas fa-dice"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-12 col-md-2">
+                    <label class="form-label">Paid Through</label>
+                    <input type="date" id="schoolExpiry" class="form-control">
+                </div>
+                <div class="col-12 col-md-2 d-flex align-items-end">
+                    <button onclick="addSchool()" id="addBtn" class="btn-primary-grad" style="width:100%; justify-content:center;">
+                        <i class="fas fa-plus"></i> Add
+                    </button>
+                </div>
+            </div>
+            <div id="statusMsg"></div>
+        </div>
+
+        <!-- School List -->
+        <div class="card">
+            <h2><i class="fas fa-list"></i> Registered Schools</h2>
+
+            <input type="text" class="search-bar" id="searchBox" placeholder="Search schools..." oninput="renderList()">
+
+            <div class="filter-tabs">
+                <div class="filter-tab active" onclick="setFilter('all', this)">All</div>
+                <div class="filter-tab" onclick="setFilter('active', this)">Active</div>
+                <div class="filter-tab" onclick="setFilter('expired', this)">Expired</div>
+                <div class="filter-tab" onclick="setFilter('inactive', this)">Inactive</div>
+            </div>
+
+            <div id="schoolList"><div style="color:rgba(255,255,255,0.4); text-align:center; padding:20px;">Loading...</div></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js" integrity="sha384-sEVIly94UBRLKWdkYoPpSG7GD/e79YHMrxVyZaOk712Ga7+EAw6w1EFi+xBzBdd+" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js" integrity="sha384-M481iNZJtbpypKgvlvZ+78Giq0BsewFLk5r2k+MOcGXlwKCc27DQRZ+WCV/zpmpC" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script>
+    const MANAGER_PASSWORD = 'pllmanager';
+
+    firebase.initializeApp({
+        apiKey: "AIzaSyB5FKrs0rys3ODV2U36YFjJWUu_BgFuDZk",
+        authDomain: "powerlift-live.firebaseapp.com",
+        projectId: "powerlift-live",
+        storageBucket: "powerlift-live.firebasestorage.app",
+        messagingSenderId: "298820185512",
+        appId: "1:298820185512:web:4bccfb5a26ff4acf0b4c67"
+    });
+    const db = firebase.firestore();
+
+    let schools = [];
+    let activeFilter = 'all';
+
+    function escapeHtml(str) {
+        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // --- Gate ---
+    function checkGate() {
+        const val = document.getElementById('gateInput').value;
+        if (val === MANAGER_PASSWORD) {
+            document.getElementById('gateScreen').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+            loadSchools();
+        } else {
+            document.getElementById('gateError').textContent = 'Incorrect password.';
+            document.getElementById('gateInput').value = '';
+        }
+    }
+
+    // --- Code generator ---
+    function generateCode() {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        let code = '';
+        for (let i = 0; i < 8; i++) code += chars[Math.floor(Math.random() * chars.length)];
+        document.getElementById('schoolCode').value = code;
+    }
+
+    // --- Status badge ---
+    function statusBadge(school) {
+        if (!school.active) return '<span class="badge-inactive">Inactive</span>';
+        const today = new Date(); today.setHours(0,0,0,0);
+        const expiry = new Date(school.expiresAt);
+        if (expiry < today) return '<span class="badge-expired">Expired</span>';
+        return '<span class="badge-active">Active</span>';
+    }
+
+    function getStatus(school) {
+        if (!school.active) return 'inactive';
+        const today = new Date(); today.setHours(0,0,0,0);
+        const expiry = new Date(school.expiresAt);
+        return expiry < today ? 'expired' : 'active';
+    }
+
+    // --- Filter ---
+    function setFilter(f, el) {
+        activeFilter = f;
+        document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        renderList();
+    }
+
+    // --- Render ---
+    function renderList() {
+        const search = document.getElementById('searchBox').value.toLowerCase();
+        const filtered = schools.filter(s => {
+            const matchSearch = s.schoolName.toLowerCase().includes(search) || s.code.toLowerCase().includes(search);
+            const matchFilter = activeFilter === 'all' || getStatus(s) === activeFilter;
+            return matchSearch && matchFilter;
+        });
+
+        const el = document.getElementById('schoolList');
+        if (filtered.length === 0) {
+            el.innerHTML = '<div style="color:rgba(255,255,255,0.4); text-align:center; padding:20px;">No schools found.</div>';
+            return;
+        }
+
+        el.innerHTML = filtered.map(s => `
+            <div class="school-row" id="row-${escapeHtml(s.id)}">
+                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px;">
+                    <div class="school-name">${escapeHtml(s.schoolName)}</div>
+                    ${statusBadge(s)}
+                </div>
+                <div class="school-meta">
+                    Expires: ${escapeHtml(s.expiresAt)} &nbsp;|&nbsp; Added: ${s.createdAt ? new Date(s.createdAt.toDate()).toLocaleDateString() : '—'}
+                </div>
+                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                    <span class="school-code">${escapeHtml(s.code)}</span>
+                    <button class="btn-sm btn-edit" onclick="startEdit('${escapeHtml(s.id)}')"><i class="fas fa-pencil"></i> Edit</button>
+                    <button class="btn-sm btn-delete" onclick="deleteSchool('${escapeHtml(s.id)}', '${escapeHtml(s.schoolName)}')"><i class="fas fa-trash"></i> Remove</button>
+                    ${s.active
+                        ? `<button class="btn-sm btn-cancel" onclick="toggleActive('${escapeHtml(s.id)}', false)"><i class="fas fa-ban"></i> Deactivate</button>`
+                        : `<button class="btn-sm" style="background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.4);color:#34d399;" onclick="toggleActive('${escapeHtml(s.id)}', true)"><i class="fas fa-check"></i> Activate</button>`
+                    }
+                </div>
+                <div id="edit-${escapeHtml(s.id)}" style="display:none;" class="edit-form">
+                    <div class="row g-2">
+                        <div class="col-12 col-md-5">
+                            <label class="form-label">School Name</label>
+                            <input type="text" id="eName-${escapeHtml(s.id)}" class="form-control" value="${escapeHtml(s.schoolName)}">
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <label class="form-label">Access Code</label>
+                            <input type="text" id="eCode-${escapeHtml(s.id)}" class="form-control" value="${escapeHtml(s.code)}" style="text-transform:uppercase;">
+                        </div>
+                        <div class="col-12 col-md-2">
+                            <label class="form-label">Paid Through</label>
+                            <input type="date" id="eExpiry-${escapeHtml(s.id)}" class="form-control" value="${escapeHtml(s.expiresAt)}">
+                        </div>
+                        <div class="col-12 col-md-2 d-flex align-items-end gap-2">
+                            <button class="btn-sm btn-edit" onclick="saveEdit('${escapeHtml(s.id)}')"><i class="fas fa-save"></i> Save</button>
+                            <button class="btn-sm btn-cancel" onclick="cancelEdit('${escapeHtml(s.id)}')">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // --- Load ---
+    function loadSchools() {
+        db.collection('schoolCodes').orderBy('schoolName').onSnapshot(snap => {
+            schools = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            renderList();
+        });
+    }
+
+    // --- Add ---
+    async function addSchool() {
+        const name = document.getElementById('schoolName').value.trim();
+        const code = document.getElementById('schoolCode').value.trim().toUpperCase();
+        const expiry = document.getElementById('schoolExpiry').value;
+        const msg = document.getElementById('statusMsg');
+
+        if (!name || !code || !expiry) {
+            msg.style.color = '#f87171';
+            msg.textContent = 'Please fill in all fields.';
+            return;
+        }
+
+        document.getElementById('addBtn').disabled = true;
+        msg.style.color = 'rgba(255,255,255,0.5)';
+        msg.textContent = 'Saving...';
+
+        try {
+            await db.collection('schoolCodes').add({
+                schoolName: name,
+                code: code,
+                expiresAt: expiry,
+                active: true,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            document.getElementById('schoolName').value = '';
+            document.getElementById('schoolCode').value = '';
+            document.getElementById('schoolExpiry').value = '';
+            msg.style.color = '#34d399';
+            msg.textContent = `✓ ${name} added.`;
+            setTimeout(() => msg.textContent = '', 3000);
+        } catch (e) {
+            msg.style.color = '#f87171';
+            msg.textContent = 'Error saving. Try again.';
+        }
+        document.getElementById('addBtn').disabled = false;
+    }
+
+    // --- Edit ---
+    function startEdit(id) {
+        document.getElementById(`edit-${id}`).style.display = 'block';
+    }
+    function cancelEdit(id) {
+        document.getElementById(`edit-${id}`).style.display = 'none';
+    }
+    async function saveEdit(id) {
+        const name = document.getElementById(`eName-${id}`).value.trim();
+        const code = document.getElementById(`eCode-${id}`).value.trim().toUpperCase();
+        const expiry = document.getElementById(`eExpiry-${id}`).value;
+        if (!name || !code || !expiry) return;
+        await db.collection('schoolCodes').doc(id).update({ schoolName: name, code, expiresAt: expiry });
+        cancelEdit(id);
+    }
+
+    // --- Toggle active ---
+    async function toggleActive(id, active) {
+        await db.collection('schoolCodes').doc(id).update({ active });
+    }
+
+    // --- Delete ---
+    async function deleteSchool(id, name) {
+        if (!confirm(`Remove ${name}? This cannot be undone.`)) return;
+        await db.collection('schoolCodes').doc(id).delete();
+    }
+</script>
+</body>
+</html>
