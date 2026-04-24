@@ -284,11 +284,8 @@
             return;
         }
 
-        const knownKeys = ['id','schoolName','code','expiresAt','active','createdAt'];
-
         el.innerHTML = filtered.map(s => {
-            const extraKeys = Object.keys(s).filter(k => !knownKeys.includes(k));
-            const hasExtra = extraKeys.length > 0;
+            const hasExtra = s.contacts && s.contacts.length > 0;
 
             return `
             <div class="school-row" id="row-${escapeHtml(s.id)}">
@@ -319,17 +316,22 @@
                     }
                 </div>
 
-                <!-- Expandable extra fields -->
+                <!-- Expandable contacts -->
                 ${hasExtra ? `
                 <div id="expand-${escapeHtml(s.id)}" style="display:none; margin-top:10px; padding-top:10px; border-top:1px solid rgba(96,165,250,0.1);">
-                    <div style="display:flex; flex-wrap:wrap; gap:8px;">
-                        ${extraKeys.map(k => `
-                            <div style="background:rgba(15,23,42,0.5); border:1px solid rgba(96,165,250,0.12); border-radius:6px; padding:6px 10px; min-width:120px;">
-                                <div style="color:rgba(255,255,255,0.4); font-size:0.72rem; font-weight:600; text-transform:uppercase; margin-bottom:2px;">${escapeHtml(k)}</div>
-                                <div style="color:white; font-size:0.85rem;">${escapeHtml(s[k])}</div>
+                    ${(s.contacts && s.contacts.length) ? `
+                    <div style="font-size:0.75rem; color:rgba(255,255,255,0.35); font-weight:600; text-transform:uppercase; margin-bottom:6px;">Contacts</div>
+                    <div style="display:flex; flex-direction:column; gap:4px;">
+                        ${s.contacts.map(c => `
+                            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:0.83rem; padding:5px 0; border-top:1px solid rgba(96,165,250,0.06);">
+                                <span style="color:white; min-width:150px;">${escapeHtml(c.name || '')}</span>
+                                <span style="color:rgba(255,255,255,0.45);">${escapeHtml(c.email || '')}</span>
+                                <span style="margin-left:auto; display:flex; gap:4px; flex-wrap:wrap;">
+                                    ${(c.roles || []).map(role => `<span style="background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.2);border-radius:12px;padding:1px 8px;color:#93c5fd;font-size:0.75rem;">${escapeHtml(role)}</span>`).join('')}
+                                </span>
                             </div>
                         `).join('')}
-                    </div>
+                    </div>` : '<span style="color:rgba(255,255,255,0.3); font-size:0.83rem;">No contacts</span>'}
                 </div>` : ''}
 
                 <!-- Edit form -->
@@ -483,23 +485,37 @@
 
             const codeIdx = headers.findIndex(h => h === 'APP CODE');
 
-            importRows = [];
+            // Role columns — everything except Name, School, Email, APP CODE
+            const nameIdx  = headers.findIndex(h => h === 'NAME');
+            const emailIdx = headers.findIndex(h => h === 'EMAIL');
+            const roleIdxs = rawHeaders.reduce((acc, h, idx) => {
+                if (idx !== nameIdx && idx !== schoolIdx && idx !== emailIdx && idx !== codeIdx) acc.push({ label: h, idx });
+                return acc;
+            }, []);
+
+            // Group by school
+            const schoolMap = {};
             for (let i = 1; i < rows.length; i++) {
                 const row = rows[i];
                 const school = (row[schoolIdx] || '').trim();
                 if (!school) continue;
-                const record = { school, code: codeIdx >= 0 ? (row[codeIdx] || '').trim().toUpperCase() : '', expiry: '' };
-                // Store all other columns as extra fields
-                rawHeaders.forEach((h, idx) => {
-                    if (idx === schoolIdx || idx === codeIdx) return;
-                    const val = (row[idx] || '').trim();
-                    if (val) record[h] = val;
-                });
-                importRows.push(record);
+                if (!schoolMap[school]) {
+                    schoolMap[school] = {
+                        school,
+                        code: codeIdx >= 0 ? (row[codeIdx] || '').trim().toUpperCase() : '',
+                        expiry: '',
+                        contacts: []
+                    };
+                }
+                const name  = nameIdx  >= 0 ? (row[nameIdx]  || '').trim() : '';
+                const email = emailIdx >= 0 ? (row[emailIdx] || '').trim() : '';
+                const roles = roleIdxs.filter(r => (row[r.idx] || '').trim()).map(r => r.label);
+                if (name || email) schoolMap[school].contacts.push({ name, email, roles });
             }
+            importRows = Object.values(schoolMap);
 
-            renderImportPreview(rawHeaders, schoolIdx, codeIdx);
-            status.textContent = `${importRows.length} rows ready to import`;
+            renderImportPreview();
+            status.textContent = `${importRows.length} schools ready to import`;
         } catch (e) {
             status.style.color = '#f87171';
             status.textContent = e.message || 'Error fetching sheet.';
@@ -507,43 +523,35 @@
         btn.disabled = false;
     }
 
-    function renderImportPreview(rawHeaders, schoolIdx, codeIdx) {
+    function renderImportPreview() {
         const preview = document.getElementById('importPreview');
         const summary = document.getElementById('importSummary');
         const table   = document.getElementById('importTable');
         preview.style.display = 'block';
-        summary.textContent   = `${importRows.length} records found`;
+        summary.textContent   = `${importRows.length} schools, ${importRows.reduce((a,r) => a + r.contacts.length, 0)} contacts`;
 
-        const extraHeaders = (rawHeaders || []).filter((_, idx) => idx !== schoolIdx && idx !== codeIdx);
-
-        table.innerHTML = `
-            <div style="overflow-x:auto;">
-            <table style="width:100%; border-collapse:collapse; font-size:0.82rem; min-width:600px;">
-                <thead>
-                    <tr style="color:rgba(255,255,255,0.4); text-align:left; border-bottom:1px solid rgba(96,165,250,0.15);">
-                        <th style="padding:6px 8px;">School</th>
-                        <th style="padding:6px 8px;">APP CODE</th>
-                        ${extraHeaders.map(h => `<th style="padding:6px 8px;">${escapeHtml(h)}</th>`).join('')}
-                        <th style="padding:6px 8px;"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${importRows.map((r, i) => `
-                        <tr style="border-bottom:1px solid rgba(96,165,250,0.08);">
-                            <td style="padding:7px 8px; color:white; white-space:nowrap;">${escapeHtml(r.school)}</td>
-                            <td style="padding:7px 8px;">
-                                <input type="text" value="${escapeHtml(r.code)}" oninput="importRows[${i}].code=this.value.toUpperCase();this.value=this.value.toUpperCase();"
-                                    style="background:rgba(15,23,42,0.6);border:1px solid rgba(96,165,250,0.2);border-radius:6px;color:#93c5fd;padding:4px 8px;font-family:monospace;font-size:0.82rem;width:110px;">
-                            </td>
-                            ${extraHeaders.map(h => `<td style="padding:7px 8px; color:rgba(255,255,255,0.6); white-space:nowrap;">${escapeHtml(r[h] || '')}</td>`).join('')}
-                            <td style="padding:7px 8px;">
-                                <button class="btn-sm btn-delete" onclick="importRows.splice(${i},1); renderImportPreview();" title="Remove row"><i class="fas fa-times"></i></button>
-                            </td>
-                        </tr>
+        table.innerHTML = importRows.map((r, i) => `
+            <div style="background:rgba(15,23,42,0.4); border:1px solid rgba(96,165,250,0.12); border-radius:10px; padding:12px 14px; margin-bottom:8px;">
+                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px;">
+                    <span style="font-weight:700; color:white;">${escapeHtml(r.school)}</span>
+                    <input type="text" value="${escapeHtml(r.code)}" placeholder="APP CODE"
+                        oninput="importRows[${i}].code=this.value.toUpperCase();this.value=this.value.toUpperCase();"
+                        style="background:rgba(15,23,42,0.6);border:1px solid rgba(96,165,250,0.2);border-radius:6px;color:#93c5fd;padding:4px 8px;font-family:monospace;font-size:0.82rem;width:110px;">
+                    <button class="btn-sm btn-delete" onclick="importRows.splice(${i},1); renderImportPreview();" title="Remove"><i class="fas fa-times"></i></button>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:4px;">
+                    ${r.contacts.map(c => `
+                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:0.82rem; padding:4px 0; border-top:1px solid rgba(96,165,250,0.06);">
+                            <span style="color:rgba(255,255,255,0.8); min-width:140px;">${escapeHtml(c.name)}</span>
+                            <span style="color:rgba(255,255,255,0.45);">${escapeHtml(c.email)}</span>
+                            <span style="margin-left:auto; display:flex; gap:4px; flex-wrap:wrap;">
+                                ${c.roles.map(role => `<span style="background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.2);border-radius:12px;padding:1px 8px;color:#93c5fd;font-size:0.75rem;">${escapeHtml(role)}</span>`).join('')}
+                            </span>
+                        </div>
                     `).join('')}
-                </tbody>
-            </table>
-            </div>`;
+                </div>
+            </div>
+        `).join('');
     }
 
     async function importAll() {
@@ -551,18 +559,14 @@
         const batch = db.batch();
         importRows.forEach(r => {
             const ref = db.collection('schoolCodes').doc();
-            const data = {
+            batch.set(ref, {
                 schoolName: r.school,
                 code: r.code || '',
                 expiresAt: r.expiry || '',
                 active: true,
+                contacts: r.contacts || [],
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
-            // Store all extra fields
-            Object.keys(r).forEach(k => {
-                if (!['school','code','expiry'].includes(k)) data[k] = r[k];
             });
-            batch.set(ref, data);
         });
         await batch.commit();
         importRows = [];
