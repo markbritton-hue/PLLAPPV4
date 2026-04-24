@@ -17,7 +17,7 @@
             padding: 20px;
             color: white;
         }
-        .container { max-width: 860px; margin: 0 auto; }
+        .container { max-width: 1200px; margin: 0 auto; }
         header { text-align: center; margin-bottom: 28px; }
         header h1 {
             font-size: 2rem; font-weight: 800;
@@ -307,7 +307,7 @@
                 </div>
 
                 <!-- Buttons -->
-                <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:4px;">
+                <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:4px; justify-content:flex-end;">
                     <button class="btn-sm btn-edit" onclick="startEdit('${escapeHtml(s.id)}')"><i class="fas fa-pencil"></i> Edit</button>
                     <button class="btn-sm btn-delete" onclick="deleteSchool('${escapeHtml(s.id)}', '${escapeHtml(s.schoolName)}')"><i class="fas fa-trash"></i> Remove</button>
                     ${s.active
