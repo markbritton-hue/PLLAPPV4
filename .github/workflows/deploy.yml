@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    name: SFTP Deploy
+    name: SFTP Deploy (main app)
     runs-on: ubuntu-latest
 
     steps:
@@ -18,3 +18,39 @@ jobs:
         run: |
           sudo apt-get install -y lftp
           lftp -c "set sftp:auto-confirm yes; open -u ${{ secrets.FTP_USER }},${{ secrets.FTP_PASS }} sftp://${{ secrets.FTP_HOST }}; mirror -R --verbose . /pllv4/"
+
+  deploy-parents:
+    name: SFTP Deploy (parents app)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Assemble parent app
+        run: |
+          mkdir -p _parents_build
+          # Parent-specific pages
+          cp parents/index.html _parents_build/index.html
+          cp parents/resources.html _parents_build/resources.html
+          # Shared pages parents can access
+          cp athletes.html _parents_build/athletes.html
+          cp platform.html _parents_build/platform.html
+          cp setup.html _parents_build/setup.html
+          cp state-record-attempts.html _parents_build/state-record-attempts.html
+          # All JS files
+          cp *.js _parents_build/ 2>/dev/null || true
+          # All CSS files
+          cp *.css _parents_build/ 2>/dev/null || true
+          # Assets
+          cp favicon.png _parents_build/ 2>/dev/null || true
+          cp favicon.svg _parents_build/ 2>/dev/null || true
+          cp *.gif _parents_build/ 2>/dev/null || true
+          cp *.png _parents_build/ 2>/dev/null || true
+          cp *.svg _parents_build/ 2>/dev/null || true
+          cp *.mp4 _parents_build/ 2>/dev/null || true
+
+      - name: Deploy via SFTP
+        run: |
+          sudo apt-get install -y lftp
+          lftp -c "set sftp:auto-confirm yes; open -u ${{ secrets.FTP_USER }},${{ secrets.FTP_PASS }} sftp://${{ secrets.FTP_HOST }}; mirror -R --verbose _parents_build/ /pllparents/"
