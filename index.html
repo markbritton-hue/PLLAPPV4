@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; img-src 'self' data: https:; font-src 'self' https://cdnjs.cloudflare.com; connect-src 'self'; frame-ancestors 'none';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; img-src 'self' data: https:; font-src 'self' https://cdnjs.cloudflare.com; connect-src 'self' https://pllv4.streamwaveprod.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; frame-ancestors 'none';">
     <link rel="icon" type="image/png" href="favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PowerLift Live</title>
@@ -12,109 +12,596 @@
         body {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
         }
 
-        .hero { text-align: center; margin-bottom: 40px; }
-        .hero-icon { font-size: 3rem; color: #60a5fa; margin-bottom: 12px; text-shadow: 0 0 30px rgba(96,165,250,0.5); }
-        .hero h1 { font-size: 2.4rem; font-weight: 800; color: #60a5fa; margin-bottom: 6px; }
-        .hero p { color: rgba(255,255,255,0.55); font-size: 1rem; }
-
-        .role-card {
-            background: rgba(30,41,59,0.8);
-            border: 1px solid rgba(96,165,250,0.2);
-            border-radius: 16px;
-            padding: 32px 20px;
+        .hero {
+            padding-top: 30px;
+            padding-bottom: 20px;
             text-align: center;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
-            text-decoration: none;
-            color: inherit;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        }
+
+        .hero-icon {
+            font-size: 3rem;
+            color: #60a5fa;
+            margin-bottom: 12px;
+            text-shadow: 0 0 30px rgba(96, 165, 250, 0.5);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #60a5fa;
+            -webkit-text-fill-color: #60a5fa;
+            margin-bottom: 8px;
+        }
+
+        .hero p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .feature-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(96, 165, 250, 0.2);
+            border-radius: 10px;
+            padding: 10px 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
             height: 100%;
         }
-        .role-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 28px rgba(0,0,0,0.5);
-            color: inherit;
+
+        .feature-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
         }
-        .role-icon { font-size: 2.8rem; margin-bottom: 14px; }
-        .role-card h2 { font-size: 1.2rem; font-weight: 800; color: white; margin-bottom: 8px; }
-        .role-card p { color: rgba(255,255,255,0.55); font-size: 0.85rem; margin-bottom: 20px; flex-grow: 1; }
-        .btn-role {
-            display: inline-flex; align-items: center; gap: 8px;
-            color: white; padding: 10px 28px; border-radius: 25px;
-            font-weight: 700; font-size: 0.9rem; border: none;
-            transition: all 0.2s; text-decoration: none;
+
+        .feature-icon {
+            font-size: 1.6rem;
+            margin-bottom: 4px;
+        }
+
+        .feature-card h2 {
+            color: #60a5fa;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+        }
+
+        .btn-athletes {
+            background: #10b981;
+            border: none;
+            font-weight: 600;
+            padding: 7px 18px;
+            border-radius: 20px;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-athletes:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+            color: white;
+        }
+
+        .btn-team {
+            background: #f59e0b;
+            border: none;
+            font-weight: 600;
+            padding: 7px 18px;
+            border-radius: 20px;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-team:hover {
+            background: #d97706;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+            color: white;
+        }
+
+        .btn-platform {
+            background: #06b6d4;
+            border: none;
+            font-weight: 600;
+            padding: 7px 18px;
+            border-radius: 20px;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+        }
+
+        .btn-platform:hover {
+            background: #0891b2;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(6, 182, 212, 0.4);
+            color: white;
+        }
+
+        .btn-results {
+            background: #8b5cf6;
+            border: none;
+            font-weight: 600;
+            padding: 7px 18px;
+            border-radius: 20px;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-results:hover {
+            background: #7c3aed;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);
+            color: white;
+        }
+
+        .btn-all-results {
+            background: #f97316;
+            border: none;
+            font-weight: 600;
+            padding: 7px 18px;
+            border-radius: 20px;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+        }
+
+        .btn-all-results:hover {
+            background: #ea6c0a;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(249, 115, 22, 0.4);
+            color: white;
+        }
+
+        .btn-setup {
+            background: #ef4444;
+            border: none;
+            font-weight: 600;
+            padding: 7px 18px;
+            border-radius: 20px;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-setup:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+            color: white;
+        }
+
+        .btn-coaches {
+            background: #ec4899;
+            border: none;
+            font-weight: 600;
+            padding: 7px 18px;
+            border-radius: 20px;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+        }
+
+        .btn-coaches:hover {
+            background: #db2777;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(236, 72, 153, 0.4);
+            color: white;
+        }
+
+        .info-section {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(96, 165, 250, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .info-section h3 {
+            color: #60a5fa;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .info-section p {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.8;
+        }
+
+        .info-section ul,
+        .info-section ol {
+            margin: 15px 0 15px 25px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .info-section li {
+            margin-bottom: 10px;
+        }
+
+        .info-section a {
+            color: #60a5fa;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .info-section a:hover {
+            color: #a78bfa;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div style="width:100%; max-width:860px;">
+    <div class="container">
+        <!-- Server offline banner -->
+        <div id="serverOfflineBanner" style="display:none; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4); border-radius: 10px; padding: 14px 18px; margin-bottom: 16px; margin-top: 10px; display:none; align-items:center; gap:12px;">
+            <i class="fas fa-server" style="color:#f87171; font-size:1.3rem;"></i>
+            <div>
+                <div style="color:#f87171; font-weight:700; font-size:0.95rem;">No Active Meets At This Time</div>
+                <div style="color:rgba(255,255,255,0.5); font-size:0.82rem;">The live results server is currently offline. Check back on meet day.</div>
+            </div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; padding: 10px 0 0;">
+            <a href="guide.html" style="display: inline-flex; align-items: center; gap: 8px; background: rgba(96, 165, 250, 0.8); color: white; text-decoration: none; padding: 10px 18px; border-radius: 8px; font-weight: 700; font-size: 0.95rem; box-shadow: 0 4px 12px rgba(96,165,250,0.3);">
+                <i class="fas fa-book-open"></i> App Guide
+            </a>
+            <a href="share.html" style="display: inline-flex; align-items: center; gap: 8px; background: rgba(167, 139, 250, 0.8); color: white; text-decoration: none; padding: 10px 18px; border-radius: 8px; font-weight: 700; font-size: 0.95rem; box-shadow: 0 4px 12px rgba(167,139,250,0.3);">
+                <i class="fas fa-share-alt"></i> Share
+            </a>
+        </div>
         <div class="hero">
-            <div class="hero-icon"><i class="fas fa-dumbbell"></i></div>
-            <h1>PowerLift Live</h1>
-            <p>Michigan High School Powerlifting — select your role to get started</p>
+            <div class="hero-icon">
+                <img src="pllapplogo.svg" alt="PowerLift Live Logo" style="width:110px; height:110px; object-fit:contain; filter: brightness(0) saturate(100%) invert(50%) sepia(100%) saturate(1000%) hue-rotate(10deg) brightness(110%);">
+            </div>
+            <h1>PowerLift Live <span id="versionHeader" style="font-size: 1rem; font-weight: 600; color: white; -webkit-text-fill-color: white;">V4.2.0</span></h1>
+            <p id="meet-subtitle">Competition Results & Team Standings</p>
+            <p id="meet-name" style="display: none; color: #60a5fa; font-size: 1rem; font-weight: 600; margin-top: -12px; margin-bottom: 16px; letter-spacing: 0.3px;"></p>
+
+            <div class="row g-3 mb-3">
+                <div class="col-6 col-md-6 col-lg-3">
+                    <a href="athletes.html" class="feature-card" style="text-decoration:none;display:block;background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.25);">
+                        <div class="feature-icon">
+                            <img src="teamviewicon2.png" style="width:2em;height:2em;filter:invert(67%) sepia(72%) saturate(400%) hue-rotate(115deg) brightness(95%) contrast(90%);">
+                        </div>
+                        <h2>Team Athletes</h2>
+                        <p>View detailed stats for your school's varsity and JV athletes by weight class</p>
+                        <span class="btn-athletes">
+                            <i class="fas fa-arrow-right me-2"></i>Team Athletes
+                        </span>
+                    </a>
+                </div>
+
+                <div class="col-6 col-md-6 col-lg-3">
+                    <a href="platform.html" class="feature-card" style="text-decoration:none;display:block;background:rgba(6,182,212,0.08);border-color:rgba(6,182,212,0.25);">
+                        <div class="feature-icon">
+                            <i class="fas fa-layer-group" style="color: #06b6d4;"></i>
+                        </div>
+                        <h2>Platform View</h2>
+                        <p>View athletes competing on each platform with their attempts</p>
+                        <span class="btn-platform">
+                            <i class="fas fa-arrow-right me-2"></i>Platform View
+                        </span>
+                    </a>
+                </div>
+
+                <div class="col-6 col-md-6 col-lg-3">
+                    <a href="athlete-view.html" class="feature-card" style="text-decoration:none;display:block;background:rgba(139,92,246,0.08);border-color:rgba(139,92,246,0.25);">
+                        <div class="feature-icon">
+                            <i class="fas fa-person-running" style="color: #8b5cf6;"></i>
+                        </div>
+                        <h2>Athlete View</h2>
+                        <p>Compare athletes by weight class with gap to leader for each lift</p>
+                        <span class="btn-results">
+                            <i class="fas fa-arrow-right me-2"></i>Athlete View
+                        </span>
+                    </a>
+                </div>
+
+                <div class="col-6 col-md-6 col-lg-3">
+                    <a href="coaches.html" class="feature-card" style="text-decoration:none;display:block;background:rgba(236,72,153,0.08);border-color:rgba(236,72,153,0.25);">
+                        <div class="feature-icon">
+                            <i class="fas fa-clipboard-user" style="color: #ec4899;"></i>
+                        </div>
+                        <h2>Coaches View</h2>
+                        <p>Your team's athletes currently lifting or on deck across all platforms</p>
+                        <span class="btn-coaches">
+                            <i class="fas fa-arrow-right me-2"></i>Coaches View
+                        </span>
+                    </a>
+                </div>
+
+                <div class="col-6 col-md-6 col-lg-3">
+                    <a href="team.html" class="feature-card" style="text-decoration:none;display:block;background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.25);">
+                        <div class="feature-icon">
+                            <i class="fas fa-trophy" style="color: #f59e0b;"></i>
+                        </div>
+                        <h2>Team Standings</h2>
+                        <p>Check team rankings and see how schools stack up</p>
+                        <span class="btn-team">
+                            <i class="fas fa-arrow-right me-2"></i>Team Standings
+                        </span>
+                    </a>
+                </div>
+
+                <div class="col-6 col-md-6 col-lg-3">
+                    <a href="results.html" class="feature-card" style="text-decoration:none;display:block;background:rgba(249,115,22,0.08);border-color:rgba(249,115,22,0.25);">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-bar" style="color: #f97316;"></i>
+                        </div>
+                        <h2>All Results</h2>
+                        <p>Browse complete competition results from all schools</p>
+                        <span class="btn-all-results">
+                            <i class="fas fa-arrow-right me-2"></i>All Results
+                        </span>
+                    </a>
+                </div>
+
+                <div class="col-6 col-md-6 col-lg-3">
+                    <a href="resources.html" class="feature-card" style="text-decoration:none;display:block;background:rgba(96,165,250,0.08);border-color:rgba(96,165,250,0.25);">
+                        <div class="feature-icon">
+                            <i class="fas fa-book-open" style="color: #60a5fa;"></i>
+                        </div>
+                        <h2>Resources</h2>
+                        <p>Rules, documents, and helpful links for competitors, coaches, and families</p>
+                        <span class="btn-athletes" style="background: #60a5fa; box-shadow: 0 4px 12px rgba(96,165,250,0.3);">
+                            <i class="fas fa-arrow-right me-2"></i>Resources
+                        </span>
+                    </a>
+                </div>
+
+<div class="col-6 col-md-6 col-lg-3">
+                    <a href="setup.html" class="feature-card" style="text-decoration:none;display:block;background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.25);">
+                        <div class="feature-icon">
+                            <i class="fas fa-cog" style="color: #ef4444;"></i>
+                        </div>
+                        <h2>Setup</h2>
+                        <p>Configure Google Sheets integration and data sources</p>
+                        <span class="btn-setup">
+                            <i class="fas fa-arrow-right me-2"></i>Go to Setup
+                        </span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="info-section" style="border-color: rgba(245, 158, 11, 0.4); background: rgba(30, 41, 59, 0.9);">
+                <h3 style="color: #f59e0b;"><i class="fas fa-exclamation-triangle me-2"></i>Disclaimer</h3>
+                <p>PowerLift Live is an <strong>unofficial, independent tool</strong> created to help coaches, athletes, and families follow meet results. It is <strong>not the official scoring app</strong> for any competition and is <strong>not affiliated with, endorsed by, or supported by the Michigan High School Powerlifting Association (MHSPL)</strong>. All competition data is sourced directly from the meet's Google Sheet. For official results, always refer to the meet director or official MHSPL resources.</p>
+            </div>
+
+            <div class="info-section" style="text-align:center;">
+                <h3><i class="fas fa-info-circle me-2"></i>How It Works</h3>
+                <p style="margin-bottom:16px;">Not sure where to start or which page to use? The App Guide explains every page and who it's designed for.</p>
+                <a href="guide.html" style="display:inline-flex;align-items:center;gap:8px;background:rgba(96,165,250,0.15);border:1px solid rgba(96,165,250,0.4);color:#60a5fa;padding:10px 24px;border-radius:10px;text-decoration:none;font-weight:700;font-size:1rem;transition:all 0.2s;" onmouseover="this.style.background='rgba(96,165,250,0.25)'" onmouseout="this.style.background='rgba(96,165,250,0.15)'"><i class="fas fa-book-open"></i> View App Guide</a>
+            </div>
+
+
+        <!-- Powered by Streamwave -->
+        <div style="text-align: center; padding: 8px 0 10px; opacity: 0.6;">
+            <p style="color: rgba(255,255,255,0.4); font-size: 0.75rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">Powered by</p>
+            <img src="StreaWaveProd-LogoTrans-White.png" alt="StreamWave Productions" style="height: 80px; width: auto;">
         </div>
 
-        <div class="row g-3 justify-content-center">
-            <div class="col-12 col-sm-4">
-                <a href="https://pllparents.streamwaveprod.com" class="role-card" style="border-color:rgba(167,139,250,0.3);">
-                    <div class="role-icon"><i class="fas fa-users" style="color:#a78bfa;"></i></div>
-                    <h2>Parent</h2>
-                    <p>Follow your athlete live — platform view, team roster, and resources.</p>
-                    <span class="btn-role" style="background:#7c3aed; box-shadow:0 4px 12px rgba(124,58,237,0.35);">
-                        <i class="fas fa-arrow-right"></i> Enter
-                    </span>
-                </a>
+        </div>
+    </div>
+
+    <!-- First-Time Setup Modal -->
+    <div id="setupModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 9999; align-items: center; justify-content: center;">
+        <div style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid rgba(96, 165, 250, 0.4); border-radius: 20px; padding: 40px; max-width: 480px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.8);">
+            <div style="font-size: 3.5rem; margin-bottom: 20px;">
+                <i class="fas fa-cog" style="color: #ef4444;"></i>
+            </div>
+            <h2 style="font-size: 1.8rem; font-weight: 800; background: linear-gradient(135deg, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 15px;">
+                Welcome to PowerLift Live!
+            </h2>
+            <p style="color: rgba(255,255,255,0.8); font-size: 1.05rem; line-height: 1.7; margin-bottom: 10px;">
+                It looks like this is your first time here. Before you can view athletes, platforms, or results you'll need to connect your Google Sheet.
+            </p>
+            <p style="color: rgba(255,255,255,0.6); font-size: 0.95rem; margin-bottom: 30px;">
+                The setup only takes a minute — just paste your sheet URL or scan a QR code.
+            </p>
+            <a href="setup.html" style="display: inline-flex; align-items: center; gap: 10px; background: #ef4444; color: white; text-decoration: none; padding: 14px 32px; border-radius: 12px; font-size: 1.1rem; font-weight: 700; box-shadow: 0 4px 15px rgba(239,68,68,0.4); margin-bottom: 15px;">
+                <i class="fas fa-cog"></i> Go to Setup
+            </a>
+            <br>
+            <button onclick="document.getElementById('setupModal').style.display='none'" style="background: none; border: none; color: rgba(255,255,255,0.4); font-size: 0.9rem; cursor: pointer; margin-top: 5px;">
+                Dismiss
+            </button>
+        </div>
+    </div>
+
+    <!-- What's New Modal -->
+    <div id="whatsNewModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9998; align-items: center; justify-content: center; padding: 16px;">
+        <div style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid rgba(167, 139, 250, 0.5); border-radius: 20px; padding: 36px; max-width: 520px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.8); max-height: 85vh; overflow-y: auto;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="font-size: 2.8rem; margin-bottom: 12px;">
+                    <i class="fas fa-sparkles" style="color: #a78bfa;"></i>
+                </div>
+                <h2 style="font-size: 1.7rem; font-weight: 800; background: linear-gradient(135deg, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 4px;">
+                    What's New
+                </h2>
+                <p style="color: rgba(255,255,255,0.5); font-size: 0.85rem; margin: 0;">Latest updates to PowerLift Live</p>
             </div>
 
-            <div class="col-12 col-sm-4">
-                <div class="role-card" style="border-color:rgba(96,165,250,0.3);" onclick="goRole('athlete')">
-                    <div class="role-icon"><i class="fas fa-person-running" style="color:#60a5fa;"></i></div>
-                    <h2>Athlete</h2>
-                    <p>View your lifts, weight class, and attempts throughout the meet.</p>
-                    <span class="btn-role" style="background:#3b82f6; box-shadow:0 4px 12px rgba(59,130,246,0.35);">
-                        <i class="fas fa-arrow-right"></i> Enter
-                    </span>
+            <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 28px;">
+                <div style="background: rgba(96, 165, 250, 0.1); border: 1px solid rgba(96, 165, 250, 0.25); border-radius: 12px; padding: 16px;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                        <i class="fas fa-dumbbell" style="color: #60a5fa; font-size: 1.2rem;"></i>
+                        <strong style="color: white; font-size: 1rem;">Correct Plate Colors</strong>
+                    </div>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin: 0; line-height: 1.6;">
+                        The barbell visualizer now uses accurate Olympic plate colors — 45 lb plates are blue, 35 lb are yellow, 25 lb are green, and so on.
+                    </p>
+                </div>
+
+                <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 16px;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                        <i class="fas fa-shield-halved" style="color: #10b981; font-size: 1.2rem;"></i>
+                        <strong style="color: white; font-size: 1rem;">Security Improvements</strong>
+                    </div>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin: 0; line-height: 1.6;">
+                        Under-the-hood security hardening across all pages — content security policy, resource integrity checks, and input sanitization.
+                    </p>
                 </div>
             </div>
 
-            <div class="col-12 col-sm-4">
-                <div class="role-card" style="border-color:rgba(16,185,129,0.3);" onclick="goRole('coach')">
-                    <div class="role-icon"><i class="fas fa-clipboard-list" style="color:#10b981;"></i></div>
-                    <h2>Coach</h2>
-                    <p>Track your entire team, manage attempts, and monitor the platform.</p>
-                    <span class="btn-role" style="background:#10b981; box-shadow:0 4px 12px rgba(16,185,129,0.35);">
-                        <i class="fas fa-arrow-right"></i> Enter
-                    </span>
-                </div>
+            <div style="text-align: center;">
+                <button onclick="sessionStorage.setItem('pllWhatsNew_v4','1'); document.getElementById('whatsNewModal').style.display='none';"
+                    style="background: linear-gradient(135deg, #60a5fa, #a78bfa); border: none; color: white; padding: 14px 40px; border-radius: 25px; font-size: 1rem; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(96,165,250,0.4); transition: all 0.2s;"
+                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(96,165,250,0.5)'"
+                    onmouseout="this.style.transform=''; this.style.boxShadow='0 4px 15px rgba(96,165,250,0.4)'">
+                    Got it!
+                </button>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <div style="text-align: center; padding: 20px 0 30px; color: rgba(255,255,255,0.3); font-size: 0.75rem;" id="versionFooter"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="state-records-data.js"></script>
     <script>
-        function goRole(role) {
-            const access = localStorage.getItem('pllSchoolAccess');
-            if (access) {
-                try {
-                    const data = JSON.parse(access);
-                    if (data.role === role && data.code) {
-                        window.location.href = role === 'coach' ? 'coaches.html' : 'athlete-view.html';
+        window.addEventListener('DOMContentLoaded', function() {
+            fetch('https://api.github.com/repos/markbritton-hue/PLLAPPV4/tags')
+                .then(r => r.json())
+                .then(tags => {
+                    if (!tags || !tags.length) return;
+                    const v41tags = tags.filter(t => /^v4\.1\.\d+$/.test(t.name));
+                    if (!v41tags.length) return;
+                    v41tags.sort((a, b) => {
+                        const n = x => parseInt(x.name.split('.')[2]);
+                        return n(b) - n(a);
+                    });
+                    const tag = v41tags[0];
+                    return fetch(tag.commit.url)
+                        .then(r => r.json())
+                        .then(commit => {
+                            const date = new Date(commit.commit.author.date).toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'});
+                            const label = tag.name.replace(/^v/, 'V');
+                            document.getElementById('versionFooter').textContent = tag.name + ' · ' + date;
+                            document.getElementById('versionHeader').textContent = label;
+                        });
+                })
+                .catch(() => {});
+            initStateRecordsStorage();
+            const config = localStorage.getItem('trplConfig');
+            if (!config) {
+                const modal = document.getElementById('setupModal');
+                modal.style.display = 'flex';
+            } else {
+                showMeetHeader();
+            }
+
+            async function showMeetHeader() {
+                const el = document.getElementById('meet-name');
+
+                // 1. Use cached meet info if already saved
+                const meetInfoRaw = localStorage.getItem('selectedMeetInfo');
+                if (meetInfoRaw) {
+                    try {
+                        displayMeetInfo(JSON.parse(meetInfoRaw), el);
                         return;
+                    } catch(e) {}
+                }
+
+                // 2. Look up the selected meet from Firestore REST API
+                const savedUrl = localStorage.getItem('selectedMeetUrl');
+                if (savedUrl) {
+                    try {
+                        const r = await fetch('https://firestore.googleapis.com/v1/projects/powerlift-live/databases/(default)/documents/events');
+                        if (r.ok) {
+                            const data = await r.json();
+                            const docs = data.documents || [];
+                            for (const doc of docs) {
+                                const f = doc.fields || {};
+                                const sheetUrl = f.sheetUrl?.stringValue || '';
+                                if (sheetUrl === savedUrl) {
+                                    const info = {
+                                        name:     f.name?.stringValue     || '',
+                                        date:     f.date?.stringValue     || '',
+                                        time:     f.time?.stringValue     || '',
+                                        location: f.location?.stringValue || ''
+                                    };
+                                    localStorage.setItem('selectedMeetInfo', JSON.stringify(info));
+                                    displayMeetInfo(info, el);
+                                    return;
+                                }
+                            }
+                        }
+                    } catch(e) {}
+                }
+
+                // 3. Final fallback: sheet title from cache
+                try {
+                    const { spreadsheetId } = JSON.parse(config);
+                    if (spreadsheetId) {
+                        const r = await fetch(`https://pllv4.streamwaveprod.com/cache/meta_${spreadsheetId}.html`);
+                        if (r.ok) {
+                            const html = await r.text();
+                            const match = html.match(/<title>([^<]+)<\/title>/);
+                            if (match) {
+                                el.innerHTML = '<span style="color:rgba(255,255,255,0.45);font-weight:600;">Current Meet:</span> ' + match[1].replace(' - Google Sheets', '').trim();
+                                el.style.display = 'block';
+                            }
+                        }
                     }
                 } catch(e) {}
             }
-            window.location.href = `unlock.html?role=${role}`;
-        }
+
+            function displayMeetInfo(info, el) {
+                const d = info.date ? new Date(info.date + 'T12:00:00').toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) : '';
+                const t = info.time ? (() => { const [h,m] = info.time.split(':'); const hr = parseInt(h); return `${hr%12||12}:${m} ${hr>=12?'PM':'AM'}`; })() : '';
+                const parts = [info.name, d && t ? `${d} · ${t}` : d || t, info.location].filter(Boolean);
+                if (!parts.length) return;
+                el.innerHTML = '<span style="color:rgba(255,255,255,0.45);font-weight:600;">Current Meet:</span> ' + parts.join('<span style="color:rgba(255,255,255,0.3);margin:0 6px;">·</span>');
+                el.style.display = 'block';
+            }
+
+            // Check if cache server is online
+            fetch('https://pllv4.streamwaveprod.com/cache/stats.json?_=' + Date.now())
+                .then(r => { if (!r.ok) throw new Error(); })
+                .catch(() => {
+                    const banner = document.getElementById('serverOfflineBanner');
+                    if (banner) banner.style.display = 'flex';
+                });
+
+            // What's New popup — show once per session (clears when tab/browser closes)
+            if (!sessionStorage.getItem('pllWhatsNew_v4')) {
+                document.getElementById('whatsNewModal').style.display = 'flex';
+            }
+
+        });
     </script>
 </body>
 </html>
