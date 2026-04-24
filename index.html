@@ -652,23 +652,26 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js" integrity="sha384-sEVIly94UBRLKWdkYoPpSG7GD/e79YHMrxVyZaOk712Ga7+EAw6w1EFi+xBzBdd+" crossorigin="anonymous"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js" integrity="sha384-M481iNZJtbpypKgvlvZ+78Giq0BsewFLk5r2k+MOcGXlwKCc27DQRZ+WCV/zpmpC" crossorigin="anonymous"></script>
     <script>
-        firebase.initializeApp({
-            apiKey: "AIzaSyB5FKrs0rys3ODV2U36YFjJWUu_BgFuDZk",
-            authDomain: "powerlift-live.firebaseapp.com",
-            projectId: "powerlift-live",
-            storageBucket: "powerlift-live.firebasestorage.app",
-            messagingSenderId: "298820185512",
-            appId: "1:298820185512:web:4bccfb5a26ff4acf0b4c67"
-        });
+        if (!firebase.apps.length) {
+            firebase.initializeApp({
+                apiKey: "AIzaSyB5FKrs0rys3ODV2U36YFjJWUu_BgFuDZk",
+                authDomain: "powerlift-live.firebaseapp.com",
+                projectId: "powerlift-live",
+                storageBucket: "powerlift-live.firebasestorage.app",
+                messagingSenderId: "298820185512",
+                appId: "1:298820185512:web:4bccfb5a26ff4acf0b4c67"
+            });
+        }
         const _gateDb = firebase.firestore();
 
-        (function checkGate() {
-            try {
-                const a = JSON.parse(localStorage.getItem('pllSchoolAccess') || '{}');
-                if (a.code && a.validatedAt && (Date.now() - a.validatedAt) < 86400000) return;
-            } catch(e) {}
+        try {
+            const a = JSON.parse(localStorage.getItem('pllSchoolAccess') || '{}');
+            if (!a.code || !a.validatedAt || (Date.now() - a.validatedAt) >= 86400000) {
+                document.getElementById('codeGate').style.display = 'flex';
+            }
+        } catch(e) {
             document.getElementById('codeGate').style.display = 'flex';
-        })();
+        }
 
         async function submitGateCode() {
             const code = document.getElementById('gateInput').value.trim().toUpperCase();
