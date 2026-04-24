@@ -15,14 +15,24 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Deploy via SFTP
-        run: |
-          sudo apt-get install -y lftp
-          lftp -c "set sftp:auto-confirm yes; set net:timeout 30; set net:max-retries 2; open -u ${{ secrets.FTP_USER }},${{ secrets.FTP_PASS }} sftp://${{ secrets.FTP_HOST }}; mirror -R --overwrite --verbose . /pllappv4/" || true
-
-      - name: Force upload index.html
-        run: |
-          sudo apt-get install -y lftp
-          lftp -c "set sftp:auto-confirm yes; set net:timeout 30; open -u ${{ secrets.FTP_USER }},${{ secrets.FTP_PASS }} sftp://${{ secrets.FTP_HOST }}; put -O /pllappv4/ index.html"
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          protocol: ftps
+          server-dir: /pllappv4/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.claude/**
+            **/parents/**
+            **/manager/**
+            *.sh
+            *.py
+            *.csv
+            *.xlsx
+            *.mp4
 
   deploy-parents:
     name: SFTP Deploy (parents app)
