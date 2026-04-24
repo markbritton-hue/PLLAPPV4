@@ -167,6 +167,29 @@
             <p>Manage school subscriptions and access codes</p>
         </header>
 
+        <!-- Import from Sheet -->
+        <div class="card">
+            <h2><i class="fas fa-file-import"></i> Import from Google Sheet</h2>
+            <p style="color:rgba(255,255,255,0.55); font-size:0.85rem; margin-bottom:14px;">
+                Add an <strong style="color:#93c5fd;">APP CODE</strong> column to your registration sheet, then click Import to preview and sync schools into Firebase.
+            </p>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                <button onclick="importFromSheet()" id="importBtn" class="btn-primary-grad" style="background:linear-gradient(135deg,#10b981,#059669);">
+                    <i class="fas fa-file-import"></i> Import Sheet
+                </button>
+                <span id="importStatus" style="font-size:0.85rem; color:rgba(255,255,255,0.5);"></span>
+            </div>
+            <div id="importPreview" style="display:none; margin-top:16px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+                    <div style="color:rgba(255,255,255,0.7); font-size:0.88rem;" id="importSummary"></div>
+                    <button onclick="importAll()" id="importAllBtn" class="btn-primary-grad" style="padding:8px 18px; font-size:0.88rem;">
+                        <i class="fas fa-cloud-upload-alt"></i> Import All
+                    </button>
+                </div>
+                <div id="importTable"></div>
+            </div>
+        </div>
+
         <!-- Add School -->
         <div class="card">
             <h2><i class="fas fa-plus-circle"></i> Add School</h2>
@@ -411,6 +434,141 @@
     async function deleteSchool(id, name) {
         if (!confirm(`Remove ${name}? This cannot be undone.`)) return;
         await db.collection('schoolCodes').doc(id).delete();
+    }
+
+    // --- Import from Sheet ---
+    const SHEET_ID = '1T249w1knVPliJcdwKrpjTNBjtvAw2_NUN-EscHNl-P0';
+    const SHEET_GID = '0';
+    let importRows = [];
+
+    function parseCSV(text) {
+        const lines = text.trim().split('\n');
+        return lines.map(line => {
+            const cols = [];
+            let cur = '', inQ = false;
+            for (let i = 0; i < line.length; i++) {
+                const c = line[i];
+                if (c === '"') { inQ = !inQ; }
+                else if (c === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
+                else { cur += c; }
+            }
+            cols.push(cur.trim());
+            return cols;
+        });
+    }
+
+    async function importFromSheet() {
+        const btn = document.getElementById('importBtn');
+        const status = document.getElementById('importStatus');
+        btn.disabled = true;
+        status.textContent = 'Fetching sheet…';
+
+        try {
+            const url = `https://pllv4.streamwaveprod.com/cache/sheet_${SHEET_ID}_${SHEET_GID}.csv`;
+            const res = await fetch(url);
+            if (!res.ok) throw new Error('Fetch failed');
+            const text = await res.text();
+            const rows = parseCSV(text);
+            if (rows.length < 2) throw new Error('No data');
+
+            const headers = rows[0].map(h => h.trim().toUpperCase());
+            const schoolIdx = headers.findIndex(h => h === 'SCHOOL');
+            const codeIdx   = headers.findIndex(h => h === 'APP CODE');
+
+            if (schoolIdx === -1) throw new Error('No "School" column found in sheet');
+            if (codeIdx === -1)   throw new Error('No "APP CODE" column found — please add it to the sheet first');
+
+            // Deduplicate by school name, keep first non-empty code found
+            const seen = {};
+            for (let i = 1; i < rows.length; i++) {
+                const name = (rows[i][schoolIdx] || '').trim();
+                const code = (rows[i][codeIdx]   || '').trim().toUpperCase();
+                if (!name) continue;
+                if (!seen[name]) seen[name] = { name, code };
+                else if (!seen[name].code && code) seen[name].code = code;
+            }
+            importRows = Object.values(seen);
+
+            renderImportPreview();
+            status.textContent = '';
+        } catch (e) {
+            status.style.color = '#f87171';
+            status.textContent = e.message || 'Error fetching sheet.';
+        }
+        btn.disabled = false;
+    }
+
+    function renderImportPreview() {
+        const preview = document.getElementById('importPreview');
+        const summary = document.getElementById('importSummary');
+        const table   = document.getElementById('importTable');
+        preview.style.display = 'block';
+        summary.textContent   = `${importRows.length} unique schools found`;
+
+        table.innerHTML = `
+            <table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
+                <thead>
+                    <tr style="color:rgba(255,255,255,0.4); text-align:left; border-bottom:1px solid rgba(96,165,250,0.15);">
+                        <th style="padding:6px 8px;">School</th>
+                        <th style="padding:6px 8px;">APP CODE</th>
+                        <th style="padding:6px 8px;">Paid Through</th>
+                        <th style="padding:6px 8px;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${importRows.map((r, i) => `
+                        <tr style="border-bottom:1px solid rgba(96,165,250,0.08);">
+                            <td style="padding:7px 8px; color:white;">${escapeHtml(r.name)}</td>
+                            <td style="padding:7px 8px;">
+                                <input type="text" value="${escapeHtml(r.code)}" oninput="importRows[${i}].code=this.value.toUpperCase();this.value=this.value.toUpperCase();"
+                                    style="background:rgba(15,23,42,0.6);border:1px solid rgba(96,165,250,0.2);border-radius:6px;color:#93c5fd;padding:4px 8px;font-family:monospace;font-size:0.85rem;width:120px;">
+                            </td>
+                            <td style="padding:7px 8px;">
+                                <input type="date" oninput="importRows[${i}].expiry=this.value;"
+                                    style="background:rgba(15,23,42,0.6);border:1px solid rgba(96,165,250,0.2);border-radius:6px;color:white;padding:4px 8px;font-size:0.82rem;">
+                            </td>
+                            <td style="padding:7px 8px;">
+                                <button class="btn-sm btn-edit" onclick="importOne(${i})"><i class="fas fa-cloud-upload-alt"></i> Add</button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>`;
+    }
+
+    async function importOne(i) {
+        const r = importRows[i];
+        if (!r.code) { alert('Please enter an APP CODE for ' + r.name); return; }
+        await db.collection('schoolCodes').add({
+            schoolName: r.name,
+            code: r.code,
+            expiresAt: r.expiry || '',
+            active: true,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        importRows.splice(i, 1);
+        renderImportPreview();
+    }
+
+    async function importAll() {
+        const missing = importRows.filter(r => !r.code);
+        if (missing.length) { alert(`${missing.length} school(s) are missing an APP CODE. Fill them in or remove them first.`); return; }
+        document.getElementById('importAllBtn').disabled = true;
+        const batch = db.batch();
+        importRows.forEach(r => {
+            const ref = db.collection('schoolCodes').doc();
+            batch.set(ref, {
+                schoolName: r.name,
+                code: r.code,
+                expiresAt: r.expiry || '',
+                active: true,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        });
+        await batch.commit();
+        importRows = [];
+        document.getElementById('importPreview').style.display = 'none';
+        document.getElementById('importAllBtn').disabled = false;
     }
 </script>
 </body>
