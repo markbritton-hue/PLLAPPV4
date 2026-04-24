@@ -424,6 +424,7 @@
         const btn = document.getElementById('importBtn');
         const status = document.getElementById('importStatus');
         btn.disabled = true;
+        status.style.color = 'rgba(255,255,255,0.5)';
         status.textContent = 'Fetching sheet…';
 
         try {
@@ -434,25 +435,30 @@
             const rows = parseCSV(text);
             if (rows.length < 2) throw new Error('No data');
 
-            const headers = rows[0].map(h => h.trim().toUpperCase());
+            const rawHeaders = rows[0].map(h => h.trim());
+            const headers = rawHeaders.map(h => h.toUpperCase());
             const schoolIdx = headers.findIndex(h => h === 'SCHOOL');
-            const codeIdx   = headers.findIndex(h => h === 'APP CODE');
-
             if (schoolIdx === -1) throw new Error('No "School" column found in sheet');
 
-            // Deduplicate by school name, keep first non-empty code found
-            const seen = {};
-            for (let i = 1; i < rows.length; i++) {
-                const name = (rows[i][schoolIdx] || '').trim();
-                const code = (rows[i][codeIdx]   || '').trim().toUpperCase();
-                if (!name) continue;
-                if (!seen[name]) seen[name] = { name, code };
-                else if (!seen[name].code && code) seen[name].code = code;
-            }
-            importRows = Object.values(seen);
+            const codeIdx = headers.findIndex(h => h === 'APP CODE');
 
-            renderImportPreview();
-            status.textContent = '';
+            importRows = [];
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i];
+                const school = (row[schoolIdx] || '').trim();
+                if (!school) continue;
+                const record = { school, code: codeIdx >= 0 ? (row[codeIdx] || '').trim().toUpperCase() : '', expiry: '' };
+                // Store all other columns as extra fields
+                rawHeaders.forEach((h, idx) => {
+                    if (idx === schoolIdx || idx === codeIdx) return;
+                    const val = (row[idx] || '').trim();
+                    if (val) record[h] = val;
+                });
+                importRows.push(record);
+            }
+
+            renderImportPreview(rawHeaders, schoolIdx, codeIdx);
+            status.textContent = `${importRows.length} rows ready to import`;
         } catch (e) {
             status.style.color = '#f87171';
             status.textContent = e.message || 'Error fetching sheet.';
@@ -460,77 +466,70 @@
         btn.disabled = false;
     }
 
-    function renderImportPreview() {
+    function renderImportPreview(rawHeaders, schoolIdx, codeIdx) {
         const preview = document.getElementById('importPreview');
         const summary = document.getElementById('importSummary');
         const table   = document.getElementById('importTable');
         preview.style.display = 'block';
-        summary.textContent   = `${importRows.length} unique schools found`;
+        summary.textContent   = `${importRows.length} records found`;
+
+        const extraHeaders = (rawHeaders || []).filter((_, idx) => idx !== schoolIdx && idx !== codeIdx);
 
         table.innerHTML = `
-            <table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
+            <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse:collapse; font-size:0.82rem; min-width:600px;">
                 <thead>
                     <tr style="color:rgba(255,255,255,0.4); text-align:left; border-bottom:1px solid rgba(96,165,250,0.15);">
                         <th style="padding:6px 8px;">School</th>
                         <th style="padding:6px 8px;">APP CODE</th>
-                        <th style="padding:6px 8px;">Paid Through</th>
+                        ${extraHeaders.map(h => `<th style="padding:6px 8px;">${escapeHtml(h)}</th>`).join('')}
                         <th style="padding:6px 8px;"></th>
                     </tr>
                 </thead>
                 <tbody>
                     ${importRows.map((r, i) => `
                         <tr style="border-bottom:1px solid rgba(96,165,250,0.08);">
-                            <td style="padding:7px 8px; color:white;">${escapeHtml(r.name)}</td>
+                            <td style="padding:7px 8px; color:white; white-space:nowrap;">${escapeHtml(r.school)}</td>
                             <td style="padding:7px 8px;">
                                 <input type="text" value="${escapeHtml(r.code)}" oninput="importRows[${i}].code=this.value.toUpperCase();this.value=this.value.toUpperCase();"
-                                    style="background:rgba(15,23,42,0.6);border:1px solid rgba(96,165,250,0.2);border-radius:6px;color:#93c5fd;padding:4px 8px;font-family:monospace;font-size:0.85rem;width:120px;">
+                                    style="background:rgba(15,23,42,0.6);border:1px solid rgba(96,165,250,0.2);border-radius:6px;color:#93c5fd;padding:4px 8px;font-family:monospace;font-size:0.82rem;width:110px;">
                             </td>
+                            ${extraHeaders.map(h => `<td style="padding:7px 8px; color:rgba(255,255,255,0.6); white-space:nowrap;">${escapeHtml(r[h] || '')}</td>`).join('')}
                             <td style="padding:7px 8px;">
-                                <input type="date" oninput="importRows[${i}].expiry=this.value;"
-                                    style="background:rgba(15,23,42,0.6);border:1px solid rgba(96,165,250,0.2);border-radius:6px;color:white;padding:4px 8px;font-size:0.82rem;">
-                            </td>
-                            <td style="padding:7px 8px;">
-                                <button class="btn-sm btn-edit" onclick="importOne(${i})"><i class="fas fa-cloud-upload-alt"></i> Add</button>
+                                <button class="btn-sm btn-delete" onclick="importRows.splice(${i},1); renderImportPreview();" title="Remove row"><i class="fas fa-times"></i></button>
                             </td>
                         </tr>
                     `).join('')}
                 </tbody>
-            </table>`;
-    }
-
-    async function importOne(i) {
-        const r = importRows[i];
-        if (!r.code) { alert('Please enter an APP CODE for ' + r.name); return; }
-        await db.collection('schoolCodes').add({
-            schoolName: r.name,
-            code: r.code,
-            expiresAt: r.expiry || '',
-            active: true,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        importRows.splice(i, 1);
-        renderImportPreview();
+            </table>
+            </div>`;
     }
 
     async function importAll() {
-        const missing = importRows.filter(r => !r.code);
-        if (missing.length) { alert(`${missing.length} school(s) are missing an APP CODE. Fill them in or remove them first.`); return; }
         document.getElementById('importAllBtn').disabled = true;
         const batch = db.batch();
         importRows.forEach(r => {
             const ref = db.collection('schoolCodes').doc();
-            batch.set(ref, {
-                schoolName: r.name,
-                code: r.code,
+            const data = {
+                schoolName: r.school,
+                code: r.code || '',
                 expiresAt: r.expiry || '',
                 active: true,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            // Store all extra fields
+            Object.keys(r).forEach(k => {
+                if (!['school','code','expiry'].includes(k)) data[k] = r[k];
             });
+            batch.set(ref, data);
         });
         await batch.commit();
         importRows = [];
         document.getElementById('importPreview').style.display = 'none';
+        document.getElementById('importStatus').textContent = 'Import complete!';
+        document.getElementById('importStatus').style.color = '#34d399';
         document.getElementById('importAllBtn').disabled = false;
+        setTimeout(() => document.getElementById('importStatus').textContent = '', 4000);
     }
 </script>
 </body>
