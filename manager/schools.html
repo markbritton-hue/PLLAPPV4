@@ -288,32 +288,29 @@
             const hasExtra = s.contacts && s.contacts.length > 0;
 
             return `
-            <div class="school-row" id="row-${escapeHtml(s.id)}">
-                <!-- Header row -->
-                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:6px; cursor:pointer;" onclick="toggleExpand('${escapeHtml(s.id)}')">
-                    <div class="school-name">${escapeHtml(s.schoolName)}</div>
-                    ${statusBadge(s)}
-                    ${hasExtra ? `<span style="color:rgba(255,255,255,0.3); font-size:0.75rem; margin-left:auto;"><i class="fas fa-chevron-down" id="chevron-${escapeHtml(s.id)}"></i></span>` : ''}
-                </div>
-
-                <!-- Code + Paid Through + actions -->
-                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:4px;">
-                    <span class="school-code">${escapeHtml(s.code) || '<span style="color:rgba(255,255,255,0.3);font-style:italic;">no code</span>'}</span>
-                    <span style="color:rgba(255,255,255,0.4); font-size:0.8rem;">
-                        <i class="fas fa-calendar-alt" style="margin-right:4px;"></i>
-                        ${s.expiresAt ? escapeHtml(s.expiresAt) : '—'}
+            <div class="school-row" id="row-${escapeHtml(s.id)}" style="padding:10px 14px;">
+                <!-- Single line: all info + buttons -->
+                <div style="display:flex; align-items:center; gap:10px; flex-wrap:nowrap;">
+                    <!-- Left: expand toggle + name -->
+                    <div style="display:flex; align-items:center; gap:8px; flex:1; min-width:0; cursor:${hasExtra ? 'pointer' : 'default'};" onclick="${hasExtra ? `toggleExpand('${escapeHtml(s.id)}')` : ''}">
+                        ${hasExtra ? `<i class="fas fa-chevron-right" id="chevron-${escapeHtml(s.id)}" style="color:rgba(255,255,255,0.3); font-size:0.75rem; flex-shrink:0; transition:transform 0.2s;"></i>` : '<span style="width:12px;flex-shrink:0;"></span>'}
+                        <span style="font-weight:700; color:white; font-size:0.92rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(s.schoolName)}</span>
+                        ${statusBadge(s)}
+                    </div>
+                    <!-- Middle: code + expiry -->
+                    <span class="school-code" style="flex-shrink:0;">${escapeHtml(s.code) || '<span style="color:rgba(255,255,255,0.25);font-style:italic;font-size:0.78rem;">no code</span>'}</span>
+                    <span style="color:rgba(255,255,255,0.4); font-size:0.8rem; white-space:nowrap; flex-shrink:0;">
+                        <i class="fas fa-calendar-alt" style="margin-right:3px;"></i>${s.expiresAt ? escapeHtml(s.expiresAt) : '—'}
                     </span>
-                    <span style="color:rgba(255,255,255,0.3); font-size:0.75rem;">Added: ${s.createdAt ? new Date(s.createdAt.toDate()).toLocaleDateString() : '—'}</span>
-                </div>
-
-                <!-- Buttons -->
-                <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:4px; justify-content:flex-end;">
-                    <button class="btn-sm btn-edit" onclick="startEdit('${escapeHtml(s.id)}')"><i class="fas fa-pencil"></i> Edit</button>
-                    <button class="btn-sm btn-delete" onclick="deleteSchool('${escapeHtml(s.id)}', '${escapeHtml(s.schoolName)}')"><i class="fas fa-trash"></i> Remove</button>
-                    ${s.active
-                        ? `<button class="btn-sm btn-cancel" onclick="toggleActive('${escapeHtml(s.id)}', false)"><i class="fas fa-ban"></i> Deactivate</button>`
-                        : `<button class="btn-sm" style="background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.4);color:#34d399;" onclick="toggleActive('${escapeHtml(s.id)}', true)"><i class="fas fa-check"></i> Activate</button>`
-                    }
+                    <!-- Right: buttons -->
+                    <div style="display:flex; align-items:center; gap:6px; flex-shrink:0; margin-left:auto;">
+                        <button class="btn-sm btn-edit" onclick="startEdit('${escapeHtml(s.id)}')"><i class="fas fa-pencil"></i></button>
+                        <button class="btn-sm btn-delete" onclick="deleteSchool('${escapeHtml(s.id)}', '${escapeHtml(s.schoolName)}')"><i class="fas fa-trash"></i></button>
+                        ${s.active
+                            ? `<button class="btn-sm btn-cancel" onclick="toggleActive('${escapeHtml(s.id)}', false)" title="Deactivate"><i class="fas fa-ban"></i></button>`
+                            : `<button class="btn-sm" style="background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.4);color:#34d399;" onclick="toggleActive('${escapeHtml(s.id)}', true)" title="Activate"><i class="fas fa-check"></i></button>`
+                        }
+                    </div>
                 </div>
 
                 <!-- Expandable contacts -->
@@ -428,7 +425,7 @@
         if (!el) return;
         const open = el.style.display === 'block';
         el.style.display = open ? 'none' : 'block';
-        if (chevron) chevron.style.transform = open ? '' : 'rotate(180deg)';
+        if (chevron) chevron.style.transform = open ? '' : 'rotate(90deg)';
     }
 
     // --- Toggle active ---
