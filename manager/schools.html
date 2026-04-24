@@ -284,17 +284,33 @@
             return;
         }
 
-        el.innerHTML = filtered.map(s => `
+        const knownKeys = ['id','schoolName','code','expiresAt','active','createdAt'];
+
+        el.innerHTML = filtered.map(s => {
+            const extraKeys = Object.keys(s).filter(k => !knownKeys.includes(k));
+            const hasExtra = extraKeys.length > 0;
+
+            return `
             <div class="school-row" id="row-${escapeHtml(s.id)}">
-                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px;">
+                <!-- Header row -->
+                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:6px; cursor:pointer;" onclick="toggleExpand('${escapeHtml(s.id)}')">
                     <div class="school-name">${escapeHtml(s.schoolName)}</div>
                     ${statusBadge(s)}
+                    ${hasExtra ? `<span style="color:rgba(255,255,255,0.3); font-size:0.75rem; margin-left:auto;"><i class="fas fa-chevron-down" id="chevron-${escapeHtml(s.id)}"></i></span>` : ''}
                 </div>
-                <div class="school-meta">
-                    Expires: ${escapeHtml(s.expiresAt)} &nbsp;|&nbsp; Added: ${s.createdAt ? new Date(s.createdAt.toDate()).toLocaleDateString() : '—'}
+
+                <!-- Code + Paid Through + actions -->
+                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:4px;">
+                    <span class="school-code">${escapeHtml(s.code) || '<span style="color:rgba(255,255,255,0.3);font-style:italic;">no code</span>'}</span>
+                    <span style="color:rgba(255,255,255,0.4); font-size:0.8rem;">
+                        <i class="fas fa-calendar-alt" style="margin-right:4px;"></i>
+                        ${s.expiresAt ? escapeHtml(s.expiresAt) : '—'}
+                    </span>
+                    <span style="color:rgba(255,255,255,0.3); font-size:0.75rem;">Added: ${s.createdAt ? new Date(s.createdAt.toDate()).toLocaleDateString() : '—'}</span>
                 </div>
-                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-                    <span class="school-code">${escapeHtml(s.code)}</span>
+
+                <!-- Buttons -->
+                <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:4px;">
                     <button class="btn-sm btn-edit" onclick="startEdit('${escapeHtml(s.id)}')"><i class="fas fa-pencil"></i> Edit</button>
                     <button class="btn-sm btn-delete" onclick="deleteSchool('${escapeHtml(s.id)}', '${escapeHtml(s.schoolName)}')"><i class="fas fa-trash"></i> Remove</button>
                     ${s.active
@@ -302,6 +318,21 @@
                         : `<button class="btn-sm" style="background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.4);color:#34d399;" onclick="toggleActive('${escapeHtml(s.id)}', true)"><i class="fas fa-check"></i> Activate</button>`
                     }
                 </div>
+
+                <!-- Expandable extra fields -->
+                ${hasExtra ? `
+                <div id="expand-${escapeHtml(s.id)}" style="display:none; margin-top:10px; padding-top:10px; border-top:1px solid rgba(96,165,250,0.1);">
+                    <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                        ${extraKeys.map(k => `
+                            <div style="background:rgba(15,23,42,0.5); border:1px solid rgba(96,165,250,0.12); border-radius:6px; padding:6px 10px; min-width:120px;">
+                                <div style="color:rgba(255,255,255,0.4); font-size:0.72rem; font-weight:600; text-transform:uppercase; margin-bottom:2px;">${escapeHtml(k)}</div>
+                                <div style="color:white; font-size:0.85rem;">${escapeHtml(s[k])}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>` : ''}
+
+                <!-- Edit form -->
                 <div id="edit-${escapeHtml(s.id)}" style="display:none;" class="edit-form">
                     <div class="row g-2">
                         <div class="col-12 col-md-5">
@@ -322,8 +353,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        `).join('');
+            </div>`;
+        }).join('');
     }
 
     // --- Load ---
@@ -386,6 +417,16 @@
         if (!name || !code || !expiry) return;
         await db.collection('schoolCodes').doc(id).update({ schoolName: name, code, expiresAt: expiry });
         cancelEdit(id);
+    }
+
+    // --- Expand/collapse extra fields ---
+    function toggleExpand(id) {
+        const el = document.getElementById(`expand-${id}`);
+        const chevron = document.getElementById(`chevron-${id}`);
+        if (!el) return;
+        const open = el.style.display === 'block';
+        el.style.display = open ? 'none' : 'block';
+        if (chevron) chevron.style.transform = open ? '' : 'rotate(180deg)';
     }
 
     // --- Toggle active ---
