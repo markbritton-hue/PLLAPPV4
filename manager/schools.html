@@ -129,37 +129,13 @@
         .filter-tab.active {
             background: rgba(96,165,250,0.15); border-color: rgba(96,165,250,0.5); color: #93c5fd;
         }
-        #gateScreen {
-            display: flex; align-items: center; justify-content: center;
-            min-height: 80vh;
-        }
-        #gateBox {
-            background: rgba(30,41,59,0.8); border: 1px solid rgba(96,165,250,0.25);
-            border-radius: 16px; padding: 40px; max-width: 380px; width: 100%; text-align: center;
-        }
     </style>
 </head>
 <body>
 <div class="container">
 
-    <!-- Password gate -->
-    <div id="gateScreen">
-        <div id="gateBox">
-            <div style="font-size:2.5rem; color:#60a5fa; margin-bottom:16px;">
-                <i class="fas fa-lock"></i>
-            </div>
-            <h2 style="font-size:1.4rem; font-weight:800; color:white; margin-bottom:8px;">Manager Access</h2>
-            <p style="color:rgba(255,255,255,0.55); font-size:0.9rem; margin-bottom:20px;">Enter your manager password to continue.</p>
-            <input type="password" id="gateInput" class="form-control" placeholder="Password" style="margin-bottom:12px;" onkeydown="if(event.key==='Enter')checkGate()">
-            <button onclick="checkGate()" class="btn-primary-grad" style="width:100%; justify-content:center;">
-                <i class="fas fa-unlock"></i> Unlock
-            </button>
-            <div id="gateError" style="color:#f87171; font-size:0.85rem; margin-top:10px; min-height:18px;"></div>
-        </div>
-    </div>
-
-    <!-- Main content (hidden until authenticated) -->
-    <div id="mainContent" style="display:none;">
+    <!-- Main content -->
+    <div id="mainContent">
         <a href="index.html" class="btn-back"><i class="fas fa-arrow-left"></i> Manager Home</a>
 
         <header>
@@ -242,8 +218,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js" integrity="sha384-M481iNZJtbpypKgvlvZ+78Giq0BsewFLk5r2k+MOcGXlwKCc27DQRZ+WCV/zpmpC" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script>
-    const MANAGER_PASSWORD = 'pllmanager';
-
     firebase.initializeApp({
         apiKey: "AIzaSyB5FKrs0rys3ODV2U36YFjJWUu_BgFuDZk",
         authDomain: "powerlift-live.firebaseapp.com",
@@ -261,18 +235,7 @@
         return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
-    // --- Gate ---
-    function checkGate() {
-        const val = document.getElementById('gateInput').value;
-        if (val === MANAGER_PASSWORD) {
-            document.getElementById('gateScreen').style.display = 'none';
-            document.getElementById('mainContent').style.display = 'block';
-            loadSchools();
-        } else {
-            document.getElementById('gateError').textContent = 'Incorrect password.';
-            document.getElementById('gateInput').value = '';
-        }
-    }
+    loadSchools();
 
     // --- Code generator ---
     function generateCode() {
