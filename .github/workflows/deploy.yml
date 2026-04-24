@@ -15,24 +15,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Deploy via SFTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USER }}
-          password: ${{ secrets.FTP_PASS }}
-          protocol: sftp
-          server-dir: /pllappv4/
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/.claude/**
-            **/parents/**
-            **/manager/**
-            *.sh
-            *.py
-            *.csv
-            *.xlsx
-            *.mp4
+        run: |
+          sudo apt-get install -y lftp
+          lftp -c "set sftp:auto-confirm yes; open -u ${{ secrets.FTP_USER }},${{ secrets.FTP_PASS }} sftp://${{ secrets.FTP_HOST }}; mirror -R --overwrite --verbose . /pllappv4/" || true
 
   deploy-parents:
     name: SFTP Deploy (parents app)
