@@ -19,6 +19,11 @@ jobs:
           sudo apt-get install -y lftp
           lftp -c "set sftp:auto-confirm yes; set net:timeout 30; set net:max-retries 2; open -u ${{ secrets.FTP_USER }},${{ secrets.FTP_PASS }} sftp://${{ secrets.FTP_HOST }}; mirror -R --overwrite --verbose . /pllappv4/" || true
 
+      - name: Force upload index.html
+        run: |
+          sudo apt-get install -y lftp
+          lftp -c "set sftp:auto-confirm yes; set net:timeout 30; open -u ${{ secrets.FTP_USER }},${{ secrets.FTP_PASS }} sftp://${{ secrets.FTP_HOST }}; put -O /pllappv4/ index.html"
+
   deploy-parents:
     name: SFTP Deploy (parents app)
     runs-on: ubuntu-latest
