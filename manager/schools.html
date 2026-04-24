@@ -143,29 +143,6 @@
             <p>Manage school subscriptions and access codes</p>
         </header>
 
-        <!-- Import from Sheet -->
-        <div class="card">
-            <h2><i class="fas fa-file-import"></i> Import from Google Sheet</h2>
-            <p style="color:rgba(255,255,255,0.55); font-size:0.85rem; margin-bottom:14px;">
-                Add an <strong style="color:#93c5fd;">APP CODE</strong> column to your registration sheet, then click Import to preview and sync schools into Firebase.
-            </p>
-            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                <button onclick="importFromSheet()" id="importBtn" class="btn-primary-grad" style="background:linear-gradient(135deg,#10b981,#059669);">
-                    <i class="fas fa-file-import"></i> Import Sheet
-                </button>
-                <span id="importStatus" style="font-size:0.85rem; color:rgba(255,255,255,0.5);"></span>
-            </div>
-            <div id="importPreview" style="display:none; margin-top:16px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
-                    <div style="color:rgba(255,255,255,0.7); font-size:0.88rem;" id="importSummary"></div>
-                    <button onclick="importAll()" id="importAllBtn" class="btn-primary-grad" style="padding:8px 18px; font-size:0.88rem;">
-                        <i class="fas fa-cloud-upload-alt"></i> Import All
-                    </button>
-                </div>
-                <div id="importTable"></div>
-            </div>
-        </div>
-
         <!-- Add School -->
         <div class="card">
             <h2><i class="fas fa-plus-circle"></i> Add School</h2>
@@ -174,20 +151,15 @@
                     <label class="form-label">School Name</label>
                     <input type="text" id="schoolName" class="form-control" placeholder="e.g. Grand Blanc High School">
                 </div>
-                <div class="col-12 col-md-3">
-                    <label class="form-label">Access Code</label>
-                    <div style="display:flex; gap:6px;">
-                        <input type="text" id="schoolCode" class="form-control" placeholder="e.g. GB2026" style="text-transform:uppercase;">
-                        <button onclick="generateCode()" title="Generate random code" style="background:rgba(96,165,250,0.15); border:1px solid rgba(96,165,250,0.3); border-radius:8px; color:#93c5fd; padding:0 10px; cursor:pointer; flex-shrink:0;">
-                            <i class="fas fa-dice"></i>
-                        </button>
-                    </div>
+                <div class="col-12 col-md-4">
+                    <label class="form-label">Email</label>
+                    <input type="email" id="schoolEmail" class="form-control" placeholder="e.g. coach@school.edu">
                 </div>
                 <div class="col-12 col-md-2">
                     <label class="form-label">Paid Through</label>
                     <input type="date" id="schoolExpiry" class="form-control">
                 </div>
-                <div class="col-12 col-md-2 d-flex align-items-end">
+                <div class="col-12 col-md-1 d-flex align-items-end">
                     <button onclick="addSchool()" id="addBtn" class="btn-primary-grad" style="width:100%; justify-content:center;">
                         <i class="fas fa-plus"></i> Add
                     </button>
@@ -366,14 +338,14 @@
 
     // --- Add ---
     async function addSchool() {
-        const name = document.getElementById('schoolName').value.trim();
-        const code = document.getElementById('schoolCode').value.trim().toUpperCase();
+        const name   = document.getElementById('schoolName').value.trim();
+        const email  = document.getElementById('schoolEmail').value.trim();
         const expiry = document.getElementById('schoolExpiry').value;
-        const msg = document.getElementById('statusMsg');
+        const msg    = document.getElementById('statusMsg');
 
-        if (!name || !code || !expiry) {
+        if (!name) {
             msg.style.color = '#f87171';
-            msg.textContent = 'Please fill in all fields.';
+            msg.textContent = 'School name is required.';
             return;
         }
 
@@ -384,13 +356,15 @@
         try {
             await db.collection('schoolCodes').add({
                 schoolName: name,
-                code: code,
+                email: email,
+                code: '',
                 expiresAt: expiry,
                 active: true,
+                contacts: [],
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
             document.getElementById('schoolName').value = '';
-            document.getElementById('schoolCode').value = '';
+            document.getElementById('schoolEmail').value = '';
             document.getElementById('schoolExpiry').value = '';
             msg.style.color = '#34d399';
             msg.textContent = `✓ ${name} added.`;
