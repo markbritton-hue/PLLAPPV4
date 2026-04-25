@@ -22,7 +22,7 @@ jobs:
       - name: Force upload index.html
         run: |
           sudo apt-get install -y lftp
-          lftp -c "set sftp:auto-confirm yes; open -u ${{ secrets.FTP_USER }},${{ secrets.FTP_PASS }} sftp://${{ secrets.FTP_HOST }}; put -O /pllappv4/ index.html; bye"
+          lftp -c "set sftp:auto-confirm yes; open -u ${{ secrets.FTP_USER }},${{ secrets.FTP_PASS }} sftp://${{ secrets.FTP_HOST }}; ls; ls /pllappv4/; put -O /pllappv4/ index.html; bye"
 
   deploy-parents:
     name: SFTP Deploy (parents app)
