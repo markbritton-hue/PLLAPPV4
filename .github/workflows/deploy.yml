@@ -53,7 +53,7 @@ jobs:
       - name: Deploy via SFTP
         run: |
           sudo apt-get install -y lftp
-          lftp -c "set sftp:auto-confirm yes; open -u ${{ secrets.FTP_USER }},${{ secrets.FTP_PASS }} sftp://${{ secrets.FTP_HOST }}; mirror -R --verbose _parents_build/ /pllparents/"
+          lftp -c "set sftp:auto-confirm yes; open -u ${{ secrets.FTP_USER }},${{ secrets.FTP_PASS }} sftp://${{ secrets.FTP_HOST }}; mirror -R --verbose _parents_build/ /parents/"
 
   deploy-manager:
     name: SFTP Deploy (manager app)
@@ -80,4 +80,4 @@ jobs:
       - name: Deploy via SFTP
         run: |
           sudo apt-get install -y lftp
-          lftp -c "set sftp:auto-confirm yes; open -u ${{ secrets.FTP_USER }},${{ secrets.FTP_PASS }} sftp://${{ secrets.FTP_HOST }}; mirror -R --verbose _manager_build/ /pllmanager/"
+          lftp -c "set sftp:auto-confirm yes; open -u ${{ secrets.FTP_USER }},${{ secrets.FTP_PASS }} sftp://${{ secrets.FTP_HOST }}; mirror -R --verbose _manager_build/ /manager/"
